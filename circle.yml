@@ -1,0 +1,37 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - pip install -r requirements.txt
+
+  override:
+    - npm install
+    - bower install
+
+test:
+  pre:
+    - docker pull eris/ipfs
+    - docker pull eris/decerver
+    - docker-compose -f spec/docker-compose.yml build
+    - docker-compose build
+
+  override:
+    # test in isolation
+    # start with the test fig. wait for contracts to be compiled and deployed.
+    - "docker-compose -f spec/docker-compose.yml up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd1_output.log & sleep 60 && go run spec/main.go":
+        timeout: 900
+    - docker-compose -f spec/docker-compose.yml kill
+    # test against main testnet
+    - "docker-compose up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd2_output.log & sleep 75 && export TESTNET=true && go run spec/main.go":
+        timeout: 900
+    - docker-compose kill
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker build -t E-Movement/SmartVote:latest .
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push E-Movement/SmartVote:latest

@@ -1,0 +1,23 @@
+SmartVote:
+  build: .
+
+  ports:
+    - "3000:3000"
+    - "3005:3005"
+    - "30303:30303"
+
+  environment:
+    - CONTAINERS=true
+
+  links:
+    - ipfs
+
+ipfs:
+  image: eris/ipfs
+
+  volumes:
+    - ~/.decerver/filesystems/ipfs:/root/.go-ipfs:rw
+
+  ports:
+    - "4001:4001"
+    - "8080:8080"
