@@ -1,9 +1,9 @@
 {
   "name": "SmartVote",
   "id": "SmartVote",
-  "app_icon": "img/decerver.png",
-  "version": "0.5.0",
-  "homepage": "https://erisindustries.com",
+  "app_icon": "",
+  "version": "0.0.1",
+  "homepage": "",
   "author": {
     "name": "SmartVote Team",
     "url": "https://e-mov.org"
@@ -24,16 +24,15 @@
   "module_dependencies": [
     {
       "name": "monk",
-      "version": "0.8.1",
+      "version": "0.0.1",
       "data": {
         "peer_server_address": "111.111.111.111:9999",
         "blockchain_id": "f858469a00e80e4f5eb536501eb7d98c7e1cc432",
-        "root_contract": "0x898814178e1de494bdc68e838b4a546e1087af0f"
+        "root_contract": "0x7864f0e45a34afdc24023169ee914c1bc975e3ec"
       }
-    },
-    {
-      "name": "ipfs",
-      "version": "0.0.1"
-    }
+    }, {
+      "name" : "ipfs",
+      "version" : "0.0.1"
+	}
   ]
 }

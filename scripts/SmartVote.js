@@ -21,10 +21,7 @@ function addVoting() {
 		return;
 	}
 	
-	var jsonObj = {
-			name : votingName
-	};
-	
+	httpApi.send("POST", baseUrl + "/addVoting?votingName=" + votingName, null);
 	
 }
 
@@ -33,7 +30,7 @@ function getVotingNum() {
 	return vtnum;
 }
 
-var HttpAPI = function(){
+var HttpAPI = function() {
 
 	this.send = function(method, url, body) {
 		var xmlHttp = new XMLHttpRequest();

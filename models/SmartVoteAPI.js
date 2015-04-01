@@ -10,7 +10,7 @@ function SmartVoteAPI() {
 		//if (url_obj.error != "") {
 		//	return null;
 		//}
-		var path = http_request.URL.Path;
+		var path = httpRequest.URL.Path;
 		Println(path);
 		var pathSplit = path.slice(1).split('/');
 		var method = pathSplit[2];
@@ -23,16 +23,30 @@ function SmartVoteAPI() {
 			};
 		}
 		
+		if (method === "addVoting") {
+			Println("in server: adding")
+			var votingName = httpRequest.URL.RawQuery.split('=')[1];
+			Println("in server: " + votingName);
+			var txData = [];
+			txData.push(method);
+			txData.push(votingName);
+			Println(txData);
+			monk.Msg(RootContract, txData);
+			monk.Commit();
+			Println("in server: finished");
+			return null;
+		}
 	};
 }
 
 function getVtNumFromBlockchain() {
 		//var txData = [];
-		//txData.push("getvtnum");
+		//txData.push("getVtNum");
 		//monk.Msg(RootContract, txData);
 		//monk.Commit();
 		Println(RootContract);
-		var sa = monk.StorageAt(RootContract, '0x0');
+		
+		var sa = monk.StorageAt(RootContract, "0x0");
 		Println(sa);
 		return sa.Data;
-	}
+}
