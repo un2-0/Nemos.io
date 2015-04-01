@@ -1,0 +1,6 @@
+{
+	"loading_order" : [
+		"SmartVoteAPI.js",
+		"SmartVote.js"
+	]
+}

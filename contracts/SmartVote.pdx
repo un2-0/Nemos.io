@@ -1,0 +1,5 @@
+#File Deployment
+!{diff1
+deploy:
+	"./SmartVoteDOUG.lll" => {{ROOT}}
+!}diff1

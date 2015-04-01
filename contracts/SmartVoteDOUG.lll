@@ -1,0 +1,31 @@
+{
+	; init
+	(include "./defs/stdll.def")
+	
+	(llInit "ongoing_votings" "none" "none" "none")
+	
+	; macros
+	(def 'get_cmd () (calldataload 0x0))
+	(def 'get_vtname () (calldataload 0x20))
+	
+	[[0x0]]1
+	[[0x20]]2
+	
+	(return 0 (lll {
+		; body
+		(when (= (get_cmd) "addvoting") {
+			[0x0](get_vtname)
+			(llAddLink "ongoing_votings" @0x0 @0x0)
+			[0x0]1
+			(return 0x0 0x20)
+		})	
+		
+		(when (= (get_cmd) "getvtnum") {
+			[[0x0]] (+ @@0x0 1)
+			; [[0x0]]@@(llLenSlot "ongoing_votings")
+			[0x0]1
+			(return 0x0 0x20)
+		})
+	
+	} 0))
+}
