@@ -1,10 +1,10 @@
-var http_api;
-var base_url;
+var httpApi;
+var baseUrl;
 
 window.onload = init;
 function init() {
-	base_url = "/apis/SmartVote";
-	http_api = new HttpAPI();
+	baseUrl = "/apis/SmartVote";
+	httpApi = new HttpAPI();
 
 	var btn = document.getElementById("creat_btn");
 	btn.onclick = addVoting;
@@ -14,22 +14,22 @@ function init() {
 }
 
 function addVoting() {
-	var voting_name = document.getElementById("new_voting_name").value;
+	var votingName = document.getElementById("new_voting_name").value;
 	
-	if (voting_name === "") {
+	if (votingName === "") {
 		window.alert("Voting name cannot be empty");
 		return;
 	}
 	
-	var json_obj = {
-			name : voting_name
+	var jsonObj = {
+			name : votingName
 	};
 	
 	
 }
 
 function getVotingNum() {
-	var vtnum = http_api.send("GET", base_url+"/get_vtnum", null);
+	var vtnum = httpApi.send("GET", baseUrl+"/getVtNum", null);
 	return vtnum;
 }
 
