@@ -9,11 +9,11 @@ function init() {
 	var btn = document.getElementById("creat_btn");
 	btn.onclick = addVoting;
 	
-	document.getElementById("voting_num").innerHTML = getVotingNum();
-	//alert(getVotingNum());
+	updateVotingNumInPage();
 }
 
 function addVoting() {
+	document.getElementById("creat_btn").disabled = true;
 	var votingName = document.getElementById("new_voting_name").value;
 	
 	if (votingName === "") {
@@ -21,8 +21,18 @@ function addVoting() {
 		return;
 	}
 	
-	httpApi.send("POST", baseUrl + "/addVoting?votingName=" + votingName, null);
+	httpApi.sendAsync("POST", baseUrl + "/addVoting?votingName=" + votingName, null,
+			function () {
+				document.getElementById("creat_btn").disabled = false;
+				window.alert("New voting created.");
+				updateVotingNumInPage();
+			}
+	);
 	
+}
+
+function updateVotingNumInPage() {
+	document.getElementById("voting_num").innerHTML = getVotingNum();
 }
 
 function getVotingNum() {
