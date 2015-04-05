@@ -1,8 +1,8 @@
 #File Deployment
 
-!{
+!{Test
 deploy:
 	"./SmartVoteDOUG.lll" => {{ROOT}}
 transact:
 	{{ROOT}} => "init"
-!}
+!}Test
