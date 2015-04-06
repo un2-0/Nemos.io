@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html>
     <head>
-		<meta charset="UTF-8">
-		<title>SmartVote</title>
-		<link type="text/css" rel="stylesheet" href="css/index.css">
-	</head>
+        <meta charset="UTF-8">
+        <title>SmartVote</title>
+        <link type="text/css" rel="stylesheet" href="css/index.css">
+    </head>
 
-	<body>
-        <div id="allcontent">
+    <body>
+        <div id="allContent">
             <div id="header">
+                <p>Here goes header...</p>
             </div>
-			<div id="table_container">
-				<div id="table_row">
-				    <div id="main">
-                        New voting name: <input type="text" id="new_voting_name">
-                        <input id="creat_btn" type="button" value="Create">
-                        <div id="show_place">
-                                <input id="show_btn" type="button" value="Show a default voting" />
+
+            <div id="tableContainer">
+                <div id="tableRow">
+
+                    <div id="main">
+                        <p>New voting name: <input type="text" id="newVotingName"></p>
+                        <input id="creatBtn" type="button" value="Create">
+                        <div id="showPlace">
+                            <input id="showBtn" type="button" value="Show a default voting" />
                         </div>
                     </div>
 
                     <div id="sidebar">
                         <div id="ongoing">
-                            <h2><span id="voting_num"></span> On-going Voting(s)</h2>	
+                            <h2><span id="votingNum"></span> On-going Voting(s)</h2>	
                         </div>
                     </div>
-            	</div>
+
+                </div>
             </div>
                         
             <div id="footer">
-                <p>Here is footer...</p>		
-  	        </div>
-	    </div>
+                <p>Here is footer...</p>
+            </div>
 
-	    <script src="scripts/SmartVote.js" type="text/javascript"></script>
-	</body>
+        </div>
+
+        <script src="scripts/SmartVote.js" type="text/javascript"></script>
+    </body>
 </html>

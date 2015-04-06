@@ -2,7 +2,7 @@
 
 !{Test
 deploy:
-	"./SmartVoteDOUG.lll" => {{ROOT}}
+    "./SmartVoteDOUG.lll" => {{ROOT}}
 transact:
-	{{ROOT}} => "init"
+    {{ROOT}} => "init"
 !}Test
