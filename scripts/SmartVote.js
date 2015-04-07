@@ -1,5 +1,23 @@
 var httpApi;
 var baseUrl;
+var createBtn;
+
+window.onload = init;
+
+function init() {
+    baseUrl = "/apis/SmartVote";
+    httpApi = new HttpAPI();
+
+    createBtn = document.getElementById("createBtn");
+    createBtn.disabled = true;
+    createBtn.onclick = addVoting;
+    
+    document.getElementById("addCandiBtn").onclick = addCandidate;
+
+    document.getElementById("showBtn").onclick = showDefaultVoting;
+
+    updateVotingNumInPage();
+}
 
 function showDefaultVoting() {
     var voting = httpApi.send("GET", baseUrl + "/getVoting?votingName=default", null)
@@ -34,13 +52,8 @@ function showDefaultVoting() {
 }
 
 function addVoting() {
-    document.getElementById("creat_btn").disabled = true;
-    var votingName = document.getElementById("new_voting_name").value;
-
-    if (votingName === "") {
-        window.alert("Voting name cannot be empty");
-        return;
-    }
+    document.getElementById("createBtn").disabled = true;
+    var votingName = escape(document.getElementById("newVotingName").value);
 
     httpApi.sendAsync("POST", baseUrl + "/addVoting?votingName=" + votingName, null,
         function () {
@@ -51,54 +64,48 @@ function addVoting() {
     );
 }
 
-function updateVotingNumInPage() {
-    document.getElementById("voting_num").innerHTML = getVotingNum();
+function addCandidate() {
+    var candiTable = document.getElementById("candiTable");
+    var newCandiNum = candiTable.rows.length + 1;
+    var newCandiRow = candiTable.insertRow(candiTable.rows.length);
+    newCandiRow.id = "candiRow" + newCandiNum;
+    //newCandiRow.class = "candiRow";
+    
+    // insert and set up the left cell
+    var leftCell = newCandiRow.insertCell(0);
+    var label = document.createElement("LABEL");
+    label.innerHTML = "Candidate " + newCandiNum;
+    label.id = "candiLabel" + newCandiNum;
+    label.htmlFor = "candi" + newCandiNum;
+    leftCell.appendChild(label);
+    
+    // insert and set up the right cell
+    var rightCell = newCandiRow.insertCell(1);
+    var input = document.createElement("INPUT");
+    input.id = "candi" + newCandiNum;
+    input.type = "text";
+    input.name = input.id;
+    rightCell.appendChild(input);
 }
 
+/**
+ * Get the number of on-going votings. if successful, call
+ * <code>updateVotingNumInPage</code>.
+ */
 function getVotingNum() {
-    var vtnum = httpApi.send("GET", baseUrl+"/getVtNum", null);
-    return vtnum;
-}
-
-var HttpAPI = function() {
-
-    this.send = function(method, url, body) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open(method, url, false);
-        if (typeof(body) === "undefined") {
-            body = null;
-        }
-        xmlHttp.send(body);
-        return xmlHttp.responseText;
-    }
-
-    this.sendAsync = function(method, url, body, callbackFn) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function(){
-            if (xmlHttp.readyState === 4) {
-                callbackFn(xmlHttp);
-            }
-        };
-        xmlHttp.open(method, url, true);
-        if (typeof(body) === "undefined") {
-            body = null;
-        }
-        xmlHttp.send(body);
+    var request = createRequest();
+    if (request == null) {
+        window.alert("Unable to create a request!");
         return;
     }
+    var url = baseUrl + "/getVtNum";
+    request.open("GET", url, true);
+    request.onsteadychange = updateVotingNumInPage;
+    request.send(null);
 }
 
-function init() {
-    baseUrl = "/apis/SmartVote";
-    httpApi = new HttpAPI();
-
-    var btn = document.getElementById("createBtn");
-    btn.onclick = addVoting;
-
-    var showBtn = document.getElementById("showBtn");
-    showBtn.onclick = showDefaultVoting;
-
-    updateVotingNumInPage();
+function updateVotingNumInPage() {
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("voting_num").innerHTML = this.responseText;
+    }
 }
-
-window.onload = init;

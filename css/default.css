@@ -40,6 +40,22 @@ body {
     border-width: 1px;
 }
 
+.processing {
+    background: url("../images/processing.gif") no-repeat;
+    background-position: right;
+}
+
+.approved {
+    background: url("../images/approved.gif") 202px -35px no-repeat;
+    background-position: right;
+}
+
+.denied {
+    background: url("../images/denied.gif") no-repeat;
+    background-position: right;
+    background-color: #FF8282;
+}
+
 #sidebar {
     display: table-cell;
     background-color: #FFFFFF;
