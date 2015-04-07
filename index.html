@@ -16,10 +16,36 @@
                 <div id="tableRow">
 
                     <div id="main">
-                        <p>New voting name: <input type="text" id="newVotingName"></p>
-                        <input id="creatBtn" type="button" value="Create">
+                        <div id="createPlace">
+                            <form>
+                                <fieldset>
+                                <legend>Step 1</legend>
+                                <p>New voting name: <input type="text" id="newVotingName"></p>
+                                <p>Description (optional): <input type="text" id="description"></p>
+                                <p>Your name: <input type="text" id="yourName"></p>
+                                <p>Your email: <input type="text" id="yourEmail"></p>
+                                </fieldset>
+                                <fieldset>
+                                <legend>Step 2</legend>
+                                <table id="candidtateTable">
+                                <tr>
+                                <td>Candidate 1:</td>
+                                <td><input id="candi1" type="text"></td>
+                                </tr>
+                                </table>
+                                <button id="addCandi" type="button">Add another candidate</button>
+                                </fieldset>
+                                <fieldset>
+                                <legend>Step 3</legend>
+                                <p>Max votes: <input type="number" id="maxVotes" min="1"></p>
+                                <p>End date: <input type="date" id="endDate"></p>
+                                <p>End time: <input type="time" id="endTime"></p>
+                                </fieldset>
+                                <button id="createBtn" type="submit">Create</button>
+                            </form>
+                        </div>
                         <div id="showPlace">
-                            <input id="showBtn" type="button" value="Show a default voting" />
+                            <button id="showBtn" type="button">Show a default voting</button>
                         </div>
                     </div>
 
@@ -33,7 +59,7 @@
             </div>
                         
             <div id="footer">
-                <p>Here is footer...</p>
+                <p>Here goes footer...</p>
             </div>
 
         </div>
