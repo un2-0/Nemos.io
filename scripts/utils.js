@@ -24,26 +24,26 @@ function HttpAPI() {
             window.alert("Unable to create a request");
             return;
         }
-        xmlHttp.open(method, url, false);
+        request.open(method, url, false);
         if (typeof(body) == "undefined") {
             body = null;
         }
-        xmlHttp.send(body);
-        return xmlHttp.responseText;
+        request.send(body);
+        return request.responseText;
     }
 
     this.sendAsync = function(method, url, body, callbackFn) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function(){
-            if (xmlHttp.readyState === 4) {
-                callbackFn(xmlHttp);
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function(){
+            if (request.readyState === 4) {
+                callbackFn(request);
             }
         };
-        xmlHttp.open(method, url, true);
-        if (typeof(body) === "undefined") {
+        request.open(method, url, true);
+        if (typeof(body) == "undefined") {
             body = null;
         }
-        xmlHttp.send(body);
+        request.send(body);
         return;
     }
 }
