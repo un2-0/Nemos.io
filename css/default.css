@@ -1,5 +1,5 @@
 body {
-    background-color: #b5a789;
+    background-color: #FFFFFF;
     font-family: Georgia, "Times New Roman", Times, serif;
     margin: 0px;
 }
@@ -14,9 +14,11 @@ body {
 }
 
 #header {
-    background-color: #675c47;
+    background-color: #FFFFFF;
     margin: 10px 10px 0px 10px;
-    height: 108px;
+    padding: 15px;
+    border-style: dashed;
+    border-width: 1px;
 }
 
 #tableContainer{
@@ -30,25 +32,31 @@ body {
 
 #main {
     display: table-cell;
-    background-color: #675c47;
+    background-color: #FFFFFF;
     padding: 15px;
     width: 650px;
     vertical-align: top;
+    border-style: dashed;
+    border-width: 1px;
 }
 
 #sidebar {
     display: table-cell;
-    background-color: #675c47;
+    background-color: #FFFFFF;
     padding: 15px;
     width: 320px;
     vertical-align: top;
+    border-style: dashed;
+    border-width: 1px;
 }
 
 #footer {
-    background-color: #675c47;
-    color:#efe5d0;
+    background-color: #FFFFFF;
+    color:#000000;
     text-align: cetner;
     padding: 15px;
     margin: 0px 10px 10px 10px;
     clear: left;
+    border-style: dashed;
+    border-width: 1px;
 }
