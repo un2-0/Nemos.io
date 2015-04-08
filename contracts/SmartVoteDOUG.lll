@@ -1,21 +1,50 @@
 {
 	; init
 	(include "./defs/stdll.def")
+	(include "./env.def")
 	
 	(llInit "ongoingVotings" "none" "none" "none")
 	
 	[[0x0]]1
 
 	; macros
-	(def 'get_cmd () (calldataload 0x0))
-	(def 'get_vtname () (calldataload 0x20))
+	(def 'cmd () (calldataload 0x0))
+	(def 'contractName () (calldataload 0x20))
+	(def 'contractAddr () (calldataload 0x40))
+
+    ; a linked-list to save all the registered contracts
+    (llInit "DOUG" "none" "none" "none)
+    (llADDLink "DOUG" "DOUG" (ADDRESS))    ; save itself's address to it
+    
 	(return 0 (lll {
-		; body
-		(when (= (get_cmd) "init") {
-			[[0x0]]0	
-			[0x0]1
-			(return 0x0 0x20)
-		})
+        ; body
+
+        ; ---------------------------------------------
+        ; Get a contract's address by its name
+        ; ---------------------------------------------
+        ; Permission Requirement: NONE
+        ; Calldata: "getContractAddr" contractName
+        ; Returns: the address associated with contractName
+        ; ---------------------------------------------
+        (when (= (cmd) "getContractAddr") {
+            [0x0] (llGet "DOUG" (contractName))
+            (return 0x0 0x20)
+        })
+
+        ; ---------------------------------------------
+        ; Register a contract's address by its name
+        ; ---------------------------------------------
+        ; Permission Requirement: "doug"
+        ; Calldata: "regContractAddr" contractName 0xADDRESS
+        ; Returns: 0 - failure | 1 - success
+        ; ---------------------------------------------
+        (when (= (cmd) "regContractAddr") {
+            ; if the initiator isn't doug, then stop
+            (unless (dougCheck (ORIGIN) (STOP))
+            (llAddLink "DOUG" (contractName) (contractAddr))
+            [0x0]1
+            (return 0x0 0x20)
+        })
 
 		(when (= (get_cmd) "addVoting") {
 			[0x0](get_vtname)
