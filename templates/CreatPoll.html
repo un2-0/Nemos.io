@@ -1,10 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8">
+  <title>Create a Poll</title>
+  <link type="text/css" rel="stylesheet" href="css/default.css">
+  <script src="scripts/SmartVote.js" type="text/javascript"></script>
+  <script src="scripts/utils.js" type="text/javascript"></script>
 </head>
-<body>
 
+<body>
+  <div id="allContent">
+    <div id="header">
+      <p>Here goes header...</p>
+    </div>
+
+    <div id="tableContainer">
+      <div id="tableRow">
+
+        <div id="main">
+          <div id="createPlace">
+            <form>
+              <fieldset>
+                <legend>Step 1</legend>
+                <p><label for="newVotingName">New voting name</label> 
+                  <input type="text" id="newVotingName" name="newVotingName" required></p>
+                <p>Description (optional): <input type="text" id="description"></p>
+                <p>Your name: <input type="text" id="initiatorName"></p>
+                <p><label for="initiatorEmail">Your email: </label> 
+                  <input type="text" id="yourEmail" required></p>
+                <p><button type="button">Next</button></p>
+              </fieldset>
+
+              <fieldset>
+                <legend>Step 2</legend>
+                <table id="candiTable">
+                  <tr id="candiRow1">
+                    <td><label id="candiLabel1" for="candi1">Candidate 1</label></td>
+                    <td><input id="candi1" type="text" name="candi1"></td>
+                  </tr>
+                  <tr id="candiRow2">
+                    <td><label id="candiLabel2" for="candi2">Candidate 2</label></td>
+                    <td><input id="candi2" type="text" name="candi2"></td>
+                  </tr>
+                  <tr id="candiRow3">
+                    <td><label id="candiLabel3" for="candi3">Candidate 3</label></td>
+                    <td><input id="candi3" type="text" name="candi3"></td>
+                  </tr>
+                </table>
+
+                <p><button id="addCandiBtn" type="button">Add another candidate</button></p>
+                <p><button type="button">Next</button></p>
+              </fieldset>
+
+              <fieldset>
+                <legend>Step 3</legend>
+                <p>Max votes: <input type="number" id="maxVotes" min="1"></p>
+                <p>End date: <input type="date" id="endDate"></p>
+                <p>End time: <input type="time" id="endTime"></p>
+              </fieldset>
+
+              <button id="createBtn" type="submit">Create</button>
+            </form>
+          </div>
+
+          <div id="showPlace">
+            <button id="showBtn" type="button">Show a default voting</button>
+          </div>
+        </div>
+
+        <div id="sidebar">
+          <div id="ongoing">
+            <h2><span id="votingNum"></span> On-going Voting(s)</h2>	
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="footer">
+      <p>Here goes footer...</p>
+    </div>
+
+  </div>
 </body>
 </html>
