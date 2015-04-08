@@ -17,7 +17,7 @@
     (return 0 (lll {
         
         ; ---------------------------------------------
-        ; Create a new poll contract and record its name andaddress
+        ; Create a new poll contract and record its name and address
         ; ---------------------------------------------
         ; Permission Requirement: ""
         ; Calldata: "createPoll" pollId
@@ -34,7 +34,7 @@
             
             ; poll name : poll contract address
             (kvSet "polls" (pollName) @0x0)
-            
+
             (return 0x0 0x20)
         })
 
@@ -42,7 +42,7 @@
         ; Delete the record of a poll contract
         ; ---------------------------------------------
         ; Permission Requirement: ""
-        ; Calldata: "deletePoll" pollId
+        ; Calldata: "deletePoll" pollName
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------
         (when (= (cmd) "deletePoll") {
