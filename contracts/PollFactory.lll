@@ -1,0 +1,61 @@
+; ---------------------------------------------
+; PollFactory - contract for creating contracts for polls
+; ---------------------------------------------
+
+{
+    ; init
+    (include "./defs/stdll.def")
+    (include "./env.def")
+    (include "./Poll.lll")
+
+    ; macros
+    (def 'cmd () (CALLDATALOAD 0x00))
+    (def 'pollName () (CALLDATALOAD 0x20))
+
+    (kvInit "polls")
+
+    (return 0 (lll {
+        
+        ; ---------------------------------------------
+        ; Create a new poll contract and record its name andaddress
+        ; ---------------------------------------------
+        ; Permission Requirement: ""
+        ; Calldata: "createPoll" pollId
+        ; Returns: the address of the newly created contract
+        ; ---------------------------------------------
+        (when (= (cmd) "createPoll") {
+            
+            ; create the contract and save its address in memory 0x0
+            [0x0] (create 0 0 (lll {
+                (poll)
+            } 0))
+
+            [[@0x0]] 1
+            
+            ; poll name : poll contract address
+            (kvSet "polls" (pollName) @0x0)
+            
+            (return 0x0 0x20)
+        })
+
+        ; ---------------------------------------------
+        ; Delete the record of a poll contract
+        ; ---------------------------------------------
+        ; Permission Requirement: ""
+        ; Calldata: "deletePoll" pollId
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------
+        (when (= (cmd) "deletePoll") {
+            [0x0] (pollName)
+            [0x20] (kvGet "polls" @0x0)
+
+            ; if the caller is not the poll itself, then stop
+            (unless (= (CALLER) @0x20) (STOP))
+            (kvSet "polls" @0x0 0)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+    })
+
+}
