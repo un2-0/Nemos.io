@@ -9,7 +9,7 @@ function SmartVoteAPI() {
 	
 	var txData = {};
 	
-	function createPoll(ipfsdata, opnum, opentime, closetime, crtusrname, plname) {
+	this.createPoll = function(ipfsdata, opnum, opentime, closetime, crtusrname, plname) {
 		Println("Adding file to ipfs.");
 		var hash = writeFile(ipfsdata);
 		if (hash === "") {
@@ -19,7 +19,7 @@ function SmartVoteAPI() {
 		return this.postPid(opnum, hash, opentime, closetime, crtusrname, plname);
 	}
 	
-	function postPid(opnum, hash, opentime, closetime, crtusrname, plname) {
+	this.postPid = function(opnum, hash, opentime, closetime, crtusrname, plname) {
 		var txData = [];
 		txData.push("init");
 		txData.push(opnum);
@@ -33,7 +33,7 @@ function SmartVoteAPI() {
 		return hash;
 	}
 	
-	function setStatus(plname, status) {
+	this.setStatusfunction(plname, status) {
 		var txData = [];
 		txData.push("setstatus");
 		txData.push(status);
@@ -41,11 +41,11 @@ function SmartVoteAPI() {
 		return hash;
 	}
 	
-	function checkStatus(plname) {
+	this.checkStatus = function(plname) {
 		return esl.single.Value(plname2Addr(plname), StringToHex("status"));
 	}
 	
-	function refreshPoll(plname) {
+	this.refreshPoll = funtion(plname) {
 		plAddr = plname2Addr(plname);
 		var opentime = esl.single.Value(plAddr, StringToHex("opentime"));
 		var closetime = esl.single.Value(plAddr, StringToHex("closetime"));
@@ -59,7 +59,7 @@ function SmartVoteAPI() {
 		}
 	}
 	
-	function vote(plname, opnum) {
+	this.vote = funtion(plname, opnum) {
 		if (checkStatus(plname) == 1) {
 			var txData = [];
 			txData.push("vote");
@@ -67,7 +67,7 @@ function SmartVoteAPI() {
 			var hash = senMsg(plname2Addr(plname), txData);;
 			return hash;
 		}
-		return 0;
+		return null;
 	}
 	
 	function plname2Addr(plname) {
