@@ -2,6 +2,9 @@ function SmartVote() {
 
 	var COMMITTING = true;
 	
+	var method = "";
+	var body = "";
+	
 	svApi = new SmartVoteAPI();
 
 	this.handle = function(httpReq) {
@@ -20,6 +23,8 @@ function SmartVote() {
 				|| resp.Header === undefined || resp.Status === undefined) {
 			return null;
 		}
+		var path = httpReq.URL.Path;
+		var pathSlice = path.slice(1).split('/'); //**************
 		return resp;
 	}
 	
