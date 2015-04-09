@@ -22,17 +22,18 @@
     (def 'hash () (calldataload 0x40))
     (def 'opentime () (calldataload 0x60))
     (def 'closetime () (calldataload 0x80))
-    (def 'creator () (calldataload 0xA0)) ;The address of the creator
-	(def 'plname () (calldataload 0xC0)) ;The name of the poll
+	(def 'createtime () (calldataload 0xA0))
+    (def 'creator () (calldataload 0xC0)) ;The address of the creator
+	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
 
     (kvInit "ops") ;The statistics of the options
 	
-    (singleInit "created" (TIMESTAMP))
     (singleInit "description" 0)
     (singleInit "inited" 0)
     (singleInit "created" 0)
     (singleInit "opened" 0)
     (singleInit "closed" 0)
+	(singleInit "created" 0)
     (singleInit "status" 0) ;0:closed, 1:opened
     (singleInit "owner" (ORIGIN))
     (singleInit "creator" 0)
@@ -50,6 +51,7 @@
 			(singleSet "opnum" @0x0)
 			(singleSet "opened" (opentime))
 			(singleSet "closed" (closetime))
+			(singleSet "created" (createtime))
 			(singleSet "creator" (crtusrname))
 			(singleSet "plname" (plname))
 			(singleSet "inited" 1)
