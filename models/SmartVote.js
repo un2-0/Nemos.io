@@ -16,7 +16,7 @@ function SmartVote() {
 			return null;
 		}
 		var resp = hFunc(urlObj, httpReq);
-		Println("REPONSE OBJECT: " JSON.stringify(resp));
+		Println("REPONSE OBJECT: " + JSON.stringify(resp));
 		
 		//Weak check, but this is clearly not a valid reponse.
 		if (typeof(resp) !== "object" || resp.Body === undefined
@@ -25,13 +25,14 @@ function SmartVote() {
 		}
 		var path = httpReq.URL.Path;
 		var pathSlice = path.slice(1).split('/'); //**************
+		Println("111111111111111111" + pathSlice);
 		return resp;
 	}
 	
 	function doPoll(method, body) {
 		if (method === "POST") {
 			var nameObj = JSON.parse(body);
-			var hash = 
+			var hash = "0x0";
 			if (COMMITTING) {
 				monk.Commit();
 			}
@@ -48,6 +49,5 @@ function SmartVote() {
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
-
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

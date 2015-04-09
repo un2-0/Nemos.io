@@ -1,8 +1,24 @@
 #File Deployment
 
-!{Test
+!{DOUG
 deploy:
-    "./SmartVoteDOUG.lll" => {{ROOT}}
+    "./contracts/SmartVoteDOUG.lll" => {{DOUG}}
+!}DOUG
+
+!{PF
+modify-deploy:
+	"./contracts/PollFactory.lll" => {{PF}}
+	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
+!}PF
+
+!{setup
 transact:
-    {{ROOT}} => "init"
-!}Test
+    {{DOUG}} => "setperm" "doug" {{PF}} 1
+
+transact:
+    {{DOUG}} => "setperm" "pollfactory" {{PF}} 1
+
+transact:
+    {{DOUG}} => "register" "pollfactory" {{PF}}
+!}setup
+

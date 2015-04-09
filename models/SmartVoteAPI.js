@@ -6,6 +6,7 @@ function SmartVoteAPI() {
 	var dougAddr = RootContract;
 	var plfAddr = "";
 	var monkAddr = "";
+	var mysubs = [];
 	
 	var txData = {};
 	
@@ -33,7 +34,7 @@ function SmartVoteAPI() {
 		return hash;
 	}
 	
-	this.setStatusfunction(plname, status) {
+	this.setStatus = function(plname, status) {
 		var txData = [];
 		txData.push("setstatus");
 		txData.push(status);
@@ -45,7 +46,7 @@ function SmartVoteAPI() {
 		return esl.single.Value(plname2Addr(plname), StringToHex("status"));
 	}
 	
-	this.refreshPoll = funtion(plname) {
+	this.refreshPoll = function(plname) {
 		plAddr = plname2Addr(plname);
 		var opentime = esl.single.Value(plAddr, StringToHex("opentime"));
 		var closetime = esl.single.Value(plAddr, StringToHex("closetime"));
@@ -59,7 +60,7 @@ function SmartVoteAPI() {
 		}
 	}
 	
-	this.vote = funtion(plname, opnum) {
+	this.vote = function(plname, opnum) {
 		if (checkStatus(plname) == 1) {
 			var txData = [];
 			txData.push("vote");
@@ -76,6 +77,7 @@ function SmartVoteAPI() {
 	
 	this.init = function() {
 		Println("Initializing SmartVote");
+		// Start subscribing to tx events.
 		Println("DOUG address: " + dougAddr);
 		plfAddr = esl.ll.Main(dougAddr, StringToHex("DOUG"), StringToHex("pollfactory"));
 		Println("plfAddr: " + plfAddr);
