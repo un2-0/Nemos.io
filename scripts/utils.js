@@ -48,7 +48,7 @@ function HttpAPI() {
     }
 }
 
-function post(path, params, method) {
+function post(path, params, method) { // e.g. post('/contact/', {name: 'Johnny Bravo'});
     method = method || "post"; // Set method to post by default if not specified.
 
     // The rest of this code assumes you are not using a library.
