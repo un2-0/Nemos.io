@@ -80,6 +80,7 @@ function SmartVoteAPI() {
 		// Start subscribing to tx events.
 		Println("DOUG address: " + dougAddr);
 		plfAddr = esl.ll.Main(dougAddr, StringToHex("DOUG"), StringToHex("pollfactory"));
+		Println("111111111111111111111111111111111111111111111111");
 		Println("plfAddr: " + plfAddr);
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);

@@ -42,7 +42,7 @@
 </body>
 <script>
 function jump() {
-	window.location.href = "CreatePoll.html";
+	window.href = "CreatePoll.html";
 }
 </script>
 </html>

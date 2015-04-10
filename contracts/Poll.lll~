@@ -6,39 +6,39 @@
 ;Track every poll
 
 (def 'poll () {
-	(include "./env.def")
-	(include "./defs/stdll.def")
-	(include "./defs/single.def")
+    (include "./env.def")
+    (include "./defs/stdll.def")
+    (include "./defs/single.def")
 
-	(def 'cmd () (calldataload 0x0))
+    (def 'cmd () (calldataload 0x0))
 	
-	(def 'status () (calldataload 0x20)))
+    (def 'status () (calldataload 0x20)))
 	
-	(def 'newopentime () (calldataload 0x20))
+    (def 'newopentime () (calldataload 0x20))
 	
-	(def 'newclosetime () (calldataload 0x20))
+    (def 'newclosetime () (calldataload 0x20))
 	
-	(def 'opnum () (calldataload 0x20)) ;The number of options
-	(def 'hash () (calldataload 0x40))
-	(def 'opentime () (calldataload 0x60))
-	(def 'closetime () (calldataload 0x80))
-	(def 'createtime () (calldataload 0xA0))
-	(def 'creator () (calldataload 0xC0)) ;The address of the creator
-	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
+    (def 'opnum () (calldataload 0x20)) ;The number of options
+    (def 'hash () (calldataload 0x40))
+    (def 'opentime () (calldataload 0x60))
+    (def 'closetime () (calldataload 0x80))
+    (def 'createtime () (calldataload 0xA0))
+    (def 'creator () (calldataload 0xC0)) ;The address of the creator
+    (def 'plname () (calldataload 0xCE0)) ;The name of the poll
 
-	(kvInit "ops") ;The statistics of the options
-
-	(singleInit "description" 0)
-	(singleInit "inited" 0)
+    (kvInit "ops") ;The statistics of the options
+	
+    (singleInit "description" 0)
+    (singleInit "inited" 0)
+    (singleInit "created" 0)
+    (singleInit "opened" 0)
+    (singleInit "closed" 0)
 	(singleInit "created" 0)
-	(singleInit "opened" 0)
-	(singleInit "closed" 0)
-	(singleInit "created" 0)
-	(singleInit "status" 0) ;0:closed, 1:opened
-	(singleInit "owner" (ORIGIN))
-	(singleInit "creator" 0)
-	(singleInit "opnum" 1)
-	(singleInit "plname" 0)
+    (singleInit "status" 0) ;0:closed, 1:opened
+    (singleInit "owner" (ORIGIN))
+    (singleInit "creator" 0)
+    (singleInit "opnum" 1)
+    (singleInit "plname" 0)
 	
 	(return 0 (lll{
 		[[0xcccc]](gass)

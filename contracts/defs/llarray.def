@@ -1,0 +1,111 @@
+;Lowest Level Array
+{
+	;Format
+
+	;+ 0 : (1 4 8 32 256) bits - Size of each element
+	;+ 1 : # elements of allocated size (0 = "unlimited")
+
+	;Keyed Component
+	;slot : Max Element number
+	;+1 : Start of array
+
+	(def 'llarrayESizeOffset 0)
+
+	(def 'llarrayMaxEOffset 0)
+	(def 'llarrayStartOffset 1)
+
+	(def 'llarrayESizeSlot (base) (+ base 0))
+
+	(def 'llarrayGetESize (base) @@(llarrayESizeSlot base))
+
+	(def 'llarrayMaxESlot (slot) (+ slot llarrayMaxEOffset))
+	(def 'llarrayStartSlot (slot) (+ slot llarrayStartOffset))
+
+	(def 'llarrayGetMaxE (slot) @@(llarrayMaxESlot slot))
+
+
+	(def 'llarrayGetE (base slot elnum) 
+		{
+			(if (> elnum (llarrayGetMaxE slot))
+				{
+					0
+				}
+				{
+					(if (>= (llarrayGetESize base) 256)
+						{
+							@@(+ (MOD elnum 0xFFFF) (+ slot llarrayStartOffset)) ;row
+						}
+						{
+							(MOD (DIV @@(+ (MOD (DIV elnum (DIV 256 (llarrayGetESize base))) 0xFFFF) (+ slot llarrayStartOffset)) (EXP 2 (MUL (llarrayGetESize base) (MOD elnum (DIV 256 (llarrayGetESize base)))))) (EXP 2 (llarrayGetESize base)))
+						}
+					)
+				}
+			)
+		}
+	)
+
+	(def 'llarrayLoadE (base key elnum mem) 
+		{
+			[mem](llarrayGetE base key elnum)
+		}
+	)
+
+	(def 'llarraySetE (base slot elnum value) 
+		{
+			(if (>= (llarrayGetESize base) 256)
+			{
+					;No Need to worry about possition in the slot we can just set it
+					[[(+ (MOD elnum 0xFFFF) (+ slot llarrayStartOffset))]]value
+				}
+				{
+					;Sorry... I hate overwriting memory :-(
+					
+					[[(+ (MOD (DIV elnum (DIV 256 (llarrayGetESize base))) 0xFFFF) (+ slot llarrayStartOffset))]](+ (MUL (DIV @@(+ (MOD (DIV elnum (DIV 256 (llarrayGetESize base))) 0xFFFF) (+ slot llarrayStartOffset)) (EXP 2 (MUL (llarrayGetESize base) (+ (MOD elnum (DIV 256 (llarrayGetESize base))) 1)))) (EXP 2 (MUL (llarrayGetESize base) (+ (MOD elnum (DIV 256 (llarrayGetESize base))) 1)))) (+ (MOD @@(+ (MOD (DIV elnum (DIV 256 (llarrayGetESize base))) 0xFFFF) (+ slot llarrayStartOffset)) (EXP 2 (MUL (llarrayGetESize base) (MOD elnum (DIV 256 (llarrayGetESize base)))))) (MUL (MOD value (EXP 2 (llarrayGetESize base))) (EXP 2 (MUL (llarrayGetESize base) (MOD elnum (DIV 256 (llarrayGetESize base))))))))
+				}
+			)
+
+			(when (> elnum @@(llarrayMaxESlot slot)) [[(llarrayMaxESlot slot)]]elnum)
+		}
+	)
+
+;Old Easier to read version
+;	(def 'llarraySetE (base slot elnum value) 
+;		{
+;			[0x0](llarrayGetESize base) ;256
+;			(if (>= @0x0 256)
+;			{
+;					;No Need to worry about possition in the slot we can just set it
+;					[0x20](+ (MOD elnum 0xFFFF) (+ slot llarrayStartOffset))
+;					[[(+ (MOD elnum 0xFFFF) (+ slot llarrayStartOffset))]]value
+;				}
+;				{
+;					[0x20](MOD elnum (DIV 256 @0x0)) ;location in row ;0
+;					[0x40](+ (MOD (DIV elnum (DIV 256 @0x0)) 0xFFFF) (+ slot llarrayStartOffset)) ;row ;elnum
+;					[0x60]@@ @0x40
+;					[0x80](EXP 2 (MUL @0x0 (+ @0x20 1)))
+;
+;					[0xA0](MUL (DIV @0x60 @0x80) @0x80) 		;Data above slot we care about
+;					[0x80](DIV @0x80 (EXP 2 @0x0))				;Adjust 0x80
+;					[0xC0](MOD @0x60 @0x80)						;data below slot
+;					[0xE0](MUL (MOD value (EXP 2 @0x0)) @0x80) 	;Data to put in slot
+;					[[@0x40]](+ @0xA0 (+ @0xC0 @0xE0)) 			;Combine and store
+;				}
+;			)
+;
+;			(when (> elnum @@(llarrayMaxESlot slot)) [[(llarrayMaxESlot slot)]]elnum)
+;		}
+;	)
+
+
+	(def 'llarrayStoreE (base slot elnum mem membool) 
+		{
+			(if membool
+				(llarraySetE base slot elnum @mem)
+				(llarraySetE base slot elnum (calldataload mem))
+			)
+		}
+	)
+
+	;TODO more advanced things such as storing large chunks of memory into an array
+
+}

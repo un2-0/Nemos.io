@@ -1,0 +1,94 @@
+{
+	;Lowest level Linked list structure
+
+	;Definition of Linked list form
+
+	;+ offset +1 : TailSlot
+	;+ offset +2 : HeadSlot
+	;+ offset +3 : Length of list
+
+	(def 'llllTailSlot (base) (+ base 0))
+	(def 'llllHeadSlot (base) (+ base 1))
+	(def 'llllLenSlot (base) (+ base 2))
+
+	;Linked list entry
+	;Note: keys can only be 20 bytes maximum
+	;slot : mainvalue
+	;+1 : Previous Entry
+	;+2 : Next Entry
+
+	(def 'llllSlotSize 0x3)
+	
+	(def 'llllPrevSlot (slot) (+ slot 1))
+	(def 'llllNextSlot (slot) (+ slot 2))
+
+	(def 'llllLinkExist (base slot) (|| (= @@(llllNextSlot @@(llllPrevSlot slot)) slot) (= slot @@(llllTailSlot base))))
+
+	(def 'llllSet (base slot offset value)
+		{
+			;This can only be called IF this link already exists.
+			(when (llllLinkExist base slot) [[(+ slot offset)]]value)
+		}
+	)
+
+	(def 'llllStore (base slot offset mem membool)
+		{
+			(if membool
+				(llllSet base slot offset @mem)
+				(llllSet base slot offset (calldataload mem))
+			)
+		}
+	)
+	(def 'llllGet (slot offset) @@(+ slot offset))
+	(def 'llllLoad (slot offset mem) [mem]@@(+ slot offset))
+
+	(def 'llllAddLink (base slot value)
+		{	
+			(if (llllLinkExist base slot)
+				{
+					(llllSet base slot 0 value)
+				}
+				{
+					;Add new link
+					[[slot]]value
+					[[(llllPrevSlot slot)]]@@(llllHeadSlot base) 	;This previous = old head
+
+					(when (!= @@(llllHeadSlot base) 0) [[(llllNextSlot @@(llllHeadSlot base))]]slot) ;Old head's next is this
+					[[(llllHeadSlot base)]]slot 					;New head is this
+
+					(when (= @@(llllTailSlot base) 0) [[(llllTailSlot base)]]slot) ;If the Tail is empty (list is empty) then set this as tail.
+
+					[[(llllLenSlot base)]](+ @@(llllLenSlot base) 1) ;Increment counter
+				}
+			)
+		}
+	)
+
+	(def 'llllRmLink (base slot)
+		{
+			;Perform checks.
+			;key used (has a previous or is the tail)
+			(when (llllLinkExist base slot)
+				{
+					;Remove link
+					;This's previous' next = This's Next
+					(when @@(llllPrevSlot slot) [[(llllNextSlot @@(llllPrevSlot slot))]]@@(llllNextSlot slot))
+					;This's next's previous = This's Previous 
+					(when @@(llllNextSlot slot) [[(llllPrevSlot @@(llllNextSlot slot))]]@@(llllPrevSlot slot)) 
+
+					;Head and Tail Modification
+					(when (= slot @@(llllHeadSlot base)) [[(llllHeadSlot base)]]@@(llllPrevSlot slot)) ;If this was Head then This's Prev becomes Head
+					(when (= slot @@(llllTailSlot base)) [[(llllTailSlot base)]]@@(llllNextSlot slot)) ;If this was Tail then This's Next becomes Tail
+
+					;Clear Values
+					[[slot]]0
+					[[(llllPrevSlot slot)]]0
+					[[(llllNextSlot slot)]]0
+
+					[[(llllLenSlot base)]](- @@(llllLenSlot base) 1) ;Decrement counter
+				}
+			)
+		}
+	)
+
+}

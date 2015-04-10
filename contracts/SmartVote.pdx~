@@ -19,6 +19,6 @@ transact:
     {{DOUG}} => "setperm" "pollfactory" {{PF}} 1
 
 transact:
-    {{DOUG}} => "register" "pollfactory" {{PF}}
+    {{DOUG}} => "register" "doug" {{PF}}
 !}setup
 

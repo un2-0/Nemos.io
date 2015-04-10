@@ -1,0 +1,48 @@
+;Standard "Namespace" Definitions
+{
+	;In the variable namespace these are universal
+	;@vari(name) : type
+	;+1 : add permission (this isn't get used for everything its the permission that allows you to add new entries (for example in a linked list))
+	;+2 : rm permission - This is the remove  permission (also governs permission to change permissions? If i implement that)
+	;+3 : mod permission - Change values
+
+	;Should there be a third? rm and modify be separated. the difference is that rm would allow you to re-add with new permissions
+	(def 'stdvaroffset 0x1)
+
+	;TODO - Modify the memory spaces
+
+	(def 'vari (vname)
+		{ 
+			[0x200]vname
+			(+ (* stdvaroffset (EXP 0x100 31)) (* (/ (SHA3 0x200 0x20) (EXP 256 24)) (EXP 256 23)))
+		}
+	)
+
+	(def 'IvtypeSlot (slot) (+ slot 0))
+	(def 'IvnSlot (slot) (+ slot 1))
+	(def 'IvapSlot (slot) (+ slot 2))
+	(def 'IvrpSlot (slot) (+ slot 3))
+	(def 'IvmpSlot (slot) (+ slot 4))
+
+	(def 'Ivtype (slot) @@(IvtypeSlot slot))
+	(def 'Ivn (slot) @@(IvnSlot slot))
+	(def 'Ivap (slot) @@(IvapSlot slot))
+	(def 'Ivrp (slot) @@(IvrpSlot slot))
+	(def 'Ivmp (slot) @@(IvmpSlot slot))
+
+	(def 'vtype (name) (Ivtype (vari name)))
+	(def 'vn (name) (Ivn (vari name)))
+	(def 'vap (name) (Ivap (vari name)))
+	(def 'vrp (name) (Ivrp (vari name)))
+	(def 'vmp (name) (Ivmp (vari name)))
+
+	(def 'vtypeSlot (name) (IvtypeSlot (vari name)))
+	(def 'vnSlot (name) (IvnSlot (vari name)))
+	(def 'vapSlot (name) (IvapSlot (vari name)))
+	(def 'vrpSlot (name) (IvrpSlot (vari name)))
+	(def 'vmpSlot (name) (IvmpSlot (vari name)))
+
+	(def 'stdVSsize 0x5)
+
+	(def 'varbase (base) (+ base stdVSsize))
+}

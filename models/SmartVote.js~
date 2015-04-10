@@ -20,11 +20,11 @@ function SmartVote() {
 		var opt = path.slice(1).split('/')[2];
 		var rq = httpReq.URL.RawQuery;
 		Println("opt: " + opt);
-		doPoll(opt, rq);
+		doPoll(opt, rq, fgt);
 		return ;
 	}
 	
-	function doPoll(opt, rq) {
+	function doPoll(opt, urlObj) {
 		if (method === "POST") {
 			var nameObj = JSON.parse(body);
 			var hash = "0x0";

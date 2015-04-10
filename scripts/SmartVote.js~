@@ -6,7 +6,7 @@ window.onload = init;
 function init() {
     baseUrl = "/apis/SmartVote";
     httpApi = new HttpAPI();
-    window.alert("1111");
+
     var createBtn = document.getElementById("createBtn");
     createBtn.onclick = createPoll;
     //document.getElementById("addCandiBtn").onclick = addCandidate;

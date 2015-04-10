@@ -1,0 +1,86 @@
+;Array-Type
+{
+
+	(include "stdvarspace.def")
+	(include "llarray.def")
+
+	;Format
+	;@vari(name) : "array"
+
+	;+ stdVSsize + 0 : (1 4 8 32 256) bits - Size of each element
+
+	;Keyed Component
+	;@(+ vari(name) (+ (* key (EXP 0x100 3)) (EXP 0x100 2)) : Max Element number
+	;+1 : Start of array
+
+	;We have 3 bytes of address space to work with so how should we do this?
+	;Given an number of a slot X (MOD X (DIV 256 elementsize)) is the location in the row
+	;The row to look at for that value is then (+ (MOD (DIV X (DIV 256 elementsize)) MaxRows) arrayStartOffset )
+
+
+	(def 'IarrayCTS (base key) (+ base (+ (EXP 0x100 2) (* (MOD key (EXP 0x100 20)) (EXP 0x100 3)))))
+	(def 'arrayCTS (name key) (IarrayCTS (vari name) key))
+
+	(def 'IarrayESizeSlot (base) (llarrayESizeSlot (varbase base)))
+
+	(def 'IarrayGetESize (base) @@(IarrayESizeSlot base))
+
+	(def 'IarrayGetE (base key elnum) (llarrayGetE (varbase base) (IarrayCTS base key) elnum))
+
+	(def 'IarrayLoadE (base key elnum mem) [mem](llarrayGetE (varbase base) (IarrayCTS base key) elnum))
+
+	(def 'IarraySetE (base key elnum value) (when (= @@base "array") (llarraySetE (varbase base) (IarrayCTS base key) elnum value)))
+
+	(def 'IarrayStoreE (base key elnum mem membool) 
+		{
+			(if membool
+				(IarraySetE base key elnum @mem)
+				(IarraySetE base key elnum (calldataload mem))
+			)
+		}
+	)
+
+	;This is the only one that needs to use the variable slots
+	(def 'IarrayInit (base name addperm rmperm modperm Esize)
+		{	
+			(when (= @@base 0x0)
+				{
+					[[base]]"array"
+					[[(IvnSlot base)]]name
+					[[(IvapSlot base)]]addperm
+					[[(IvrpSlot base)]]rmperm
+					[[(IvmpSlot base)]]modperm
+					[[(IarrayESizeSlot base)]]Esize
+				}
+			)
+		}
+	)
+	
+
+	;EXTERNALS
+	;--------------------------------------------------------
+	(def 'arrayGetESize (name) (IarrayGetESize (vari name)))
+	(def 'arrayGetMaxE (name) (IarrayGetMaxE (vari name)))
+
+	(def 'arrayESizeSlot (name) (IarrayESizeSlot (vari name)))
+
+	;Keyed arrays
+	(def 'arrayGetE (name key elnum) (IarrayGetE (vari name) key elnum))
+	(def 'arrayLoadE (name key elnum mem) (IarrayLoadE (vari name) key elnum mem))
+	(def 'arraySetE (name key elnum value) (IarraySetE (vari name) key elnum value))
+	(def 'arrayStoreE (name key elnum mem membool) (IarrayStoreE (vari name) key elnum mem membool))
+	(def 'arrayInit (name addperm rmperm modperm Esize) (IarrayInit (vari name) name addperm rmperm modperm Esize))
+	(def 'arrayInit (name Esize) (IarrayInit (vari name) name "none" "none" "none" Esize))
+
+;	(def 'arrayInit (one two three four five) [[0xDEADBEEF]]0xFEEDFACE)
+
+	;Keyless arrays (use above but set key to 0x0 by default)
+    ; get from storage, load to stack
+	(def 'arrayGetE (name elnum) (IarrayGetE (vari name) 0x0 elnum))
+	(def 'arrayLoadE (name elnum mem) (IarrayLoadE (vari name) 0x0 elnum mem))
+	(def 'arraySetE (name elnum value) (IarraySetE (vari name) 0x0 elnum value))
+	(def 'arrayStoreE (name elnum mem membool) (IarrayStoreE (vari name) 0x0 elnum mem membool))
+
+	;TODO more advanced things such as storing large chunks of memory into an array
+
+}

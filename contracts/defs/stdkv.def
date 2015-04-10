@@ -1,0 +1,56 @@
+;key-value type
+{
+	(include "stdvarspace.def")
+	(include "llkv.def")
+
+	;Definition of Key Value form
+	;@vari(name) : "keyvalue"
+
+	;Key Value entry
+	;Note: keys can only be 20 bytes maximum
+	;@(+ vari(name) (+ (* key (EXP 0x100 3)) (EXP 0x100 2)) : value
+	;---------------------------------------------------------------------------------------------
+
+	(def 'IkvCTS (base key) (+ base (+ (EXP 0x100 2) (* (MOD key (EXP 0x100 20)) (EXP 0x100 3)))))
+
+	(def 'IkvInit (base name addperm rmperm modperm)
+		{
+			(when (= @@base 0x0)
+				{
+					[[base]]"keyvalue"
+					[[(IvnSlot base)]]name
+					[[(IvapSlot base)]]addperm
+					[[(IvrpSlot base)]]rmperm
+					[[(IvmpSlot base)]]modperm
+				}
+			)
+		}
+	)
+
+	(def 'IkvSet (base slot value) (when (= @@base "keyvalue") (llkvSet slot 0 value)))
+
+	(def 'IkvStore (base slot mem membool)
+		{
+			(if membool
+				(IkvSet base slot @mem)
+				(IkvSet base slot (calldataload mem))
+			)
+		}
+	)
+	(def 'IkvGet (slot) (llkvGet slot 0))
+	(def 'IkvLoad (slot mem) (llkvLoad slot 0 mem))
+
+
+	;Externals
+	;-------------------------------------------------------------
+	(def 'kvCTS (name key) (IkvCTS (vari name) key))
+
+	(def 'kvInit (name addperm rmperm modperm) (IkvInit (vari name) name addperm rmperm modperm))
+	(def 'kvInit (name) (IkvInit (vari name) name "none" "none" "none"))
+
+	(def 'kvGet (name key) (IkvGet (kvCTS name key)))
+	(def 'kvLoad (name key mem) (IkvLoad (kvCTS name key) mem))
+
+	(def 'kvSet (name key value) (IkvSet (vari name) (kvCTS name key) value))
+	(def 'kvStore (name key mem membool) (IkvStore (vari name) (kvCTS name key) mem membool))
+}

@@ -97,11 +97,13 @@
 	(llAddLink "permnames" "doug" 1)
 	(llAddLink "permnames" "pollfactory" 2)
 	(llAddLink "permnames" "polls" 3)
+	(llAddLink "permnames" "blacklist" 4)
 
 	(arrayInit "perms" "none" "none" "none" 4) ;Gives Caller all permissions
 	(arraySetE "perms" (CALLER) 1 1)
 	(arraySetE "perms" (CALLER) 2 1)
 	(arraySetE "perms" (CALLER) 3 1)
+	(arraySetE "perms" (CALLER) 4 1)
 
 	(def 'BLcheck (addr) (= (arrayGetE "perms" addr 1) 1))
 

@@ -1,0 +1,55 @@
+;Single Type Definitions
+{
+	(include "stdvarspace.def")
+
+	;Single
+	;@vari(name): "single"
+
+	;+ stdVSsize : value
+
+	;INTERNALs
+	(def 'IsingleVS (base) (varbase base))
+	(def 'IsingleValue (base) @@(IsingleVS base))
+
+	(def 'IsingleInit (base name addperm rmperm modperm value)
+		{
+			(when (= @@base 0x0)
+				{
+					[[base]]"single"
+					[[(IvnSlot base)]]name
+					[[(IvapSlot base)]]addperm
+					[[(IvrpSlot base)]]rmperm
+					[[(IvmpSlot base)]]modperm
+					[[(IsingleVS base)]]value
+				}
+			)
+		}
+	)
+
+	(def 'IsingleLoad (base mem) [mem]@@(IsingleVS base)) ;mem is an address in memory to which we write the values
+	(def 'IsingleGet (base) @@(IsingleVS base))
+	(def 'IsingleSet (base value) (when (= @@base "single") [[(IsingleVS base)]]value))
+
+	;boolmem determines if it read from memory or from calldata array in order to set it.
+	(def 'IsingleStore (name mem boolmem)
+		{
+			(if boolmem
+				(IsingleSet name @mem)
+				(IsingleSet name (calldataload mem))
+			)
+		}
+	)
+
+	(def 'singleVS (name) (IsingleVS (vari name)))
+	(def 'singleValue (name) (IsingleValue (vari name)))
+
+	(def 'singleInit (name addperm rmperm modperm value) (IsingleInit (vari name) name addperm rmperm modperm value))
+	(def 'singleInit (name addperm rmperm modperm) (IsingleInit (vari name) name addperm rmperm modperm 0))
+	(def 'singleInit (name value) (IsingleInit (vari name) name "none" "none" "none" value))
+	(def 'singleInit (name) (IsingleInit (vari name) name "none" "none" "none" 0))
+
+	(def 'singleLoad (name mem) (IsingleLoad (vari name) mem))
+	(def 'singleGet (name) (IsingleGet (vari name)))
+	(def 'singleSet (name value) (IsingleSet (vari name) value))
+	(def 'singleStore (name mem membool) (IsingleStore (vari name) mem membool))
+}

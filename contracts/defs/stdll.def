@@ -1,0 +1,104 @@
+;Linked List Type
+{
+	(include "stdvarspace.def")
+	(include "llll.def")
+
+	;Definition of Linked list form
+	;@vari(name) : "linkedlist"
+
+	;+ stdVSsize +1 : TailSlot
+	;+ stdVSsize +2 : HeadSlot
+	;+ stdVSsize +3 : Length of list
+
+	(def 'llbase (base) (+ base stdVSsize))
+	(def 'IllTailSlot (base) (llllTailSlot (llbase base)))
+	(def 'IllHeadSlot (base) (llllHeadSlot (llbase base)))
+	(def 'IllLenSlot (base) (llllLenSlot (llbase base)))
+
+	(def 'IllTail (base) @@(IllTailSlot base))
+	(def 'IllHead (base) @@(IllHeadSlot base))
+	(def 'IllLen (base) @@(IllLenSlot base))
+
+	;Linked list entry
+	;Note: keys can only be 20 bytes maximum
+	;@(+ vari(name) (+ (* key (EXP 0x100 3)) (EXP 0x100 2)) : mainvalue
+	;+1 : Previous Entry
+	;+2 : Next Entry
+
+	;---------------------------------------------------------------------------------------------
+
+	(def 'IllCTS (base key) (+ base (+ (EXP 0x100 2) (* (MOD key (EXP 0x100 20)) (EXP 0x100 3)))))
+	(def 'IllCTK (slot) (MOD (DIV slot (EXP 0x100 3)) (EXP 0x100 20)))
+
+	(def 'IllLinkExist (base key) (llllLinkExist base (IllCTS base key)))
+
+	(def 'IllPrevSlot (base key) (llllPrevSlot (IllCTS base key)))
+	(def 'IllNextSlot (base key) (llllNextSlot (IllCTS base key)))
+
+	(def 'IllNextKey (base key) (IllCTK @@(IllNextSlot base key)))
+	(def 'IllPrevKey (base key) (IllCTK @@(IllPrevSlot base key)))
+
+	(def 'IllInit (base name addperm rmperm modperm)
+		{
+			(when (= @@base 0x0)
+				{
+					[[base]]"linkedlist"
+					[[(IvnSlot base)]]name
+					[[(IvapSlot base)]]addperm
+					[[(IvrpSlot base)]]rmperm
+					[[(IvmpSlot base)]]modperm
+				}
+			)
+		}
+	)
+
+	(def 'IllAddLink (base key value) (when (= @@base "linkedlist") (llllAddLink (llbase base) (IllCTS base key) value)))
+
+	(def 'IllRmLink (base key) (when (= @@base "linkedlist") (llllRmLink (llbase base) (IllCTS base key))))
+
+	(def 'IllSet (base key value) (when (= @@base "linkedlist") (llllSet (llbase base) (IllCTS base key) 0 value)))
+
+	(def 'IllStore (base key mem membool)
+		{
+			(if membool
+				(IllSet base slot @mem)
+				(IllSet base slot (calldataload mem))
+			)
+		}
+	)
+	(def 'IllGet (base key) (llllGet (IllCTS base key) 0))
+	(def 'IllLoad (base key mem) (llllLoad (IllCTS base key) 0 mem))
+
+
+	;Externals
+	;-------------------------------------------------------------
+	(def 'llCTS (name key) (IllCTS (vari name) key))
+	(def 'llCTK (name key) (IllCTK (vari name) key))
+	(def 'llLinkExist (name key) (IllLinkExist (vari name) key))
+
+	(def 'llPrevSlot (name key) (IllPrevSlot (vari name) key))
+	(def 'llNextSlot (name key) (IllNextSlot (vari name) key))
+
+	(def 'llNextKey (name key) (IllNextKey (vari name) key))
+	(def 'llPrevKey (name key) (IllPrevKey (vari name) key))
+
+	(def 'llTailSlot (name) (IllTailSlot (vari name)))
+	(def 'llHeadSlot (name) (IllHeadSlot (vari name)))
+	(def 'llLenSlot (name) (IllLenSlot (vari name)))
+
+	(def 'llTail (name) (IllTail (vari name)))
+	(def 'llHead (name) (IllHead (vari name)))
+	(def 'llLen (name) (IllLen (vari name)))
+
+	(def 'llInit (name addperm rmperm modperm) (IllInit (vari name) name addperm rmperm modperm))
+	(def 'llInit (name) (IllInit (vari name) name "none" "none" "none"))
+
+	(def 'llAddLink (name key value) (IllAddLink (vari name) key value))
+	(def 'llRmLink (name key) (IllRmLink (vari name) key))
+
+	(def 'llGet (name key) (IllGet (vari name) key))
+	(def 'llLoad (name key mem) (IllLoad (vari name) key mem))
+
+	(def 'llSet (name key value) (IllSet (vari name) key value))
+	(def 'llStore (name key mem membool) (IllStore (vari name) key mem membool))
+}
