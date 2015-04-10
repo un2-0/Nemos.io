@@ -15,13 +15,24 @@ function SmartVote() {
 		if (urlObj.error !== "") {
 			return null;
 		}
+<<<<<<< HEAD
+=======
+		var resp = hFunc(urlObj, httpReq);
+		Println("REPONSE OBJECT: " + JSON.stringify(resp));
+>>>>>>> origin/master
 		
 		var path = httpReq.URL.Path;
+<<<<<<< HEAD
 		var opt = path.slice(1).split('/')[2];
 		var rq = httpReq.URL.RawQuery;
 		Println("opt: " + opt);
 		doPoll(opt, rq);
 		return ;
+=======
+		var pathSlice = path.slice(1).split('/'); //**************
+		Println("111111111111111111" + pathSlice);
+		return resp;
+>>>>>>> origin/master
 	}
 	
 	function doPoll(opt, rq) {
