@@ -7,8 +7,7 @@
 (def 'yonpoll () {
 
     (include "./env.def")
-    (include "./defs/stdll.def")
-    (include "./defs/single.def")
+    (include "./defs/stdkv.def")
 
     ; --------------------------------------------------------------------------
     ; macros
@@ -34,17 +33,13 @@
     )
 
     ; --------------------------------------------------------------------------
-    ; basic info
+    ; variable attributes
     ; --------------------------------------------------------------------------
-    (kvInit "attributes" "none" "none" "none")
-    ; Do we need id?????????????????????????????????????????????????????????????
-    (kvSet "attributes" "name" 0)
-    (kvSet "attributes" "description" 0)
-    (kvSet "attributes" "type" "yesorno")
-    (kvSet "attributes" "opentime" 0)
-    (kvSet "attributes" "closetime" 0)
-    (kvSet "attributes" "creattime" (TIMESTAMP))
-    (kvSet "attributes" "creator" (ORIGIN))
+    (kvInit "vattrs" "none" "none" "none")
+    (kvSet "vattrs" "name" 0)
+    (kvSet "vattrs" "description" 0)
+    (kvSet "vattrs" "opentime" 0)
+    (kvSet "vattrs" "closetime" 0)
     ; status:
     ;   1 - created but not ready (the only status in which the contract can be
     ;       edited)
@@ -52,33 +47,43 @@
     ;   3 - on-going (opened but not closed)
     ;   3 - closed
     (kvSet "attributes" "status" 1)
+    
+    ; --------------------------------------------------------------------------
+    ; constant attributes
+    ; --------------------------------------------------------------------------
+    (kvInit "cattrs" "none" "none" "none"
+    (kvSet "vattrs" "creattime" (TIMESTAMP))
+    (kvSet "vattrs" "creator" (ORIGIN))
+    (kvSet "vattrs" "type" "yon")
 
     ; --------------------------------------------------------------------------
-    ; others
+    ; admins and voters
     ; --------------------------------------------------------------------------
-    ; the array of 2 to store the votes
-    (kvInit "stat" "none" "none" "none")
-    (kvSet "stat" "yes" 0)
-    (kvSet "stat" "no" 0)
-    
     ; for recording the addresses of all the contract (account) that can edit
     ; this poll before it is ready (the creator will always be one of them)
     (kvInit "admins" "none" "none" "none")
     (kvSet "admins" (ORIGIN) 1)
     
     ; for recording all the voters
-    (llInit "voters" "none" "none" "none")
+    (kvInit "voters" "none" "none" "none")
+    
+    ; --------------------------------------------------------------------------
+    ; options and stat
+    ; --------------------------------------------------------------------------
+    (kvInit "stat" "none" "none" "none")
+    (kvSet "stat" "yes" 0)
+    (kvSet "stat" "no" 0)
+    
 
     (return 0 (lll{
         [[0xcccc]](gass)
 
         ; ----------------------------------------------------------------------
-        ; Set attributes
+        ; Set variable attributes
         ; ----------------------------------------------------------------------
         ; Calldata: "set" attributekey attributeval
         ; - Legal attribute_keys include:
-        ;   "name", "description", "opentime", "closetime", "creattime",
-        ;   "creator" (the last two cannot be changed)
+        ;   "name", "description", "opentime", "closetime" and "status",
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "set") {

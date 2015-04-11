@@ -1,48 +1,91 @@
-; ---------------------------------------------
-; Poll - the contract
-; ---------------------------------------------
-; ---------------------------------------------
+; ------------------------------------------------------------------------------
+; OneOfNPoll - the template for one-out-of-N poll contract
+; ------------------------------------------------------------------------------
+; Descirption to be filled
+; ------------------------------------------------------------------------------
 
-;Track every poll
+(def 'ooonpoll () {
 
-(def 'poll () {
-	(include "./env.def")
-	(include "./defs/stdll.def")
-	(include "./defs/single.def")
+    (include "./env.def")
+    (include "./defs/stdkv.def")
 
-	(def 'cmd () (calldataload 0x0))
-	
-	(def 'status () (calldataload 0x20)))
-	
-	(def 'newopentime () (calldataload 0x20))
-	
-	(def 'newclosetime () (calldataload 0x20))
-	
-	(def 'opnum () (calldataload 0x20)) ;The number of options
-	(def 'hash () (calldataload 0x40))
-	(def 'opentime () (calldataload 0x60))
-	(def 'closetime () (calldataload 0x80))
-	(def 'createtime () (calldataload 0xA0))
-	(def 'creator () (calldataload 0xC0)) ;The address of the creator
-	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
+    ; --------------------------------------------------------------------------
+    ; macros
+    ; --------------------------------------------------------------------------
+    (def 'cmd () (calldataload 0x0))
+    
+    ; for setting attributes
+    (def 'attributekey (calldataload 0x20))
+    (def 'attributeval (calldataload 0x40))
 
-	(kvInit "ops") ;The statistics of the options
+    ; macro for checking edit permission: the caller is in admins and the status
+    ; of the contract is 1 - created but not ready
+    (def 'epcheck () (&& (= (llGet "admins" (CALLER)) 1)
+                         (= (singleGet "status") 1)
+                     )
+    )
 
-	(singleInit "description" 0)
-	(singleInit "inited" 0)
-	(singleInit "created" 0)
-	(singleInit "opened" 0)
-	(singleInit "closed" 0)
-	(singleInit "created" 0)
-	(singleInit "status" 0) ;0:closed, 1:opened
-	(singleInit "owner" (ORIGIN))
-	(singleInit "creator" 0)
-	(singleInit "opnum" 1)
-	(singleInit "plname" 0)
-	
-	(return 0 (lll{
-		[[0xcccc]](gass)
-		(when (&& (= (cmd) "init") (= (singleGet "inited") 0)) {
+    ; --------------------------------------------------------------------------
+    ; variable attributes
+    ; --------------------------------------------------------------------------
+    (kvInit "vattrs" "none" "none" "none")
+    (kvSet "vattrs" "name" 0)
+    (kvSet "vattrs" "description" 0)
+    (kvSet "vattrs" "opentime" 0)
+    (kvSet "vattrs" "closetime" 0)
+    ; status:
+    ;   1 - created but not ready (the only status in which the contract can be
+    ;       edited)
+    ;   2 - ready (waiting to be opened)
+    ;   3 - on-going (opened but not closed)
+    ;   3 - closed
+    (kvSet "attributes" "status" 1)
+    
+    ; --------------------------------------------------------------------------
+    ; constant attributes
+    ; --------------------------------------------------------------------------
+    (kvInit "cattrs" "none" "none" "none"
+    (kvSet "vattrs" "creattime" (TIMESTAMP))
+    (kvSet "vattrs" "creator" (ORIGIN))
+    (kvSet "vattrs" "type" "ooon")
+
+    ; --------------------------------------------------------------------------
+    ; admins and voters
+    ; --------------------------------------------------------------------------
+    ; for recording the addresses of all the contract (account) that can edit
+    ; this poll before it is ready (the creator will always be one of them)
+    (kvInit "admins" "none" "none" "none")
+    (kvSet "admins" (ORIGIN) 1)
+    
+    ; for recording all the voters
+    (kvInit "voters" "none" "none" "none")
+    
+    ; --------------------------------------------------------------------------
+    ; options and stat
+    ; --------------------------------------------------------------------------
+    (llInit "ops")
+    (kvInit "stat")
+
+    (return 0 (lll{
+        [[0xcccc]](gass)
+        
+        ; ----------------------------------------------------------------------
+        ; Set variable attributes
+        ; ----------------------------------------------------------------------
+        ; Calldata: "set" attributekey attributeval
+        ; - Legal attributekeys include:
+        ;   "name", "description", "opentime", "closetime" and "status"
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "set") {
+            (unless (epcheck) (STOP))
+            (kvSet (attributekey) (attributeval))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+        
+        (when (&& (= (cmd) "init") (= (singleGet "inited") 0)) {
 			(singleSet "description" (hash))
 			[0x0](opnum)
 			(for ([0x20]1) (<= @0x20 @0x0) [0x20](+ @0x20 1)
@@ -60,7 +103,8 @@
 			(return 0x0 0x20)
 		}
 	)
-
+; The following two blocks are to be removed because we can directly read the
+; value by their name in js.
 ;(when (&& (= (cmd) "getopentime") (= (singleGet "inited") 1)) {
 ;   [0x0]"opened"
 ;   (return 0x0 0x20)
@@ -106,20 +150,30 @@
 			(return 0x0 0x20)
 		})
 
+        ;-----------------------------------------------------------------------
+        ; Delete the poll
+        ; Only the creator of the poll can delete it.
+        ;-----------------------------------------------------------------------
+        ; Calldata: "deletePoll"
+        ; Returns:
+        ;-----------------------------------------------------------------------
         (when (= (cmd) "deletePoll") {
+
+            (unless (= (singleGet "creator") (CALLER)) (STOP))
+
             ; get the address of the PollFactory contract
             ; and save it in memory 0x60
             [0x0]"getContractAddr"
             [0x20]"PollFactory"
             (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
             
+            ; delete the record in the PollFactory contract
             [0x0]"deletePoll"
             [0x20](singleGet "pollname")
             (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
             
             (unless (= @0x40 1) (STOP))
-            
-            (suicide (ORIGIN))    ; ???????????????????????????????????????????
+            (suicide (ADRESS))
         })
         
     } 0)) ; end of return
