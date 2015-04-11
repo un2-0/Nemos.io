@@ -19,21 +19,13 @@
     (def 'attributekey (calldataload 0x20))
     (def 'attributeval (calldataload 0x40))
     
-    ; for casting votes
+    ; for voting
     (def 'choice (calldataload 0x20))
     
     ; for setting admins/voters
     (def 'addr (calldataload 0x20))
     (def 'hood (calldataload 0x40))
-    
-    (def 'status () (calldataload 0x20))
-    
-    (def 'opentime () (calldataload 0x20))
-    
-    (def 'closetime () (calldataload 0x20))
-    
-    (def 'name () (calldataload 0x20))
-    
+
     ; macro for checking edit permission: the caller is in admins and the status
     ; of the contract is 1 - created but not ready
     (def 'epcheck () (&& (= (llGet "admins" (CALLER)) 1)
@@ -149,6 +141,7 @@
 ????????????????????????????????????????????????????????????????????????????????
         ; ----------------------------------------------------------------------
         ; Open the poll
+        ; Called by PollManager
         ; ----------------------------------------------------------------------
         ; Calldata: "open"
         ; Returns: 0 - fail | 1 - success
@@ -164,18 +157,16 @@
         ; ----------------------------------------------------------------------
         ; Record a vote.
         ; ----------------------------------------------------------------------
-        ; Calldata: "cast" "yes"/"no"
+        ; Calldata: "vote" choice
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "cast")) {
-            (unless (= (llGet "voters" (CALLER)) 1) (STOP))
+        (when (= (cmd) "vote")) {
+            (unless (= (kvGet "voters" (CALLER)) 1) (STOP))
             (when (= (choice) "yes") {
-                [0x0] (kvGet "stat" "yes")
-                (kvSet "stat" "yes" (@0x0 + 1))
+                (kvSet "stat" "yes" (+ (kvGet "stat" "yes") 1))
             })
             (when (= (choice) "no") {
-                [0x0] (kvGet "stat" "no")
-                (kvSet "stat" "no" (@0x0 + 1))
+                (kvSet "stat" "no" (+ (kvGet "stat" "no") 1))
             })
 
             [0x0]1
@@ -187,7 +178,7 @@
         ; Only the creator of the poll can delete it in the first status,
         ; ie. before "ready"
         ;-----------------------------------------------------------------------
-        ; Calldata: "deletePoll"
+        ; Calldata: "deletepoll"
         ; Returns:
         ;-----------------------------------------------------------------------
         (when (= (cmd) "deletepoll") {
@@ -205,8 +196,9 @@
             (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
             
             (unless (= @0x40 1) (STOP))
-            (suicide (ORIGIN))    ; ????????????????????????????????????????????
-            ; or should it be (suicide (ADDRESS))???????????????????????????????
+            
+            (suicide (ADDRESS))
+            ;(suicide (ORIGIN))
         })
         
     } 0)) ; end of return
