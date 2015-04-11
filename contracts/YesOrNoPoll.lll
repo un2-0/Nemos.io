@@ -15,12 +15,16 @@
     ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
     
-    ; for set
+    ; for setting attributes
     (def 'attributekey (calldataload 0x20))
     (def 'attributeval (calldataload 0x40))
     
-    ; for voting
+    ; for casting votes
     (def 'choice (calldataload 0x20))
+    
+    ; for setting admins/voters
+    (def 'addr (calldataload 0x20))
+    (def 'hood (calldataload 0x40))
     
     (def 'status () (calldataload 0x20))
     
@@ -31,8 +35,8 @@
     (def 'name () (calldataload 0x20))
     
     ; macro for checking edit permission: the caller is in admins and the status
-    ; of the contract is 1 - created but not opened
-    (def 'EPcheck () (&& (= (llGet "admins" (CALLER)) 1)
+    ; of the contract is 1 - created but not ready
+    (def 'epcheck () (&& (= (llGet "admins" (CALLER)) 1)
                          (= (singleGet "status") 1)
                      )
     )
@@ -44,14 +48,16 @@
     ; Do we need id?????????????????????????????????????????????????????????????
     (kvSet "attributes" "name" 0)
     (kvSet "attributes" "description" 0)
+    (kvSet "attributes" "type" "yesorno")
     (kvSet "attributes" "opentime" 0)
     (kvSet "attributes" "closetime" 0)
     (kvSet "attributes" "creattime" (TIMESTAMP))
     (kvSet "attributes" "creator" (ORIGIN))
     ; status:
-    ;   1 - created but not opened (the only status in which the contract can be
+    ;   1 - created but not ready (the only status in which the contract can be
     ;       edited)
-    ;   2 - on-going
+    ;   2 - ready (waiting to be opened)
+    ;   3 - on-going (opened but not closed)
     ;   3 - closed
     (kvSet "attributes" "status" 1)
 
@@ -63,12 +69,12 @@
     (kvSet "stat" "yes" 0)
     (kvSet "stat" "no" 0)
     
-    ; ll to record all the contract that can edit this poll before it is
-    ; opened (the creator will always be one of them)
-    (llInit "admins" "none" "none" "none")
-    (llAddLink "admins" (ORIGIN) 1)
+    ; for recording the addresses of all the contract (account) that can edit
+    ; this poll before it is ready (the creator will always be one of them)
+    (kvInit "admins" "none" "none" "none")
+    (kvSet "admins" (ORIGIN) 1)
     
-    ; ll to record all the voters
+    ; for recording all the voters
     (llInit "voters" "none" "none" "none")
 
     (return 0 (lll{
@@ -83,13 +89,62 @@
         ;   "creator" (the last two cannot be changed)
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "set"))) {
-            (unless (EPcheck) (STOP))
+        (when (= (cmd) "set") {
+            (unless (epcheck) (STOP))
             (kvSet (attributekey) (attributeval))
             
             [0x0]1
             (return 0x0 0x20)
         })
+        
+        ; ----------------------------------------------------------------------
+        ; Register or deregister an admin
+        ; ----------------------------------------------------------------------
+        ; Calldata: "setadmin" adminaddr adminhood
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "setadmin") {
+            (unless (epcheck) (STOP))
+            
+            ; get the address of AccountManager by firing a transaction to DOUG
+            [0x0]"getcontract"
+            [0x20]"AccountManager"
+            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
+            
+            ; check if the account exists
+            [0x0]"checkaccount"
+            [0x20](addr)
+            (CALL (gass) @0x60 0 0x0 0x40 0x80 0x20)
+
+            (unless (= @0x80 1) (STOP)
+            
+            (kvSet "admins" (addr) (hood))
+        })
+        
+        ; ----------------------------------------------------------------------
+        ; Register or deregister a voter
+        ; ----------------------------------------------------------------------
+        ; Calldata: "setvoter" voteraddr voterhood
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "setvoter") {
+            (unless (epcheck) (STOP))
+            
+            ; get the address of AccountManager by firing a transaction to DOUG
+            [0x0]"getcontract"
+            [0x20]"AccountManager"
+            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
+            
+            ; check if the account exists
+            [0x0]"checkaccount"
+            [0x20](addr)
+            (CALL (gass) @0x60 0 0x0 0x40 0x80 0x20)
+
+            (unless (= @0x80 1) (STOP)
+            
+            (kvSet "voters" (addr) (hood))
+        })
+
 
 ????????????????????????????????????????????????????????????????????????????????
         ; ----------------------------------------------------------------------
@@ -107,12 +162,12 @@
 ????????????????????????????????????????????????????????????????????????????????
 
         ; ----------------------------------------------------------------------
-        ; Update a vote.
+        ; Record a vote.
         ; ----------------------------------------------------------------------
-        ; Calldata: "vote" "yes"/"no"
+        ; Calldata: "cast" "yes"/"no"
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "vote")) {
+        (when (= (cmd) "cast")) {
             (unless (= (llGet "voters" (CALLER)) 1) (STOP))
             (when (= (choice) "yes") {
                 [0x0] (kvGet "stat" "yes")
@@ -129,7 +184,8 @@
 
         ;-----------------------------------------------------------------------
         ; Delete the poll
-        ; Only the creator of the poll can delete it.
+        ; Only the creator of the poll can delete it in the first status,
+        ; ie. before "ready"
         ;-----------------------------------------------------------------------
         ; Calldata: "deletePoll"
         ; Returns:
@@ -149,7 +205,8 @@
             (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
             
             (unless (= @0x40 1) (STOP))
-            (suicide (ORIGIN))    ; ???????????????????????????????????????????
+            (suicide (ORIGIN))    ; ????????????????????????????????????????????
+            ; or should it be (suicide (ADDRESS))???????????????????????????????
         })
         
     } 0)) ; end of return
