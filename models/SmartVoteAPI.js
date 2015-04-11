@@ -9,6 +9,77 @@ function SmartVoteAPI() {
 	var mysubs = [];
 	
 	var txData = {};
+
+	// Codes for polling
+	// 0 - non existing
+	// 1 - pending
+	// 2 - failed
+	// 3 - succeeded
+	this.checkTx = function(txHash){
+		Println("CHECKING HASH: " + txHash);
+		var txObj = txData[txHash];
+		if(txObj === undefined){
+			return 0;
+		}
+		// failedF
+		if (txObj.status === 2){
+			delete txData[txHash];
+		} else if (txObj.status === 4){
+			delete txData[txHash];
+		}
+		return txObj.status;
+	}
+
+	this.newTxObj = function(){
+		return {"status" : 0 };
+	}
+
+	this.statUpdateBlock = function(event){
+		var blockObj = event.Resource;
+		if(blockObj.Transactions.length === 0){
+			return;
+		}
+		var txs = blockObj.Transactions;
+		for(var i = 0; i < txs.length; i++){
+			var tx = txs[i];
+			var hash = '0x' + tx.Hash;
+			var txObj = txData[hash];
+			if(txObj !== undefined && txObj.status == 3){
+				txObj.status = 4;
+			}
+			if(hash === accTx){
+				myaccAddr = esl.kv.Value(afAddr, StringToHex("accounts"), myMonkAddr);
+				Println("Updating myaccAddr: " + myaccAddr);
+				accTx = "";
+			}
+		}
+	}
+
+	this.statUpdatePost = function(event){
+		var hash = "0x" + event.Resource.Hash;
+		Println("Post tx received: " + hash);
+		var txObj = txData[hash];
+		if(txObj !== undefined && txObj.status < 3){
+			txObj.status = 3;
+		}
+
+	}
+
+	this.statUpdateFail = function(event){
+		var txObj = txData[event.Resource.Hash];
+		if(txObj !== undefined){
+			txObj.status = 2;
+		}
+	}
+
+	// functions for adding new type of txs
+	this.trackTx = function(txHash){
+		Println("Added hash for tracking: " + txHash.slice(0,6) + "...");
+		var txObj = this.newTxObj();
+		txObj.status = 1;
+		txData[txHash] = txObj;
+		Println("Added tx data");
+	}
 	
 	this.createPoll = function(ipfsdata, opnum, opentime, closetime, crtusrname, plname) {
 		Println("Adding file to ipfs.");
@@ -74,10 +145,27 @@ function SmartVoteAPI() {
 	function plname2Addr(plname) {
 		return esl.kv.Value(plfAddr, sutil.StringToHex("polls", plname));
 	}
-	
+
+	// No websockets running here, meaning there's only one possible sub from this runtime.
+	this.sub = function() {
+		events.subscribe("monk","newBlock","", this.statUpdateBlock, "does_not_matter_since_not_websocket");
+		events.subscribe("monk","newTx:post","", this.statUpdatePost, "does_not_matter_since_not_websocket");
+		events.subscribe("monk","newTx:pre:fail","", this.statUpdateFail, "does_not_matter_since_not_websocket");
+		events.subscribe("monk","newTx:post:fail","", this.statUpdateFail, "does_not_matter_since_not_websocket");
+	}
+
+	// No websockets running here, meaning there's only one possible sub from this runtime.
+	function unsub(){
+		events.unsubscribe("monk","newBlock", "does_not_matter_since_not_websocket");
+		events.unsubscribe("monk","newTx:post","does_not_matter_since_not_websocket");
+		events.unsubscribe("monk","newTx:pre:fail","does_not_matter_since_not_websocket");
+		events.unsubscribe("monk","newTx:post:fail","does_not_matter_since_not_websocket");
+	}
+
 	this.init = function() {
 		Println("Initializing SmartVote");
 		// Start subscribing to tx events.
+		this.sub();
 		Println("DOUG address: " + dougAddr);
 		plfAddr = esl.ll.Main(dougAddr, StringToHex("DOUG"), StringToHex("pollfactory"));
 		Println("plfAddr: " + plfAddr);
