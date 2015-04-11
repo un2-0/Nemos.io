@@ -1,13 +1,14 @@
 ; ------------------------------------------------------------------------------
-; OneOfNPoll - the template for one-of-many poll contract
+; OneVote
 ; ------------------------------------------------------------------------------
-; Descirption to be filled
+; The template for the "one voter, one vote" voting method
 ; ------------------------------------------------------------------------------
 
-(def 'yonpoll () {
+(def 'onevote () {
 
     (include "./env.def")
     (include "./defs/stdkv.def")
+    (include "./defs/stll.def")
 
     ; --------------------------------------------------------------------------
     ; macros
@@ -17,13 +18,6 @@
     ; for setting attributes
     (def 'attributekey (calldataload 0x20))
     (def 'attributeval (calldataload 0x40))
-    
-    ; for voting
-    (def 'choice (calldataload 0x20))
-    
-    ; for setting admins/voters
-    (def 'addr (calldataload 0x20))
-    (def 'hood (calldataload 0x40))
 
     ; macro for checking edit permission: the caller is in admins and the status
     ; of the contract is 1 - created but not ready
@@ -54,140 +48,144 @@
     (kvInit "cattrs" "none" "none" "none"
     (kvSet "vattrs" "creattime" (TIMESTAMP))
     (kvSet "vattrs" "creator" (ORIGIN))
-    (kvSet "vattrs" "type" "yon")
+    (kvSet "vattrs" "type" "ooon")
 
     ; --------------------------------------------------------------------------
-    ; admins and voters
+    ; admins, voters and votes
     ; --------------------------------------------------------------------------
     ; for recording the addresses of all the contract (account) that can edit
     ; this poll before it is ready (the creator will always be one of them)
     (kvInit "admins" "none" "none" "none")
     (kvSet "admins" (ORIGIN) 1)
     
-    ; for recording all the voters
-    (kvInit "voters" "none" "none" "none")
+    (llInit "voters" "none" "none" "none")
+    (llInit "votes" "none" "none" "none")
     
     ; --------------------------------------------------------------------------
-    ; options and stat
+    ; candidates and votes
     ; --------------------------------------------------------------------------
-    (kvInit "stat" "none" "none" "none")
-    (kvSet "stat" "yes" 0)
-    (kvSet "stat" "no" 0)
-    
+    (llInit "cands")
+    (kvInit "votes")
 
     (return 0 (lll{
         [[0xcccc]](gass)
-
+        
         ; ----------------------------------------------------------------------
-        ; Set variable attributes
+        ; Set a variable attribute
         ; ----------------------------------------------------------------------
-        ; Calldata: "set" attributekey attributeval
-        ; - Legal attribute_keys include:
-        ;   "name", "description", "opentime", "closetime" and "status",
+        ; Calldata: "setattr" attributekey attributeval
+        ; - Legal attributekeys include:
+        ;   "name", "description", "opentime", "closetime" and "status"
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "set") {
+        (when (= (cmd) "setattr") {
             (unless (epcheck) (STOP))
             (kvSet (attributekey) (attributeval))
             
             [0x0]1
             (return 0x0 0x20)
         })
-        
+
         ; ----------------------------------------------------------------------
-        ; Register or deregister an admin
+        ; Add a voter
         ; ----------------------------------------------------------------------
-        ; Calldata: "setadmin" adminaddr adminhood
-        ; Returns: 0 - fail | 1 - success
+        ; Calldata: "addvoter" voteraddr
+        ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "setadmin") {
+        (when (= (cmd) "addvoter") {
             (unless (epcheck) (STOP))
             
-            ; get the address of AccountManager by firing a transaction to DOUG
-            [0x0]"getcontract"
-            [0x20]"AccountManager"
-            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
-            
-            ; check if the account exists
-            [0x0]"checkaccount"
-            [0x20](addr)
-            (CALL (gass) @0x60 0 0x0 0x40 0x80 0x20)
-
-            (unless (= @0x80 1) (STOP)
-            
-            (kvSet "admins" (addr) (hood))
+            (llAddLink "voters" (candname) 1)
+            (kvSet "stat" (candname) 0)
         })
         
         ; ----------------------------------------------------------------------
-        ; Register or deregister a voter
+        ; Add a candidate
         ; ----------------------------------------------------------------------
-        ; Calldata: "setvoter" voteraddr voterhood
-        ; Returns: 0 - fail | 1 - success
+        ; Calldata: "addcand" candname
+        ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "setvoter") {
+        (when (= (cmd) "addcand") {
             (unless (epcheck) (STOP))
-            
-            ; get the address of AccountManager by firing a transaction to DOUG
-            [0x0]"getcontract"
-            [0x20]"AccountManager"
-            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
-            
-            ; check if the account exists
-            [0x0]"checkaccount"
-            [0x20](addr)
-            (CALL (gass) @0x60 0 0x0 0x40 0x80 0x20)
-
-            (unless (= @0x80 1) (STOP)
-            
-            (kvSet "voters" (addr) (hood))
+            (llAddLink "cands" (candname) 1)
+            (kvSet "stat" (candname) 0)
         })
+        
+        (when (&& (= (cmd) "init") (= (singleGet "inited") 0)) {
+			(singleSet "description" (hash))
+			[0x0](opnum)
+			(for ([0x20]1) (<= @0x20 @0x0) [0x20](+ @0x20 1)
+				(kvSet "ops" @0x20 0)
+			)
+			(singleSet "opnum" @0x0)
+			(singleSet "opened" (opentime))
+			(singleSet "closed" (closetime))
+			(singleSet "created" (createtime))
+			(singleSet "creator" (crtusrname))
+			(singleSet "plname" (plname))
+			(singleSet "inited" 1)
+			
+			[0x0]1
+			(return 0x0 0x20)
+		}
+	)
+; The following two blocks are to be removed because we can directly read the
+; value by their name in js.
+;(when (&& (= (cmd) "getopentime") (= (singleGet "inited") 1)) {
+;   [0x0]"opened"
+;   (return 0x0 0x20)
+;})
 
+;(when (&& (= (cmd) "getclosetime") (= (singleGet "inited") 1)) {
+;   [0x0]"closed"
+;   (return 0x0 0x20)
+;})
 
-????????????????????????????????????????????????????????????????????????????????
-        ; ----------------------------------------------------------------------
-        ; Open the poll
-        ; Called by PollManager
-        ; ----------------------------------------------------------------------
-        ; Calldata: "open"
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (&& (= (cmd) "setstatus") (= (singleGet "inited") 1)) {
-            (kvSet "attributes" "status" 2)
+		(when (&& (= (cmd) "setopentime") (= (singleGet "inited") 1)) {
+			(singleSet "opentime" (newopentime))
 
-            [0x0]1
-            (return 0x0 0x20)
-        })
-????????????????????????????????????????????????????????????????????????????????
+			[0x0]1
+			(return 0x0 0x20)
+		})
 
-        ; ----------------------------------------------------------------------
-        ; Record a vote.
-        ; ----------------------------------------------------------------------
-        ; Calldata: "vote" choice
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "vote")) {
-            (unless (= (kvGet "voters" (CALLER)) 1) (STOP))
-            (when (= (choice) "yes") {
-                (kvSet "stat" "yes" (+ (kvGet "stat" "yes") 1))
-            })
-            (when (= (choice) "no") {
-                (kvSet "stat" "no" (+ (kvGet "stat" "no") 1))
-            })
+		(when (&& (= (cmd) "setclosetime") (= (singleGet "inited") 1)) {
+			(singleSet "closetime" (newclosetime))
 
-            [0x0]1
-            (return 0x0 0x20)
-        })
+			[0x0]1
+			(return 0x0 0x20)
+		})
+
+		(when (&& (= (cmd) "setstatus") (= (singleGet "inited") 1))
+			{
+				(singleSet "status" (status))
+
+				[0x0]1
+				(return 0x0 0x20)
+			}
+		)
+
+		(when (&& (= (cmd) "vote") (= (singleGet "status") 1)) {
+			(kvSet "ops" (opnum) (+ (kvGet "ops" (opnum)) 1))
+
+			[0x0]1
+			(return 0x0 0x20)
+		})
+
+		(when (&& (= (cmd) "getstat") (= (singleGet "inited") 1)) {
+			[0x0](kvGet "ops" (opnum))
+			(return 0x0 0x20)
+		})
 
         ;-----------------------------------------------------------------------
         ; Delete the poll
-        ; Only the creator of the poll can delete it in the first status,
-        ; ie. before "ready"
+        ; Only the creator of the poll can delete it.
         ;-----------------------------------------------------------------------
-        ; Calldata: "deletepoll"
+        ; Calldata: "deletePoll"
         ; Returns:
         ;-----------------------------------------------------------------------
-        (when (= (cmd) "deletepoll") {
-            (unless (EPcheck) (STOP))
+        (when (= (cmd) "deletePoll") {
+
+            (unless (= (singleGet "creator") (CALLER)) (STOP))
 
             ; get the address of the PollFactory contract
             ; and save it in memory 0x60
@@ -201,9 +199,7 @@
             (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
             
             (unless (= @0x40 1) (STOP))
-            
-            (suicide (ADDRESS))
-            ;(suicide (ORIGIN))
+            (suicide (ADRESS))
         })
         
     } 0)) ; end of return
