@@ -24,7 +24,7 @@
 	(def 'closetime () (calldataload 0x80))
 	(def 'createtime () (calldataload 0xA0))
 	(def 'creator () (calldataload 0xC0)) ;The address of the creator
-	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
+	(def 'plname () (calldataload 0xE0)) ;The name of the poll
 
 	(kvInit "ops") ;The statistics of the options
 
@@ -52,7 +52,7 @@
 			(singleSet "opened" (opentime))
 			(singleSet "closed" (closetime))
 			(singleSet "created" (createtime))
-			(singleSet "creator" (crtusrname))
+			(singleSet "creator" (creator))
 			(singleSet "plname" (plname))
 			(singleSet "inited" 1)
 			

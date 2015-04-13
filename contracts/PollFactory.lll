@@ -1,61 +1,83 @@
-; ---------------------------------------------
-; PollFactory - contract for creating contracts for polls
-; ---------------------------------------------
-
 {
-    ; init
-    (include "./defs/stdll.def")
-    (include "./env.def")
-    (include "./Poll.lll")
+	(include "./Account.lll")
+	(include "./defs/stdkv.def")
+	(include "./defs/stdll.def")
+	(include "./env.def")
 
-    ; macros
-    (def 'cmd () (CALLDATALOAD 0x00))
-    (def 'pollName () (CALLDATALOAD 0x20))
+	(kvInit "polls")
+	(llInit "plnames")
 
-    (kvInit "polls")
+	(def 'opnum () (calldataload 0x20)) ;The number of options
+	(def 'hash () (calldataload 0x40))
+	(def 'opentime () (calldataload 0x60))
+	(def 'closetime () (calldataload 0x80))
+	(def 'createtime () (calldataload 0xA0))
+	(def 'creator () (calldataload 0xC0)) ;The address of the creator
+	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
 
-    (return 0 (lll {
-        
-        ; ---------------------------------------------
-        ; Create a new poll contract and record its name and address
-        ; ---------------------------------------------
-        ; Permission Requirement: ""
-        ; Calldata: "createPoll" pollId
-        ; Returns: the address of the newly created contract
-        ; ---------------------------------------------
-        (when (= (cmd) "createPoll") {
-            
-            ; create the contract and save its address in memory 0x0
-            [0x0] (create 0 0 (lll {
-                (poll)
-            } 0))
+	(def 'DAPPDOUG 0xdaffe)
+	(return 0 (lll {
 
-            [[@0x0]] 1
-            
-            ; poll name : poll contract address
-            (kvSet "polls" (pollName) @0x0)
+		(when (= (calldataload 0x0) "createpoll")
+			{
 
-            (return 0x0 0x20)
-        })
+				(unless (&& (= (llGet "plnames" (plname)) 0) (= (kvGet "polls" (ORIGIN)) 0)) (STOP)) ;Poll name taken
 
-        ; ---------------------------------------------
-        ; Delete the record of a poll contract
-        ; ---------------------------------------------
-        ; Permission Requirement: ""
-        ; Calldata: "deletePoll" pollName
-        ; Returns: 0 - fail | 1 - success
-        ; ---------------------------------------------
-        (when (= (cmd) "deletePoll") {
-            [0x0] (pollName)
-            [0x20] (kvGet "polls" @0x0)
+				(llAddLink "plnames" (plname) (ORIGIN))
 
-            ; if the caller is not the poll itself, then stop
-            (unless (= (CALLER) @0x20) (STOP))
-            (kvSet "polls" @0x0 0)
+				;Create the code
+				[0x0](create 0 0 (lll {
+						
+					(poll)
 
-            [0x0]1
-            (return 0x0 0x20)
-        })
-    })
+				} 0))
 
+				[[@0x0]]1 ;note that this contract was made here
+
+				(kvSet "polls" (ORIGIN) @0x0)
+
+				[0x20]"setperm"
+				[0x40]"pollaccount"
+				[0x60]@0x0
+				[0x80]1
+				(CALL (gass) DAPPDOUG 0 0x20 0x80 0xA0 0x20)
+
+				[0x20]"init"
+				[0x40](opnum)
+				[0x60](hash)
+				[0x80](opentime)
+				[0xA0](closetime)
+				[0xC0](createtime)
+				[0xE0](creator)
+				[0x100](plname)
+				(CALL (gass) @0x0 0 0x20 0x100 0x120 0x20)
+
+				(return 0x0 0x20) ;Return address
+			}
+		)
+
+		(when (= (calldataload 0x0) "check")
+			{
+				[0x0]@@(calldataload 0x20)
+				(return 0x0 0x20)
+			}
+		)
+
+		(when (= (calldataload 0x0) "deleteapoll")
+			{
+				[0x0](calldataload 0x20) ;The poll name
+				[0x20](llGet "plnames" @0x0) ;The poll address
+				[0x40](kvGet "polls" @0x20) ;The contract address
+
+				(unless (= (CALLER) @0x40) (STOP))
+
+				(llRmLink "plnames" @0x0)
+				(kvSet "polls" @0x20 0)
+
+				[0x0]1
+				(return 0x0 0x20)
+			}
+		)
+
+	} 0))
 }
