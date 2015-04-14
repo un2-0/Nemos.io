@@ -1,0 +1,268 @@
+;c3d linked list new namespace?
+{
+	;C3D namespace implements the C3D Spec this is an awkward combination of
+	;A variable and A namespace but I decided it would be better this way
+
+	(def 'C3DOffset 3)
+	(def 'C3DCTS (key) (+ (* C3DOffset (EXP 256 31)) (* (MOD key (EXP 0x100 20)) 0x10000)))
+
+	;Top Level Slots
+
+	(def 'TopIndicatorSlot () (+ (* C3DOffset (EXP 256 31)) 0x1))
+	(def 'TopDataModelSlot () (+ (* C3DOffset (EXP 256 31)) 0x2))
+	(def 'TopUISlot () (+ (* C3DOffset (EXP 256 31)) 0x3))
+	(def 'TopContentSlot () (+ (* C3DOffset (EXP 256 31)) 0x4))
+	(def 'TopParentSlot () (+ (* C3DOffset (EXP 256 31)) 0x5))
+	(def 'TopOwnerSlot () (+ (* C3DOffset (EXP 256 31)) 0x6))
+	(def 'TopCreatorSlot () (+ (* C3DOffset (EXP 256 31)) 0x7))
+	(def 'TopTimestampSlot () (+ (* C3DOffset (EXP 256 31)) 0x8))
+	(def 'TopBehaviourSlot () (+ (* C3DOffset (EXP 256 31)) 0x9))
+	(def 'TopTailSlot () (+ (* C3DOffset (EXP 256 31)) 0xA))
+	(def 'TopHeadSlot () (+ (* C3DOffset (EXP 256 31)) 0xB))
+	(def 'TopListLenSlot () (+ (* C3DOffset (EXP 256 31)) 0xC))
+
+	(def 'TopIndicator () @@(TopIndicatorSlot))
+	(def 'TopDataModel () @@(TopDataModelSlot))
+	(def 'TopUI () @@(TopUISlot))
+	(def 'TopContent () @@(TopContentSlot))
+	(def 'TopParent () @@(TopParentSlot))
+	(def 'TopOwner () @@(TopOwnerSlot))
+	(def 'TopCreator () @@(TopCreatorSlot))
+	(def 'TopTimestamp () @@(TopTimestampSlot))
+	(def 'TopBehaviour () @@(TopBehaviourSlot))
+	(def 'TopTail () @@(TopTailSlot))
+	(def 'TopHead () @@(TopHeadSlot))
+	(def 'TopListLen () @@(TopListLenSlot))
+
+
+	;Linked List Definitions
+	(def 'C3DAddressSlot (base) (+ base 0)) ;??Whats this for??
+	(def 'C3DPrevSlot (base) (+ base 1))
+	(def 'C3DNextSlot (base) (+ base 2))
+	(def 'C3DTypeSlot (base) (+ base 3))
+	(def 'C3DBehaviourSlot (base) (+ base 4))
+	(def 'C3DContentSlot (base) (+ base 5))
+	(def 'C3DDataModelSlot (base) (+ base 6))
+	(def 'C3DUISlot (base) (+ base 7))
+	(def 'C3DTimestampSlot (base) (+ base 8))
+
+	(def 'C3DAddress (base) @@(C3DAddressSlot base)) ;??Whats this for??
+	(def 'C3DPrev (base) @@(C3DPrevSlot base))
+	(def 'C3DNext (base) @@(C3DNextSlot base))
+	(def 'C3DType (base) @@(C3DTypeSlot base))
+	(def 'C3DBehaviour (base) @@(C3DBehaviourSlot base))
+	(def 'C3DContent (base) @@(C3DContentSlot base))
+	(def 'C3DDataModel (base) @@(C3DDataModelSlot base))
+	(def 'C3DUI (base) @@(C3DUISlot base))
+	(def 'C3DTimestamp (base) @@(C3DTimestampSlot base))
+
+	(def 'C3DSetTop (thing value)
+		{
+			(when (= thing "indicator") [[(TopIndicatorSlot)]]value)
+			(when (= thing "datamodel") [[(TopDataModelSlot)]]value)
+			(when (= thing "ui") [[(TopUISlot)]]value)
+			(when (= thing "content") [[(TopContentSlot)]]value)
+			(when (= thing "parent") [[(TopParentSlot)]]value)
+			(when (= thing "owner") [[(TopOwnerSlot)]]value)
+			(when (= thing "creator") [[(TopCreatorSlot)]]value)
+			(when (= thing "timestamp") [[(TopTimestampSlot)]]value)
+			(when (= thing "behaviour") [[(TopBehaviourSlot)]]value)
+		}
+	)
+
+	(def 'C3DSetLink (key thing value)
+		{
+			(when (= thing "address") [[(C3DAddressSlot (C3DCTS key))]]value)
+			(when (= thing "type") [[(C3DTypeSlot (C3DCTS key))]]value)
+			(when (= thing "behaviour") [[(C3DBehaviourSlot (C3DCTS key))]]value)
+			(when (= thing "content") [[(C3DContentSlot (C3DCTS key))]]value)
+			(when (= thing "datamodel") [[(C3DDataModelSlot (C3DCTS key))]]value)
+			(when (= thing "ui") [[(C3DUISlot (C3DCTS key))]]value)
+			(when (= thing "timestamp") [[(C3DTimestampSlot (C3DCTS key))]]value)
+		}
+	)
+
+	(def 'C3DStoreLink (key mem memlen membool)
+		{
+			;Set all of the values
+			(if membool
+				{
+					(when (&& (|| (<= 0x20 memlen) (= memlen 0)) (!= @mem 0)) [[(C3DAddressSlot (C3DCTS key))]]@mem)
+					(when (&& (|| (<= 0x40 memlen) (= memlen 0)) (!= @(+ mem 0x20) 0)) [[(C3DTypeSlot (C3DCTS key))]]@(+ mem 0x20))
+					(when (&& (|| (<= 0x60 memlen) (= memlen 0)) (!= @(+ mem 0x40) 0)) [[(C3DBehaviourSlot (C3DCTS key))]]@(+ mem 0x40))
+					(when (&& (|| (<= 0x80 memlen) (= memlen 0)) (!= @(+ mem 0x60) 0)) [[(C3DContentSlot (C3DCTS key))]]@(+ mem 0x60))
+					(when (&& (|| (<= 0xA0 memlen) (= memlen 0)) (!= @(+ mem 0x80) 0)) [[(C3DDataModelSlot (C3DCTS key))]]@(+ mem 0x80))
+					(when (&& (|| (<= 0xC0 memlen) (= memlen 0)) (!= @(+ mem 0xA0) 0)) [[(C3DUISlot (C3DCTS key))]]@(+ mem 0xA0))
+					(when (= (C3DTimestamp (C3DCTS key)) 0)[[(C3DTimestampSlot (C3DCTS key))]](NUMBER))
+				}
+				{
+					(when (&& (|| (<= 0x20 memlen) (= memlen 0)) (!= (calldataload mem) 0)) [[(C3DAddressSlot (C3DCTS key))]](calldataload mem))
+					(when (&& (|| (<= 0x40 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x20)) 0)) [[(C3DTypeSlot (C3DCTS key))]](calldataload (+ mem 0x20)))
+					(when (&& (|| (<= 0x60 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x40)) 0)) [[(C3DBehaviourSlot (C3DCTS key))]](calldataload (+ mem 0x40)))
+					(when (&& (|| (<= 0x80 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x60)) 0)) [[(C3DContentSlot (C3DCTS key))]](calldataload (+ mem 0x60)))
+					(when (&& (|| (<= 0xA0 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x80)) 0)) [[(C3DDataModelSlot (C3DCTS key))]](calldataload (+ mem 0x80)))
+					(when (&& (|| (<= 0xC0 memlen) (= memlen 0)) (!= (calldataload (+ mem 0xA0)) 0)) [[(C3DUISlot (C3DCTS key))]](calldataload (+ mem 0xA0)))
+					(when (= (C3DTimestamp (C3DCTS key)) 0)[[(C3DTimestampSlot (C3DCTS key))]](NUMBER))
+				}
+			)
+		}
+	)
+
+	(def 'C3DStoreTop (mem memlen membool) ;NO CURRENT WAY TO DELETE
+		{
+			;Set all of the values
+			(if membool
+				{
+
+					(when (&& (|| (<= 0x20 memlen) (= memlen 0)) (!= @mem 0)) [[(TopIndicatorSlot)]]@mem)
+					(when (&& (|| (<= 0x40 memlen) (= memlen 0)) (!= @(+ mem 0x20) 0)) [[(TopDataModelSlot)]]@(+ mem 0x20))
+					(when (&& (|| (<= 0x60 memlen) (= memlen 0)) (!= @(+ mem 0x40) 0)) [[(TopUISlot)]]@(+ mem 0x40))
+					(when (&& (|| (<= 0x80 memlen) (= memlen 0)) (!= @(+ mem 0x60) 0)) [[(TopContentSlot)]]@(+ mem 0x60))
+					(when (&& (|| (<= 0xA0 memlen) (= memlen 0)) (!= @(+ mem 0x80) 0)) [[(TopParentSlot)]]@(+ mem 0x80))
+					(when (&& (|| (<= 0xC0 memlen) (= memlen 0)) (!= @(+ mem 0xA0) 0)) [[(TopOwnerSlot)]]@(+ mem 0xA0))
+					(when (&& (|| (<= 0xE0 memlen) (= memlen 0)) (!= @(+ mem 0xC0) 0)) [[(TopCreatorSlot)]]@(+ mem 0xC0))
+					(when (= (TopTimestamp) 0) [[(TopTimestampSlot)]](NUMBER))
+					(when (&& (|| (<= 0x100 memlen) (= memlen 0)) (!= @(+ mem 0xE0) 0)) [[(TopBehaviourSlot)]]@(+ mem 0xE0))
+				}
+				{
+					(when (&& (|| (<= 0x20 memlen) (= memlen 0)) (!= (calldataload mem) 0)) [[(TopIndicatorSlot)]](calldataload mem))
+					(when (&& (|| (<= 0x40 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x20)) 0)) [[(TopDataModelSlot)]](calldataload (+ mem 0x20)))
+					(when (&& (|| (<= 0x60 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x60)) 0)) [[(TopContentSlot)]](calldataload (+ mem 0x60)))
+					(when (&& (|| (<= 0x80 memlen) (= memlen 0)) (!= (calldataload (+ mem 0x80)) 0)) [[(TopParentSlot)]](calldataload (+ mem 0x80)))
+					(when (&& (|| (<= 0xA0 memlen) (= memlen 0)) (!= (calldataload (+ mem 0xA0)) 0)) [[(TopOwnerSlot)]](calldataload (+ mem 0xA0)))
+					(when (&& (|| (<= 0xC0 memlen) (= memlen 0)) (!= (calldataload (+ mem 0xC0)) 0)) [[(TopCreatorSlot)]](calldataload (+ mem 0xC0)))
+					(when (= (TopTimestamp) 0) [[(TopTimestampSlot)]](NUMBER))
+					(when (&& (|| (<= 0x100 memlen) (= memlen 0)) (!= (calldataload (+ mem 0xE0)) 0)) [[(TopBehaviourSlot)]](calldataload (+ mem 0xE0)))
+				}
+			)
+		}
+	)
+
+	(def 'C3DGetTop (thing)
+		{
+			(when (= thing "indicator") [[0x0]]@@(TopIndicatorSlot))
+			(when (= thing "datamodel") [[0x0]]@@(TopDataModelSlot))
+			(when (= thing "ui") [[0x0]]@@(TopUISlot))
+			(when (= thing "content") [[0x0]]@@(TopContentSlot))
+			(when (= thing "parent") [[0x0]]@@(TopParentSlot))
+			(when (= thing "owner") [[0x0]]@@(TopOwnerSlot))
+			(when (= thing "creator") [[0x0]]@@(TopCreatorSlot))
+			(when (= thing "timestamp") [[0x0]]@@(TopTimestampSlot))
+			(when (= thing "behaviour") [[0x0]]@@(TopBehaviourSlot))
+			(when (= thing "tail") [[0x0]]@@(TopTailSlot))
+			(when (= thing "head") [[0x0]]@@(TopHeadSlot))
+			@@0x0
+		}
+	)
+
+	(def 'C3DGetLink (key thing)
+		{
+			(when (= thing "address") [[0x0]]@@(C3DAddressSlot (C3DCTS key)))
+			(when (= thing "type") [[0x0]]@@(C3DTypeSlot (C3DCTS key)))
+			(when (= thing "behaviour") [[0x0]]@@(C3DBehaviourSlot (C3DCTS key)))
+			(when (= thing "content") [[0x0]]@@(C3DContentSlot (C3DCTS key)))
+			(when (= thing "datamodel") [[0x0]]@@(C3DDataModelSlot (C3DCTS key)))
+			(when (= thing "ui") [[0x0]]@@(C3DUISlot (C3DCTS key)))
+			(when (= thing "timestamp") [[0x0]]@@(C3DTimestampSlot (C3DCTS key)))
+			@@0x0
+		}
+	)
+
+	(def 'C3DLoadTop (mem memlen)
+		{
+			(when (|| (<= 0x20 memlen) (= memlen 0)) [mem]@@(TopIndicatorSlot))
+			(when (|| (<= 0x40 memlen) (= memlen 0)) [(+ mem 0x20)]@@(TopDataModelSlot))
+			(when (|| (<= 0x60 memlen) (= memlen 0)) [(+ mem 0x40)]@@(TopUISlot))
+			(when (|| (<= 0x80 memlen) (= memlen 0)) [(+ mem 0x60)]@@(TopContentSlot))
+			(when (|| (<= 0xA0 memlen) (= memlen 0)) [(+ mem 0x80)]@@(TopParentSlot))
+			(when (|| (<= 0xC0 memlen) (= memlen 0)) [(+ mem 0xA0)]@@(TopOwnerSlot))
+			(when (|| (<= 0xE0 memlen) (= memlen 0)) [(+ mem 0xC0)]@@(TopCreatorSlot))
+			(when (|| (<= 0x100 memlen) (= memlen 0)) [(+ mem 0xE0)]@@(TopTimestampSlot))
+			(when (|| (<= 0x120 memlen) (= memlen 0)) [(+ mem 0x100)]@@(TopBehaviourSlot))
+			(when (|| (<= 0x140 memlen) (= memlen 0)) [(+ mem 0x120)]@@(TopTailSlot))
+			(when (|| (<= 0x160 memlen) (= memlen 0)) [(+ mem 0x140)]@@(TopHeadSlot))
+		}
+	)
+
+	(def 'C3DClearLink (key)
+		{
+			[[(C3DAddressSlot (C3DCTS key))]]0
+			[[(C3DTypeSlot (C3DCTS key))]]0
+			[[(C3DBehaviourSlot (C3DCTS key))]]0
+			[[(C3DContentSlot (C3DCTS key))]]0
+			[[(C3DDataModelSlot (C3DCTS key))]]0
+			[[(C3DUISlot (C3DCTS key))]]0
+			[[(C3DTimestampSlot (C3DCTS key))]]0
+		}
+	)
+
+	(def 'C3DLoadLink (key mem memlen)
+		{
+			(when (|| (<= 0x20 memlen) (= memlen 0)) [mem]@@(C3DAddressSlot (C3DCTS key)))
+			(when (|| (<= 0x40 memlen) (= memlen 0)) [(+ mem 0x20)]@@(C3DTypeSlot (C3DCTS key)))
+			(when (|| (<= 0x60 memlen) (= memlen 0)) [(+ mem 0x40)]@@(C3DBehaviourSlot (C3DCTS key)))
+			(when (|| (<= 0x80 memlen) (= memlen 0)) [(+ mem 0x60)]@@(C3DContentSlot (C3DCTS key)))
+			(when (|| (<= 0xA0 memlen) (= memlen 0)) [(+ mem 0x80)]@@(C3DDataModelSlot (C3DCTS key)))
+			(when (|| (<= 0xC0 memlen) (= memlen 0)) [(+ mem 0xA0)]@@(C3DUISlot (C3DCTS key)))
+			(when (|| (<= 0xE0 memlen) (= memlen 0)) [(+ mem 0xC0)]@@(C3DTimestampSlot (C3DCTS key)))
+		}
+	)
+
+	(def 'C3DAddLink (key mem memlen membool)
+		{
+			;key used (has a previous or is the tail)
+			(when (&& (= @@(C3DPrevSlot (C3DCTS key)) 0) (!= (C3DCTS key) (TopTail)))
+				{
+
+					;Add new link
+					[[(C3DPrevSlot (C3DCTS key))]](TopHead) 	;This previous = old head
+					(when (!= (TopHead) 0) [[(C3DNextSlot (TopHead))]](C3DCTS key))	;Old head's next is this
+					[[(TopHeadSlot)]](C3DCTS key) 				;New head is this
+
+					(when (= (TopTail) 0) [[(TopTailSlot)]](C3DCTS key)) ;If the Tail is empty (list is empty) then set this as tail.
+
+					[[(TopListLenSlot)]](+ (TopListLen) 1) ;Increment counter
+
+					
+					(C3DStoreLink key mem memlen membool)
+				}
+			)
+		}
+	)
+
+	(def 'C3DRmLink (key)
+		{
+			;Perform checks.
+			;key used (has a previous or is the tail)
+			(when (|| (!= @@(C3DPrevSlot (C3DCTS key)) 0) (= (C3DCTS key) (TopTail)))
+				{
+
+					;Remove link
+					;This's previous' next = This's Next
+					(when @@(C3DPrevSlot (C3DCTS key)) [[(C3DNextSlot @@(C3DPrevSlot (C3DCTS key)))]]@@(C3DNextSlot (C3DCTS key)))
+					;This's next's previous = This's Previous
+					(when @@(C3DNextSlot (C3DCTS key)) [[(C3DPrevSlot @@(C3DNextSlot (C3DCTS key)))]]@@(C3DPrevSlot (C3DCTS key)))
+
+					;Head and Tail Modification
+					(when (= (C3DCTS key) (TopHead)) [[(TopHeadSlot)]]@@(C3DPrevSlot (C3DCTS key))) ;If this was Head then This's Prev becomes Head
+					(when (= (C3DCTS key) (TopTail)) [[(TopTailSlot)]]@@(C3DNextSlot (C3DCTS key))) ;If this was Tail then This's Next becomes Tail
+
+					;Clear Values
+					[[(C3DCTS key)]]0
+					[[(C3DPrevSlot (C3DCTS key))]]0
+					[[(C3DNextSlot (C3DCTS key))]]0
+
+					[[(TopListLenSlot)]](- (TopListLen) 1) ;Decrement counter
+
+					(C3DClearLink key)
+				}
+			)
+		}
+	)
+
+	(def 'C3DInit (mem1 memlen1 membool1)
+		{
+			(C3DStoreTop mem1 memlen1 membool1)
+		}
+	)
+}

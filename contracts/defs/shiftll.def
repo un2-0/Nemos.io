@@ -1,0 +1,89 @@
+;Linked List Type
+{
+	(include "../stdvarspace.def")
+	(include "../llll.def")
+
+	;Definition of Linked list form
+	;@shiftbase(addr) : "linkedlist"
+
+	;+ stdVSsize +1 : TailSlot
+	;+ stdVSsize +2 : HeadSlot
+	;+ stdVSsize +3 : Length of list
+
+	(def 'llbase (base) (+ base stdVSsize))
+	(def 'IllTailSlot (base) (llllTailSlot (llbase base)))
+	(def 'IllHeadSlot (base) (llllHeadSlot (llbase base)))
+	(def 'IllLenSlot (base) (llllLenSlot (llbase base)))
+
+	;Linked list entry
+	;Note: keys can only be 20 bytes maximum
+	;@(+ vari(name) (+ (* key (EXP 0x100 3)) (EXP 0x100 2)) : mainvalue
+	;+1 : Previous Entry
+	;+2 : Next Entry
+
+	;---------------------------------------------------------------------------------------------
+	(def 'shiftbase (addr) (+ (* 42 (EXP 0x100 31)) (* (MOD addr (EXP 0x100 20)) (EXP 0x100 11))))
+	(def 'IllCTS (base TSI) (+ base (+ (EXP 0x100 2) (* (MOD TSI (EXP 0x100 8)) (EXP 0x100 3)))))
+
+
+	(def 'IllPrevSlot (base TSI) (llllPrevSlot (IllCTS base TSI)))
+	(def 'IllNextSlot (base TSI) (llllNextSlot (IllCTS base TSI)))
+
+	(def 'IllInit (base slot value)
+		{
+			[[base]]"shiftlist"
+			(when value
+				{
+					[[(IllHeadSlot base)]]slot
+					[[(IllTailSlot base)]]slot
+
+					[[(IllLenSlot base)]]1
+
+					[[slot]]value
+				}
+			)
+		}
+	)
+
+	(def 'IllAddLink (base TSI value) (llllAddLink (llbase base) (IllCTS base TSI) value))
+
+	(def 'IllRmLink (base TSI) (llllRmLink (llbase base) (IllCTS base TSI)))
+
+	(def 'IllSet (base TSI value) (llllSet (llbase base) (IllCTS base TSI) 0 value))
+
+	(def 'IllStore (base TSI mem membool)
+		{
+			(if membool
+				(IllSet base TSI @mem)
+				(IllSet base TSI (calldataload mem))
+			)
+		}
+	)
+	(def 'IllGet (base TSI) (llllGet (IllCTS base TSI) 0))
+	(def 'IllLoad (base TSI mem) (llllLoad (IllCTS base TSI) 0 mem))
+
+
+	;Externals
+	;-------------------------------------------------------------
+	(def 'llCTS (addr TSI) (IllCTS (shiftbase addr) TSI))
+	(def 'llprevslot (addr TSI) (Illprevslot (shiftbase addr) TSI))
+	(def 'llnextslot (addr TSI) (Illnextslot (shiftbase addr) TSI))
+
+	(def 'llTailSlot (addr) (IllTailSlot (shiftbase addr)))
+	(def 'llHeadSlot (addr) (IllHeadSlot (shiftbase addr)))
+	(def 'llLenSlot (addr) (IllLenSlot (shiftbase addr)))
+
+	(def 'llInit (addr TSI value) (IllInit (shiftbase addr) (llCTS addr TSI) value))
+	(def 'llAddLink (addr TSI value) (IllAddLink (shiftbase addr) TSI value))
+	(def 'llRmLink (addr TSI) (IllRmLink (shiftbase addr) TSI))
+
+	(def 'llGet (addr TSI) (IllGet (shiftbase addr) TSI))
+	(def 'llLoad (addr TSI mem) (IllLoad (shiftbase addr) TSI mem))
+
+	(def 'llSet (addr TSI value) (IllSet (shiftbase addr) TSI value))
+	(def 'llStore (addr TSI mem membool) (IllStore (shiftbase addr) TSI mem membool))
+
+	(def 'shiftllInited (addr) (!= @@(shiftbase(addr)) 0))
+
+
+}

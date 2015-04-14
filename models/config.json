@@ -1,5 +1,6 @@
 {
 	"loading_order" : [
+		"decerver_api.js",
 		"SmartVoteAPI.js",
 		"SmartVote.js"
 	]

@@ -1,5 +1,5 @@
 {
-	(include "./Account.lll")
+	(include "./Poll.lll")
 	(include "./defs/stdkv.def")
 	(include "./defs/stdll.def")
 	(include "./env.def")
@@ -7,21 +7,15 @@
 	(kvInit "polls")
 	(llInit "plnames")
 
-	(def 'opnum () (calldataload 0x20)) ;The number of options
-	(def 'hash () (calldataload 0x40))
-	(def 'opentime () (calldataload 0x60))
-	(def 'closetime () (calldataload 0x80))
-	(def 'createtime () (calldataload 0xA0))
-	(def 'creator () (calldataload 0xC0)) ;The address of the creator
-	(def 'plname () (calldataload 0xCE0)) ;The name of the poll
+	(def 'plname () (calldataload 0x20)) ;The name of the poll
 
 	(def 'DAPPDOUG 0xdaffe)
 	(return 0 (lll {
 
-		(when (= (calldataload 0x0) "createpoll")
+		(when (= (calldataload 0x0) "create")
 			{
 
-				(unless (&& (= (llGet "plnames" (plname)) 0) (= (kvGet "polls" (ORIGIN)) 0)) (STOP)) ;Poll name taken
+				(unless (&& (= (llGet "plnames" (plname)) 0) (= (kvGet "polls" (ORIGIN)) 0)) (STOP)) ;Poll name taken/Poll has an account
 
 				(llAddLink "plnames" (plname) (ORIGIN))
 
@@ -42,15 +36,9 @@
 				[0x80]1
 				(CALL (gass) DAPPDOUG 0 0x20 0x80 0xA0 0x20)
 
-				[0x20]"init"
-				[0x40](opnum)
-				[0x60](hash)
-				[0x80](opentime)
-				[0xA0](closetime)
-				[0xC0](createtime)
-				[0xE0](creator)
-				[0x100](plname)
-				(CALL (gass) @0x0 0 0x20 0x100 0x120 0x20)
+				[0xA0]"init"
+				[0xC0](plname)
+				(CALL (gass) @0x0 0 0xA0 0x40 0xE0 0x20)
 
 				(return 0x0 0x20) ;Return address
 			}

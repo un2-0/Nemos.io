@@ -1,0 +1,75 @@
+;Double type Definitions
+{
+	(include "stdvarspace.def")
+
+	;Double
+	;@vari(name): "double"
+	
+	;+ stdVSsize : value  - Highest bytes first
+	;+ stdVSsize : value2
+
+	;INTERNALs
+	(def 'IdoubleVS1 (value) (varbase value))
+	(def 'IdoubleVS2 (value) (+ (varbase value) 1))
+	(def 'IdoubleValue1 (value) @@(IdoubleVS1 value))
+	(def 'IdoubleValue2 (value) @@(IdoubleVS2 value))
+
+	(def 'IdoubleInit (base name addperm rmperm modperm value value2)
+		{
+			(when (= @@base 0x0)
+				{
+					[[base]]"double"
+					[[(IvnSlot base)]]name
+					[[(IvapSlot base)]]addperm
+					[[(IvrpSlot base)]]rmperm 		
+					[[(IvmpSlot base)]]modperm
+					[[(IdoubleVS1 base)]]value
+					[[(IdoubleVS2 base)]]value2
+				}
+			)
+		}
+	)
+	(def 'IdoubleLoad (base mem)
+		{
+			[mem]@@(IdoubleVS1 base)
+			[(+ mem 0x20)]@@(IdoubleVS2 base)
+		}
+	)
+
+	;Double Get should push the both values onto the stack but def does not let you do that
+
+	(def 'IdoubleSet (base value value2)
+		{
+			(when (= @@base "double")
+				{
+					[[(IdoubleVS1 base)]]value
+					[[(IdoubleVS2 base)]]value2
+				}
+			)
+		}
+	)
+
+	(def 'IdoubleStore (base mem boolmem)
+		{
+			(if boolmem
+				(IdoubleSet base @mem @(+ mem 0x20))
+				(IdoubleSet base (calldataload mem) (calldataload (+ mem 0x20)))
+			)
+		}
+	)
+
+	(def 'doubleVS1 (name) (IdoubleVS1 (vari name)))
+	(def 'doubleVS2 (name) (IdoubleVS2 (vari name)))
+	(def 'doubleValue1 (name) @@(IdoubleVS1 (vari name)))
+	(def 'doubleValue2 (name) @@(IdoubleVS2 (vari name)))
+
+	(def 'doubleInit (name addperm rmperm modperm value value2) (IdoubleInit (vari name) name addperm rmperm modperm value value2))
+	(def 'doubleInit (name value value2) (IdoubleInit (vari name) name "none" "none" "none" value value2))
+	(def 'doubleInit (name addperm rmperm modperm) (IdoubleInit (vari name) name addperm rmperm modperm 0 0))
+	(def 'doubleInit (name) (IdoubleInit (vari name) name "none" "none" "none" 0 0))
+	
+	(def 'doubleLoad (name mem) (IdoubleLoad (vari name) mem))
+	(def 'doubleSet (name value value2) (IdoubleSet (vari name) value value2))
+	(def 'doubleStore (name mem boolmem) (IdoubleStore (vari name) mem boolmem))
+
+}

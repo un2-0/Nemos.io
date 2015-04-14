@@ -2,7 +2,7 @@
 
 !{DOUG
 deploy:
-    "./contracts/SmartVoteDOUG.lll" => {{DOUG}}
+	"./contracts/SmartVoteDOUG.lll" => {{DOUG}}
 !}DOUG
 
 !{PF
@@ -13,12 +13,11 @@ modify-deploy:
 
 !{setup
 transact:
-    {{DOUG}} => "setperm" "doug" {{PF}} 1
+	{{DOUG}} => "setperm" "doug" {{PF}} 1
 
 transact:
-    {{DOUG}} => "setperm" "pollfactory" {{PF}} 1
+	{{DOUG}} => "setperm" "pollfactory" {{PF}} 1
 
 transact:
-    {{DOUG}} => "register" "pollfactory" {{PF}}
+	{{DOUG}} => "register" "pollfactory" {{PF}}
 !}setup
-

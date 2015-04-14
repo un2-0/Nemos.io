@@ -1,0 +1,125 @@
+;New llarray definition
+{
+	;Format
+
+	(def 'llarrayGetE (slot ESize elnum) 
+		{
+			(if (>= ESize 256)
+				{
+					@@(+ (MOD elnum 0xFFFF) slot) ;row
+				}
+				{
+					(MOD (DIV @@(+ (MOD (DIV elnum (DIV 256 ESize)) 0xFFFF) slot) (EXP 2 (MUL ESize (MOD elnum (DIV 256 ESize))))) (EXP 2 ESize))
+				}
+			)
+		}
+	)
+
+	(def 'llarrayLoadE (slot ESize elnum mem) 
+		{
+			[mem](llarrayGetE slot ESize elnum)
+		}
+	)
+
+	(def 'llarraySetE (slot ESize elnum value) 
+		{
+			(if (>= ESize 256)
+			{
+					;No Need to worry about possition in the slot we can just set it
+					[[(+ (MOD elnum 0xFFFF) slot)]]value
+				}
+				{
+					;Sorry... I hate overwriting memory :-(
+					
+					[[(+ (MOD (DIV elnum (DIV 256 ESize)) 0xFFFF) slot)]](+ (MUL (DIV @@(+ (MOD (DIV elnum (DIV 256 ESize)) 0xFFFF) slot) (EXP 2 (MUL ESize (+ (MOD elnum (DIV 256 ESize)) 1)))) (EXP 2 (MUL ESize (+ (MOD elnum (DIV 256 ESize)) 1)))) (+ (MOD @@(+ (MOD (DIV elnum (DIV 256 ESize)) 0xFFFF) slot) (EXP 2 (MUL ESize (MOD elnum (DIV 256 ESize))))) (MUL (MOD value (EXP 2 ESize)) (EXP 2 (MUL ESize (MOD elnum (DIV 256 ESize)))))))
+				}
+			)
+		}
+	)
+
+;Old Easier to read version
+;	(def 'llarraySetE (base slot elnum value) 
+;		{
+;			[0x0]ESize ;256
+;			(if (>= @0x0 256)
+;			{
+;					;No Need to worry about possition in the slot we can just set it
+;					[0x20](+ (MOD elnum 0xFFFF) slot)
+;					[[(+ (MOD elnum 0xFFFF) slot)]]value
+;				}
+;				{
+;					[0x20](MOD elnum (DIV 256 @0x0)) ;location in row ;0
+;					[0x40](+ (MOD (DIV elnum (DIV 256 @0x0)) 0xFFFF) slot) ;row ;elnum
+;					[0x60]@@ @0x40
+;					[0x80](EXP 2 (MUL @0x0 (+ @0x20 1)))
+;
+;					[0xA0](MUL (DIV @0x60 @0x80) @0x80) 		;Data above slot we care about
+;					[0x80](DIV @0x80 (EXP 2 @0x0))				;Adjust 0x80
+;					[0xC0](MOD @0x60 @0x80)						;data below slot
+;					[0xE0](MUL (MOD value (EXP 2 @0x0)) @0x80) 	;Data to put in slot
+;					[[@0x40]](+ @0xA0 (+ @0xC0 @0xE0)) 			;Combine and store
+;				}
+;			)
+;		}
+;	)
+
+
+	(def 'llarrayStoreE (slot ESize elnum mem membool) 
+		{
+			(if membool
+				(llarraySetE slot ESize elnum @mem)
+				(llarraySetE slot ESize elnum (calldataload mem))
+			)
+		}
+	)
+
+	;TODO more advanced things such as storing large chunks of memory into an array
+
+	(def 'llarrayWrite (slot ESize start memstart len)
+		{
+			;For writing sequentially
+		}
+	)
+
+	(def 'llarrayRead (slot ESize start memstart len)
+		{
+			;For Reading Sequentially
+			[A]@@(+ slot (Div (Mul ESize start) 256))
+			[hang](Mod (Mul ESize start) 8)
+			(if (|| (= ESize 1) (|| (= ESize 2) (= Esize 4)))
+				{
+					[B](- (- 32 (Mod (Div (Mul ESize start) 8)) 32) 1)
+				}
+				{
+					[B](- 32 (Mod (Div (Mul ESize start) 8)) 32)
+				}
+			)
+			[hold](Div @A (Exp 2 (- 256 @hang)))
+			;NEED TO RE-THINK This
+			[temp](* (+ start len) ESize)
+			(if (= (Mod @temp 256) 0)
+				{
+					[end](+ slot (/ @temp 256))
+				}
+				{
+					[end](+ (+ slot (/ @temp 256)) 1)
+				}
+			)
+
+
+			[ups](Div 256 ESize)
+			[SSlot](+ slot (Div start @ups))
+			[ESlot](+ slot (Div (+ start len) @ups))
+			[memstart](Div @@SSlot (Exp ESize (Mod start @ups)))
+			[tempstart](+ memstart (Div (Mul ESize (Mod start @ups)) 8))
+			[offset](Exp 2 (Mod (Mul ESize (Mod start @ups)) 8)))
+			(for [i](+ @SSlot 1) (<= @i @ESlot) [i](+ @i 1)
+				{
+					;loop
+					[@tempstart](Mul @@ @i
+				}
+			)
+		}
+	)
+
+}

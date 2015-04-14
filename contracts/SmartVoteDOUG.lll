@@ -96,9 +96,9 @@
 	(llInit "permnames" "none" "none" "none")
 	(llAddLink "permnames" "doug" 1)
 	(llAddLink "permnames" "pollfactory" 2)
-	(llAddLink "permnames" "polls" 3)
+	(llAddLink "permnames" "pollaccount" 3)
 
-	(arrayInit "perms" "none" "none" "none" 4) ;Gives Caller all permissions
+	(arrayInit "perms" "none" "none" "none" 3) ;Gives Caller all permissions
 	(arraySetE "perms" (CALLER) 1 1)
 	(arraySetE "perms" (CALLER) 2 1)
 	(arraySetE "perms" (CALLER) 3 1)

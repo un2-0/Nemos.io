@@ -1,0 +1,23 @@
+{
+	;Lowest level Key-Value Pairing
+
+	;Note: keys can only be 20 bytes maximum
+	;slot : mainvalue
+
+	(def 'llkvSet (slot offset value)
+		{
+			[[(+ slot offset)]]value
+		}
+	)
+
+	(def 'llkvStore (slot offset mem membool)
+		{
+			(if membool
+				(llkvSet slot offset @mem)
+				(llkvSet slot offset (calldataload mem))
+			)
+		}
+	)
+	(def 'llkvGet (slot offset) @@(+ slot offset))
+	(def 'llkvLoad (slot offset mem) [mem]@@(+ slot offset))
+}

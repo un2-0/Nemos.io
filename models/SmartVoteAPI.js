@@ -81,28 +81,22 @@ function SmartVoteAPI() {
 		Println("Added tx data");
 	}
 	
-	this.createPoll = function(ipfsdata, opnum, opentime, closetime, crtusrname, plname) {
+	this.createPoll = function(plname) {
+		var txData = [];
+		Println("Creating poll in blockchain.");
+		txData.push("create");
+		txData.push(plname);
+		var hash = sendMsg(plfAddr, txData);
+		return hash;
+	}
+
+	this.initPoll = function() {
 		Println("Adding file to ipfs.");
 		var hash = writeFile(ipfsdata);
 		if (hash === "") {
 			Println("Error when adding file to ipfs.");
 			return "0x0";
 		}
-		return this.postPid(opnum, hash, opentime, closetime, crtusrname, plname);
-	}
-	
-	this.postPid = function(opnum, hash, opentime, closetime, crtusrname, plname) {
-		var txData = [];
-		txData.push("init");
-		txData.push(opnum);
-		txData.push(hash);
-		txData.push(opentime);
-		txData.push(closetime);
-		txData.push(Date());
-		txData.push(crtusrname);
-		txData.push(plname);
-		var hash = sendMsg(plAddr, txData);
-		return hash;
 	}
 	
 	this.setStatus = function(plname, status) {
@@ -136,14 +130,14 @@ function SmartVoteAPI() {
 			var txData = [];
 			txData.push("vote");
 			txData.push(opnum);
-			var hash = senMsg(plname2Addr(plname), txData);;
+			var hash = senMsg(plname2Addr(plname), txData);
 			return hash;
 		}
 		return null;
 	}
 	
 	function plname2Addr(plname) {
-		return esl.kv.Value(plfAddr, sutil.StringToHex("polls", plname));
+		return esl.kv.Value(plfAddr, sutil.stringToHex("polls", plname));
 	}
 
 	// No websockets running here, meaning there's only one possible sub from this runtime.
@@ -165,11 +159,22 @@ function SmartVoteAPI() {
 	this.init = function() {
 		Println("Initializing SmartVote");
 		// Start subscribing to tx events.
-		this.sub();
+		//this.sub();
 		Println("DOUG address: " + dougAddr);
-		plfAddr = esl.ll.Main(dougAddr, StringToHex("DOUG"), StringToHex("pollfactory"));
+		plfAddr = esl.ll.Main(dougAddr, sutil.stringToHex("DOUG"), sutil.stringToHex("pollfactory"));
 		Println("plfAddr: " + plfAddr);
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
+	}
+
+	this.test = function(plname) {
+		var aaaaa = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
+		var bbb = esl.kv.Value(plfAddr, sutil.stringToHex("polls"), aaaaa);
+		return bbb;
+	}
+
+	this.test1 = function(plAddr) {
+		Println("plfAddr: \n" + plfAddr);
+		return esl.single.Value(plAddr, sutil.stringToHex("plname"));
 	}
 };
