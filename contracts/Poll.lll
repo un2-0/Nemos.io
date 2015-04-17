@@ -55,7 +55,7 @@
 			(singleSet "description" (hash))
 			(singleSet "opnum" (opnum))
 			[0x0](opnum)
-			(for {[0xE0]1} (<= @0xE0 @0x0) [0xE0](+ @0xE0 1) ;hex addition?
+			(for {[0xE0]1} (<= @0xE0 @0x0) [0xE0](+ @0xE0 1)
 				(kvSet "ops" @0xE0 0)
 			)
 			(singleSet "opened" (opentime))

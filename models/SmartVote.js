@@ -142,11 +142,11 @@ function SmartVote() {
 		if (COMMITTING) {
 			monk.Commit();
 		}
-		svApi.setOpnum(plname, 20);
-		if (COMMITTING) {
+		svApi.initPoll(plname, 20, "2222", "3333", "444444" ,"55555555", "6666666666");
+		if (COMMITING) {
 			monk.Commit();
 		}
-		Println("aaaaaaaa" + svApi.getOpnum(plname));
+		println("ccccccccccccccccc" + svApi.test1(plname));
 	}
 	
 	this.test3 = function() {

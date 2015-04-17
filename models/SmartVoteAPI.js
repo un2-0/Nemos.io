@@ -145,7 +145,7 @@ function SmartVoteAPI() {
 	}
 
 	this.getOpnum = function(plname) {
-		return parseInt(esl.single.Value(plname2Addr(plname), sutil.stringToHex("opnum")), 16);
+		return esl.single.Value(plname2Addr(plname), sutil.stringToHex("opnum")).slice(2);
 	}
 	
 	this.refreshPoll = function(plname) {
@@ -163,14 +163,12 @@ function SmartVoteAPI() {
 	}
 	
 	this.vote = function(plname, opnum) {
-		if (this.checkStatus(plname) == 1) {
-			var txData = [];
-			txData.push("vote");
-			txData.push("0x" + opnum.toString(16));
-			var hash = sendMsg(plname2Addr(plname), txData);
-			return hash;
-		}
-		return null;
+		var txData = [];
+		opnum = parseInt(opnum);
+		txData.push("vote");
+		txData.push("0x" + opnum.toString(16));
+		var hash = sendMsg(plname2Addr(plname), txData);
+		return hash;
 	}
 
 	this.showPolls = function() {
@@ -216,6 +214,7 @@ function SmartVoteAPI() {
 	}
 
 	this.test1 = function(plname) {
-		return esl.single.Value(plname2Addr(plname), sutil.stringToHex("plname"));
+		Println("vvvvvvvvv");
+		return storageAt(plname2addr(plname), 0xCCCC);
 	}
 };
