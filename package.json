@@ -28,7 +28,7 @@
       "data": {
         "peer_server_address": "111.111.111.111:9999",
         "blockchain_id": "f858469a00e80e4f5eb536501eb7d98c7e1cc432",
-        "root_contract": "0x181b4e465bb948c9d15cb5e2f4a1f7979ec7c081"
+        "root_contract": "0xbbe5e91bec0261a11e827a815a37af9b57fc8469"
       }
     }, {
       "name" : "ipfs",

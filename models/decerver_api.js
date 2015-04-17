@@ -2,13 +2,11 @@
 function sendMsg(addr, txIndata) {
 	Println("Sending message");
 	for (var i = 0; i < txIndata.length; i++) {
-		Println(txIndata[i]);
 		txIndata[i] = txIndata[i].trim();
 	}
 	Printf("TxData: %v\n", txIndata);
 	var rData = monk.Msg(addr, txIndata);
 	if (rData.Error !== "") {
-		Println("555555555555555555555555555555");
 		Println(rData.Error);
 		return "";
 	}

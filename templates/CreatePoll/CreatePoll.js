@@ -6,14 +6,14 @@ window.onload = init;
 function init() {
     baseUrl = "/apis/SmartVote";
     httpApi = new HttpAPI();
-    window.alert("1111");
     var createBtn = document.getElementById("createBtn");
     createBtn.onclick = createPoll;
+    showVotings();
     //document.getElementById("addCandiBtn").onclick = addCandidate;
 
     //document.getElementById("showBtn").onclick = showDefaultVoting;
 }
-
+/*
 function showDefaultVoting() {
     var voting = httpApi.send("GET", baseUrl + "/getVoting?votingName=default", null)
     //window.alert("before parsing");
@@ -45,25 +45,21 @@ function showDefaultVoting() {
     submitBtn.appendChild(document.createTextNode("Vote"));
     showDiv.appendChild(submitBtn);
 }
+*/
 
 function createPoll() {
-    document.getElementById("createBtn").disabled = true;
-    var opnum = 3;
+    //document.getElementById("createBtn").disabled = true;
+    var opnum = escape(document.getElementById("opnum").value);
     var description = escape(document.getElementById("description").value);
-    var opentime = Date();
+    var opentime = new Date().toLocaleDateString();
     var closetime = escape(document.getElementById("endTime").value)
-    var createtime = opentime;
+    var createtime = new Date().toLocaleDateString();
     var creatorusrname = escape(document.getElementById("initiatorName").value);
     var votingName = escape(document.getElementById("newVotingName").value);
-    httpApi.sendAsync("POST", baseUrl + "/addVoting?votingName=" + votingName + , null,
-        function () {
-            document.getElementById("creat_btn").disabled = false;
-            window.alert("New voting created.");
-            updateVotingNumInPage();
-        }
-    );
+    httpApi.send("GET", baseUrl + "/addVt&" + votingName + "&" + opnum + "&" + description + "&" + opentime + "&" + closetime + "&" + createtime + "&" + creatorusrname, null);
+    window.location.reload();
 }
-
+/*
 function addCandidate() {
     var candiTable = document.getElementById("candiTable");
     var newCandiNum = candiTable.rows.length + 1;
@@ -86,12 +82,13 @@ function addCandidate() {
     input.type = "text";
     input.name = input.id;
     rightCell.appendChild(input);
-}
+}*/
 
 /**
  * Get the number of on-going votings. if successful, call
  * <code>updateVotingNumInPage</code>.
  */
+/*
 function getVotingNum() {
     var request = createRequest();
     if (request == null) {
@@ -108,4 +105,25 @@ function updateVotingNumInPage() {
     if (this.readyState == 4 && this.status == 200) {
         document.getElementById("voting_num").innerHTML = this.responseText;
     }
+}
+*/
+function showVotings() {
+    var votings = httpApi.send("GET", baseUrl + "/showVotings", null);
+    if (votings != 0) {
+        var vtlist = votings.split('"').join("");
+        vtlist = vtlist.split(";");
+        var vtlen = vtlist.length;
+        var str ="";
+        for (var i = 0; i < vtlen; i++) {
+            document.getElementById('ongoingvoting').innerHTML = document.getElementById('ongoingvoting').innerHTML + '<p>' + vtlist[i] +'</p>';
+        }
+    }
+/*
+    var container = document.getElementById("ongoingvoting").innerHTML;
+    var np = document.createElement("p");
+    var txt = document.createTextNode(str);
+    np.appendChild(txt);
+    document.body.appendChild(np);
+    container.insertBefore(np, container.fisrtChild);
+*/
 }

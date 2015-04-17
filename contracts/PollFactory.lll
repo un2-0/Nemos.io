@@ -2,10 +2,13 @@
 	(include "./Poll.lll")
 	(include "./defs/stdkv.def")
 	(include "./defs/stdll.def")
+	(include "./defs/single.def")
 	(include "./env.def")
 
 	(kvInit "polls")
 	(llInit "plnames")
+	(kvInit "pllist")
+	(singleInit "plnum" 0)
 
 	(def 'plname () (calldataload 0x20)) ;The name of the poll
 
@@ -15,9 +18,11 @@
 		(when (= (calldataload 0x0) "create")
 			{
 
-				(unless (&& (= (llGet "plnames" (plname)) 0) (= (kvGet "polls" (ORIGIN)) 0)) (STOP)) ;Poll name taken/Poll has an account
+				(unless (= (llGet "plnames" (plname)) 0) (STOP)) ;Poll name taken/Poll has an account
 
-				(llAddLink "plnames" (plname) (ORIGIN))
+				(singleSet "plnum" (+ (singleGet "plnum") 1))
+				(llAddLink "plnames" (plname) (singleGet "plnum"))
+				(kvSet "pllist" (singleGet "plnum") (plname))
 
 				;Create the code
 				[0x0](create 0 0 (lll {
@@ -28,7 +33,7 @@
 
 				[[@0x0]]1 ;note that this contract was made here
 
-				(kvSet "polls" (ORIGIN) @0x0)
+				(kvSet "polls" (singleGet "plnum") @0x0)
 
 				[0x20]"setperm"
 				[0x40]"pollaccount"

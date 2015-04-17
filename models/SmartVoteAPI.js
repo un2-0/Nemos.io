@@ -81,7 +81,7 @@ function SmartVoteAPI() {
 		Println("Added tx data");
 	}
 	
-	this.createPoll = function(plname) {
+	this.createPollAccount = function(plname) {
 		var txData = [];
 		Println("Creating poll in blockchain.");
 		txData.push("create");
@@ -90,25 +90,62 @@ function SmartVoteAPI() {
 		return hash;
 	}
 
-	this.initPoll = function() {
-		Println("Adding file to ipfs.");
-		var hash = writeFile(ipfsdata);
-		if (hash === "") {
-			Println("Error when adding file to ipfs.");
-			return "0x0";
-		}
+	this.initPoll = function(plname, opnum, description, opentime, closetime ,createtime, creatorusrname) {
+		var txData = [];
+		Println("Initing poll in blockchain.");
+		txData.push("set");
+		txData.push("0x" + opnum.toString(16));
+		txData.push(description);
+		txData.push(opentime);
+		txData.push(closetime);
+		txData.push(createtime);
+		txData.push(creatorusrname);
+		var hash = sendMsg(plname2Addr(plname), txData);
+		return hash;
 	}
 	
 	this.setStatus = function(plname, status) {
 		var txData = [];
 		txData.push("setstatus");
-		txData.push(status);
-		var hash = senMsg(plname2Addr(plname), txData);
+		txData.push("0x" + status.toString(16));
+		var hash = sendMsg(plname2Addr(plname), txData);
 		return hash;
 	}
 	
 	this.checkStatus = function(plname) {
-		return esl.single.Value(plname2Addr(plname), StringToHex("status"));
+		return parseInt(esl.single.Value(plname2Addr(plname), sutil.stringToHex("status")), 16);
+	}
+
+	this.getDescription = function(plname) {
+		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("description")));
+	}
+
+	this.getOpentime = function(plname) {
+		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("opened")));
+	}
+
+	this.getClosetime = function(plname) {
+		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("closed")));
+	}
+
+	this.getCreatetime = function(plname) {
+		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("created")));
+	}
+
+	this.getCreatorusrname = function(plname) {
+		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("creator")));
+	}
+
+	this.setOpnum = function(plname, opnum) {
+		var txData = [];
+		txData.push("setopnum");
+		txData.push("0x" + opnum.toString(16));
+		var hash = sendMsg(plname2Addr(plname), txData);
+		return hash;
+	}
+
+	this.getOpnum = function(plname) {
+		return parseInt(esl.single.Value(plname2Addr(plname), sutil.stringToHex("opnum")), 16);
 	}
 	
 	this.refreshPoll = function(plname) {
@@ -126,34 +163,45 @@ function SmartVoteAPI() {
 	}
 	
 	this.vote = function(plname, opnum) {
-		if (checkStatus(plname) == 1) {
+		if (this.checkStatus(plname) == 1) {
 			var txData = [];
 			txData.push("vote");
-			txData.push(opnum);
-			var hash = senMsg(plname2Addr(plname), txData);
+			txData.push("0x" + opnum.toString(16));
+			var hash = sendMsg(plname2Addr(plname), txData);
 			return hash;
 		}
 		return null;
 	}
+
+	this.showPolls = function() {
+		var plnum = parseInt(esl.single.Value(plfAddr, sutil.stringToHex("plnum")), 16);
+		if (plnum == 0) {
+			Println("No poll in block chain.");
+			return 0;
+		}
+		var pllist = "";
+		for (var i = 1; i <= plnum; i++) {
+			pllist += sutil.hexToString(esl.kv.Value(plfAddr, sutil.stringToHex("pllist"), i)) + ";";
+		}
+		pllist = pllist.slice(0, pllist.length - 1);
+		Println("poll list:  " + pllist);
+		return pllist;
+	}
+
+	this.getStat = function(plname) {
+		plAddr = plname2Addr(plname);
+		var stat = "";
+		var opnum = this.getOpnum(plname);
+		for (var i = 1; i <= opnum; i++) {
+			stat += parseInt(esl.kv.Value(plAddr, sutil.stringToHex("ops"), i), 16) + ";";
+		}
+		stat = stat.slice(0, stat.length - 1);
+		return stat;
+	}
 	
 	function plname2Addr(plname) {
-		return esl.kv.Value(plfAddr, sutil.stringToHex("polls", plname));
-	}
-
-	// No websockets running here, meaning there's only one possible sub from this runtime.
-	this.sub = function() {
-		events.subscribe("monk","newBlock","", this.statUpdateBlock, "does_not_matter_since_not_websocket");
-		events.subscribe("monk","newTx:post","", this.statUpdatePost, "does_not_matter_since_not_websocket");
-		events.subscribe("monk","newTx:pre:fail","", this.statUpdateFail, "does_not_matter_since_not_websocket");
-		events.subscribe("monk","newTx:post:fail","", this.statUpdateFail, "does_not_matter_since_not_websocket");
-	}
-
-	// No websockets running here, meaning there's only one possible sub from this runtime.
-	function unsub(){
-		events.unsubscribe("monk","newBlock", "does_not_matter_since_not_websocket");
-		events.unsubscribe("monk","newTx:post","does_not_matter_since_not_websocket");
-		events.unsubscribe("monk","newTx:pre:fail","does_not_matter_since_not_websocket");
-		events.unsubscribe("monk","newTx:post:fail","does_not_matter_since_not_websocket");
+		var pubAddr = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
+		return esl.kv.Value(plfAddr, sutil.stringToHex("polls"), pubAddr);
 	}
 
 	this.init = function() {
@@ -167,14 +215,7 @@ function SmartVoteAPI() {
 		Println("monkAddr: " + monkAddr);
 	}
 
-	this.test = function(plname) {
-		var aaaaa = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
-		var bbb = esl.kv.Value(plfAddr, sutil.stringToHex("polls"), aaaaa);
-		return bbb;
-	}
-
-	this.test1 = function(plAddr) {
-		Println("plfAddr: \n" + plfAddr);
-		return esl.single.Value(plAddr, sutil.stringToHex("plname"));
+	this.test1 = function(plname) {
+		return esl.single.Value(plname2Addr(plname), sutil.stringToHex("plname"));
 	}
 };
