@@ -12,93 +12,86 @@
     (include "./env.def")
     (include "./defs/stll.def")
     
+    ; --------------------------------------------------------------------------
+    ; macros (UPPER_CASE)
+    ; --------------------------------------------------------------------------
     ; macros for constants
     ; NONE
-
+    ;
     ; macros for parameters
-    (def 'cmd () (calldataload 0x0))
-    (def 'userName () (calldataload 0x20))
+    (def 'CMD () (calldataload 0x0))
+    (def 'NAME () (calldataload 0x20))
 
-    (def 'organizerName (calldataload 0x20))
-    
-    ; variables
+    ; --------------------------------------------------------------------------
+    ; variables (lower_case)
+    ; --------------------------------------------------------------------------
     (llInit "organizers" "none" "none" "none")
     (llInit "users" "none" "none" "none")
 
     (return 0 (lll {
         ; ----------------------------------------------------------------------
-        ; Create an organizer from the template
+        ; Create an organizer from the Organizer template
         ; ----------------------------------------------------------------------
-        ; Calldata: "createOrganizer" organizerName
-        ; Returns: 0 - fail | 1 - success
+        ; Calldata: "createOrganizer"
+        ; Returns:
+        ;     0 - fail
+        ;     0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "createOrganizer") {
+        (when (= (CMD) "createOrganizer") {
             ; create the contract
             [0x0](create 0 0 (lll {
-                    (organizer)
-                 } 0))
+                      (organizer)
+                  } 0))
             [[@0x0]]1
 
-            ; set organizername in the contract
-            [0x20]"setName"
-            [0x40](organizerName)
-            (CALL (gass) @0x0 0x20 0x40 0x60 0x20)
-            
-            ; if setName fails, return 0
-            (when (= @0x60 0) (STOP))
-            ; else add the contract in users
-            (llAddLink "organizer" (organizerName) @0x0)
+            (llAddLink "organizers" (ORIGIN) @0x0)
 
-            [0x80]1
-            (return 0x80 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Create a user from the template
-        ; ----------------------------------------------------------------------
-        ; Calldata: "createUser" userName
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "createUser") {
-            ; create the contract
-            [0x0](create 0 0 (lll {
-                    (user)
-                 } 0))
-            [[@0x0]]1
-
-            ; set username in the contract
-            [0x20]"setName"
-            [0x40](userName)
-            (CALL (gass) @0x0 0x20 0x40 0x60 0x20)
-            
-            ; if setName fails, return 0
-            (when (= @0x60 0) (STOP))
-            ; else add the contract in users
-            (llAddLink "users" (userName) @0x0)
-
-            [0x80]1
-            (return 0x80 0x20)
-        })
-        
-        ; ----------------------------------------------------------------------
-        ; Check if a name is an organizer. If so, return its address, else 0.
-        ; ----------------------------------------------------------------------
-        ; Calldata: "checkOrganizer" organizerName
-        ; Returns: 0 | address
-        ; ---------------------------------------------------------------------- 
-        (when (= (cmd) "checkOrganizer") {
-            [0x0](llGet "organizers" (organizerName))
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Check if a name is a user. If so, return its address, else 0.
+        ; Create a user from the User template
         ; ----------------------------------------------------------------------
-        ; Calldata: "checkUser" userName
-        ; Returns: 0 | address
+        ; Calldata: "createUser"
+        ; Returns:
+        ;     0 - fail
+        ;     0xADDRESS - the address of the newly created contract
+        ; ----------------------------------------------------------------------
+        (when (= (CMD) "createUser") {
+            ; create the contract
+            [0x0](create 0 0 (lll {
+                     (user)
+                 } 0))
+            [[@0x0]]1
+            
+            (llAddLink "users" (ORIGIN) @0x0)
+
+            (return 0x0 0x20)
+        })
+        
+        ; ----------------------------------------------------------------------
+        ; Check if a name is an organizer.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "checkOrganizer" NAME
+        ; Returns:
+        ;     0 - not so
+        ;     0xADDRESS - the address of the according organizer contract
         ; ---------------------------------------------------------------------- 
-        (when (= (cmd) "checkUser") {
-            [0x0](llGet "users" (userName))
+        (when (= (CMD) "checkOrganizer") {
+            [0x0](llGet "organizers" (ADDRESS))
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Check if a name is a user.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "checkUser" NAME
+        ; Returns:
+        ;     0 - not so
+        ;     0xADDRESS - the address of the according user contract
+        ; ---------------------------------------------------------------------- 
+        (when (= (CMD) "checkUser") {
+            [0x0](llGet "users" (ADDRESS))
             (return 0x0 0x20)
         })
     })

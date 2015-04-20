@@ -1,92 +1,84 @@
 ; ------------------------------------------------------------------------------
 ; User
 ; ------------------------------------------------------------------------------
-; The template for User
+; The template for users, the accounts who can vote in elections.
 ; ------------------------------------------------------------------------------
 (def 'user () {
 
     ; init
     (include "./env.def")
     (include "./defs/single.def")
-    (include "./defs/stll.def")
+    (include "./defs/stdll.def")
     
+    ; --------------------------------------------------------------------------
+    ; macros (UPPER_CASE)
+    ; --------------------------------------------------------------------------
     ; macros for constants
-    ; TODO include DOUG address, to be substituded in pdx???????????????????????
     (def 'DAPPDOUG 0xabcdef)
-    (def 'CREATED (TIMESTAMP))
+    ; the computer which owns this contract
+    (def 'OWNER (ORIGIN))
     ; the creator would be the AccountManager
-    (def 'CREATOR (CALLER))
+    (def 'MANAGER (CALLER))
+    (def 'CREATED_TIME (TIMESTAMP))
     
     ; macros for parameters
-    (def 'cmd () (calldataload 0x0))
-    ; for setName
-    (def 'userName () (calldataload 0x20))
-    ; for addElection
-    (def 'organizerName (calldataload 0x20))
-    (def 'electionAddress (calldataload 0x40))
-    ; for vote
-    (def 'vote (calldataload 0x60))
+    (def 'CMD () (calldataload 0x0))
+    (def 'ELECTION_ADDRESS (calldataload 0x20))
+    (def 'BALLOT (calldataload 0x40))
     
-    (singleInit "username" "none" "none" "none")
-
-    ; ll for all the elections that the user can vote in
+    ; --------------------------------------------------------------------------
+    ; variables (lower_case)
+    ; --------------------------------------------------------------------------
+    ; all the elections that the user can vote in
     (llInit "elections" "none" "none" "none")
 
     (return 0 (lll {
         ; body
-        ; ----------------------------------------------------------------------
-        ; Set username
-        ; ----------------------------------------------------------------------
-        ; Calldata: "setName" username
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "setName") {
-            (unless (= (CALLER) CREATOR) (STOP))
-            (singleSet "username" (userName))
-            [0x0]1
-            (return 0x0 0x20)
-        })
         
         ; ----------------------------------------------------------------------
-        ; Add an election that the user can vote in
+        ; Register an election in which this user can vote.
         ; ----------------------------------------------------------------------
-        ; Calldata: "addElection" organizerName electionAddress
+        ; Calldata: "registerElection" ELECTION_ADDRESS
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
-        (when (= (cmd) "addElection") {
+        (when (= (CMD) "registerElection") {
             ; check if the caller is an Organizer
             [0x0]"checkOrganizer"
-            [0x20](organizerName)
-            (CALL (gass) CREATOR 0 0x0 0x40 0x40 0x20)
+            [0x20](CALLER)
+            (CALL (gass) MANAGER 0 0x0 0x40 0x40 0x20)
             
             (when (= @0x40 0) (STOP))
             
-            (llAddLink "elections" (electionAddress) 1)
+            ; check if the organizer creates the election
+            [0x0]"checkOrganizer"
+            (CALL (gass) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            
+            (unless (= @0x40 (CALLER)) (STOP))
+            
+            (llAddLink "elections" (ELECTION_ADDRESS) (ELECTION_ADDRESS))
         })
 
         ; ----------------------------------------------------------------------
-        ; Cast a vote
+        ; Deregister an election that the user can vote in
         ; ----------------------------------------------------------------------
-        ; Calldata: "vote" userName electionAddress vote
+        ; Calldata: "deregisterElection" ELECTION_ADDRESS
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
-        (when (= (cmd) "vote") {
-            (unless (= (userName) (singleGet "username")) (STOP))
+        (when (= (CMD) "deregisterElection") {
+            ; check if the caller is an Organizer
+            [0x0]"checkOrganizer"
+            [0x20](CALLER)
+            (CALL (gass) MANAGER 0 0x0 0x40 0x40 0x20)
             
-            [0x0]"vote"
-            [0x20](vote)
-            (CALL (gass) (electionAddress) 0 0x0 0x40 0x40 0x20)
+            (when (= @0x40 0) (STOP))
             
-            ; @0x40 is the result of the voting
-            (return 0x40 0x20)
+            ; check if the organizer creates the election
+            [0x0]"checkOrganizer"
+            (CALL (gass) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            
+            (unless (= @0x40 (CALLER)) (STOP))
+            
+            (llRmLink "elections" (ELECTION_ADDRESS))
         })
-        
-        ; To be created
-        ; ----------------------------------------------------------------------
-        ; Remove an election that the user can vote in
-        ; ----------------------------------------------------------------------
-        ; Calldata: "rmElection" organizerName electionAddress
-        ; Returns: 0 - fail | 1 - success
-        ; ---------------------------------------------------------------------- 
     })
 })
