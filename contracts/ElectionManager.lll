@@ -1,8 +1,8 @@
 ; ------------------------------------------------------------------------------
 ; ElectionManager
 ; ------------------------------------------------------------------------------
-; Create contracts for elections.
-; Keep track of all the elections.
+; - create contracts for elections.
+; - keep track of all the elections.
 ; ------------------------------------------------------------------------------
 
 {
@@ -11,98 +11,69 @@
     (include "./env.def")
     (include "./Election.lll")
 
+    ; --------------------------------------------------------------------------
     ; macros
-    (def 'cmd () (CALLDATALOAD 0x00))
-    (def 'pollname () (CALLDATALOAD 0x20))
+    ; --------------------------------------------------------------------------
+    ; for constants
+    ; the address of DOUG, will be substituded in pdx
+    (def 'DAPPDOUG 0xabcdef)
+    ; the address of AccountManager, will be substituded in pdx
+    (def 'ACCOUNT_MANAGER 0xabcdef)
     
-    ; the address of DOUG, defined in pdx, may need to change it
-    ; ??????????????????????????????????????????????????????????????????????????
-    (def 'DAPPDOUG 0xdaffe)
+    ; for parameters
+    (def 'CMD () (CALLDATALOAD 0x0))
+    (def 'ELECTION_NAME () (CALLDATALOAD 0x20))
     
-    (kvInit "types" "none" "none" "none")
-    (kvSet "oneoutofn" 1)
-    (kvSet "yesorno" 1)
+    ; --------------------------------------------------------------------------
+    ; variables
+    ; --------------------------------------------------------------------------
+    (llInit "elections" "none" "none" "none")    ; all elections
 
-    (kvInit "polls" "none" "none" "none")
-    
     (return 0 (lll {
-        
+        ; body
         ; ----------------------------------------------------------------------
-        ; Create a contract for a new Election.
-        ; and record its name (or id?) and address
+        ; Create a contract for a new election.
         ; ----------------------------------------------------------------------
-        ; Permission Requirement: "pollmaker"
-        ; Calldata: "createOOONPoll" pollName pollType
-        ;   pollType: "
-        ; Returns: the address of the newly created contract
+        ; Calldata: "createElection" ELECTION_NAME
+        ; Returns:
+        ;     0 - fail
+        ;     0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "createElection") {
+        (when (= (CMD) "createElection") {
             ; first check if the name has already taken
-            (unless (= (kvGet "polls" (pollname)) 0) (STOP))
+            (unless (= (llGet "elections" (ELECTION_NAME)) 0) (STOP))
             
-            ; then check if the user has the permission to make a poll
-            ; 1. get the address of the contract for AccountFactory.lll
-            ;    and save it in memory 0x20
-            [0x0] "getContractAddr"
-            (CALL (gass) DAPPDOUG 0 0x0 0x20 0x20 0x20)
-            ; 2. do the checking
-            [0x0] "checkPerm"
+            ; then check if the caller is an organizer
+            [0x0] "checkOrganizer"
             [0x20] (CALLER)
-            [0x40] "pollmaker"
-            (CALL (gass) @0x20 0 0x0 0x60 0x60 0x20)
-            ; 3. if the user doesn't have the permission, stop
-            (unless (= @0x60 1) (STOP))
+            (CALL (gass) ACCOUNT_MANAGER 0 0x0 0x40 0x40 0x20)
+
+            (when (= @0x40 0) (STOP))
             
             ; create the contract and save its address in memory 0x0
-            [0x0] (create 0 0 (lll {
-                (ooonpoll)
+            [0x0](create 0 0 (lll {
+                (election)
             } 0))
-
-            [[@0x0]] 1    ; ????????????????????????????????????????????????????
+            [[@0x0]]1
             
-            ; poll name : poll contract address
-            (kvSet "polls" (pollname) @0x0)
+            (llAddLink "elections" (ELECTION_NAME) @0x0)
 
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Create a contract for a new yes-or-no poll
-        ; and record its name (or id?) and address
+        ; Delete an election (called by the election itself)
         ; ----------------------------------------------------------------------
-        ; Permission Requirement: ""
-        ; Calldata: "createYONPoll" pollId
-        ; Returns: the address of the newly created contract
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "createYONPoll") {
-            
-            ; create the contract and save its address in memory 0x0
-            [0x0] (create 0 0 (lll {
-                (yonpoll)
-            } 0))
-
-            [[@0x0]] 1
-            
-            ; poll name : poll contract address
-            (kvSet "polls" (pollName) @0x0)
-
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Delete the record of a poll contract
-        ; ----------------------------------------------------------------------
-        ; Permission Requirement: ""
-        ; Calldata: "deletePoll" pollName
+        ; Calldata: "rmElection" ELECTION_NAME
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "deletePoll") {
-            [0x0] (pollName)
-            [0x20] (kvGet "polls" @0x0)
+        (when (= (CMD) "rmElection") {
+            [0x0] (ElECTION_NAME)
+            [0x20] (llGet "elections" (ELECTION_NAME))
 
             ; if the caller is not the poll itself, then stop
             (unless (= (CALLER) @0x20) (STOP))
-            (kvSet "polls" @0x0 0)
+            (llRmLink "elections" @0x0)
 
             [0x0]1
             (return 0x0 0x20)
