@@ -5,6 +5,9 @@
 <title>SmartVote Login</title>
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <link rel="stylesheet" type="text/css" href="css/body.css"/> 
+<script src="scripts/SmartVote.js" type="text/javascript"></script>
+<script src="scripts/utils.js" type="text/javascript"></script>
+
 </head>
 <body>
 <div class="container">
@@ -21,14 +24,19 @@
 				<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>			</div> 
 			<div>
 				<!-- <input type="submit" value="Log in" /> -->
-				<input type="submit" onclick="jump()" value="log in" class="btn btn-primary" id="js-btn-login"/>
+				<input type="submit" onclick="jumpToCreateElection()" value="log in" class="btn btn-primary" id="js-btn-login"/>
+				<a href="#">Register as a voter</a>
+				<a href="#">Register as an Organizer</a>
 				<a href="#">Forgot your password?</a>
 				<!-- <a href="#">Register</a> -->
 			</div>
+			
+		
+			
 		</form><!-- form -->
-		 <div class="button">
-			<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>
-			<a href="https://github.com/E-Movement/SmartVote">What is SmartVote?</a>	
+		 <div class="button" style="text-align:center;">
+			<!--  <span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>-->
+			<a href="https://github.com/E-Movement/SmartVote" target="_blank">What is SmartVote?</a>	
 		</div> <!-- button -->
 	</section><!-- content -->
 </div>
@@ -40,9 +48,6 @@
 <p>Powered by: <a href="https://github.com/E-Movement" target="_blank">E-Movement</a></p>
 </div>
 </body>
-<script>
-function jump() {
-	window.location.href = "CreatePoll.html";
-}
-</script>
+
+
 </html>
