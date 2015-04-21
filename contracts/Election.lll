@@ -152,27 +152,35 @@
         })
 
         ;-----------------------------------------------------------------------
+        ; Check the organizer. (called by the Organizer)
+        ;-----------------------------------------------------------------------
+        ; Calldata: "checkOrganizer"
+        ; Returns:
+        ;     0 - the caller is not its organizer
+        ;     1 - the caller is its organizer
+        ;-----------------------------------------------------------------------
+        (when (= (CMD) "checkOrganizer") {
+            (unless (= (CALLER ORGANIZER) (STOP))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
         ; Delete the Election. (called by the Organizer)
         ;-----------------------------------------------------------------------
         ; Calldata: "deletePoll"
         ; Returns:
         ;-----------------------------------------------------------------------
-        (when (= (cmd) "deletePoll") {
+        (when (= (CMD) "deletePoll") {
+            ; check if the call is the Organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
 
-            (unless (= (singleGet "creator") (CALLER)) (STOP))
-
-            ; get the address of the PollFactory contract
-            ; and save it in memory 0x60
-            [0x0]"getContractAddr"
-            [0x20]"PollFactory"
-            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
+            ; remove the record in ElectionManager
+            [0x0]"rmElection"
+            (CALL (gass) @0x60 0 0x0 0x20 0x20 0x20)
             
-            ; delete the record in the PollFactory contract
-            [0x0]"deletePoll"
-            [0x20](singleGet "pollname")
-            (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
-            
-            (unless (= @0x40 1) (STOP))
+            (unless (= @0x20 1) (STOP))
             (suicide (ADRESS))
         })
         
