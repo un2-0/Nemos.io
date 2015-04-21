@@ -20,7 +20,7 @@ function showDefaultVoting() {
     voting = JSON.parse(voting);
     //var voting = jQuery.parseJSON(ret);
     //window.alert("done");
-    var showDiv = document.getElementById("show_place");
+    var showDiv = document.getElementById("showPlace");
     var candNum = voting.candidates.length;
 
     //Create and append a form
