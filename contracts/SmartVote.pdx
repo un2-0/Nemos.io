@@ -1,15 +1,21 @@
 #File Deployment
-
 !{DOUG
 deploy:
-    "./contracts/SmartVoteDOUG.lll" => {{DOUG}}
+    "./SmartVoteDOUG.lll" => {{DOUG}}
 !}DOUG
 
-!{PF
+!{ElectionManager
 modify-deploy:
-	"./contracts/PollFactory.lll" => {{PF}}
-	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
-!}PF
+    "./ElectionManager.lll" => {{EM}}
+    (def 'DOUG 0xabcdef) => (def 'DOUG {{DOUG}})
+!}
+
+!{AccountManager
+modify-deploy:
+    "./AccountManager.lll" => {{AM}}
+    (def 'DOUG 0xabcdef) => (def 'DOUG {{DOUG}})
+    (def 'ELECTION_MANAGER 0xabcdef) => (def 'ELECTIOn_MANAGER {{AM}})
+!}AccountManager
 
 !{setup
 transact:
@@ -18,7 +24,10 @@ transact:
 transact:
     {{DOUG}} => "setperm" "pollfactory" {{PF}} 1
 
+# register AccountManager and ElectionManager in DOUG
 transact:
-    {{DOUG}} => "register" "pollfactory" {{PF}}
+    {{DOUG}} => "registerContract" "AccountManager" {{AM}}
+transact:
+    {{DOUG}} => "registerContract" "ElectionManager" {{EM}}
 !}setup
 

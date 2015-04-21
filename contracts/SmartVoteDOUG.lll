@@ -19,6 +19,9 @@
     (def 'CONTRACT_NAME () (calldataload 0x20)
     (def 'CONTRACT_NAME () (calldataload 0x20)
 
+    ; --------------------------------------------------------------------------
+    ; variables (lower_case)
+    ; --------------------------------------------------------------------------
     (llInit "contracts" "none" "none" "none")
     (llAddLink "contracts" "DAPPDOUG" (ADDRESS))
 

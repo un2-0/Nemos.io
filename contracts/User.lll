@@ -13,8 +13,6 @@
     ; --------------------------------------------------------------------------
     ; macros (UPPER_CASE)
     ; --------------------------------------------------------------------------
-    ; macros for constants
-    (def 'DAPPDOUG 0xabcdef)
     ; the computer which owns this contract
     (def 'OWNER (ORIGIN))
     ; the creator would be the AccountManager
@@ -33,7 +31,7 @@
     (llInit "elections" "none" "none" "none")
 
     (return 0 (lll {
-        [[0xcccc]](gass)    ; ??????????????????????????????????????????????????
+        [[0xcccc]](GASS)    ; ??????????????????????????????????????????????????
 
         ; body
         
@@ -53,7 +51,7 @@
             
             ; check if the organizer creates the election
             [0x0]"checkOrganizer"
-            (CALL (gass) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
             
             (unless (= @0x40 (CALLER)) (STOP))
             
@@ -70,13 +68,13 @@
             ; check if the caller is an Organizer
             [0x0]"checkOrganizer"
             [0x20](CALLER)
-            (CALL (gass) MANAGER 0 0x0 0x40 0x40 0x20)
+            (CALL (GASS) MANAGER 0 0x0 0x40 0x40 0x20)
             
             (when (= @0x40 0) (STOP))
             
             ; check if the organizer creates the election
             [0x0]"checkOrganizer"
-            (CALL (gass) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
             
             (unless (= @0x40 (CALLER)) (STOP))
             

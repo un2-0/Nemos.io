@@ -15,10 +15,7 @@
     ; macros
     ; --------------------------------------------------------------------------
     ; for constants
-    ; the address of DOUG, will be substituded in pdx
-    (def 'DAPPDOUG 0xabcdef)
-    ; the address of AccountManager, will be substituded in pdx
-    (def 'ACCOUNT_MANAGER 0xabcdef)
+    (def 'DOUG 0xabcdef)
 
     ; for parameters
     (def 'CMD () (CALLDATALOAD 0x0))
@@ -43,10 +40,13 @@
             (unless (= (llGet "elections" (ELECTION_ADDRESS)) 0) (STOP))
             
             ; then check if the caller is an organizer
-            [0x0] "checkOrganizer"
-            [0x20] (CALLER)
-            (CALL (gass) ACCOUNT_MANAGER 0 0x0 0x40 0x40 0x20)
-
+            [0x0]"checkContract
+            [0x20]"AccountManager"
+            (CALL (GASS) DOUG 0 0x0 0x40 0x40 0x20)
+            (when (= @0x40 0) (STOP))
+            [0x0]"checkOrganizer"
+            [0x20](CALLER)
+            (CALL (GASS) @0x40 0 0x0 0x40 0x40 0x20)
             (when (= @0x40 0) (STOP))
             
             ; create the contract and save its address in memory 0x20

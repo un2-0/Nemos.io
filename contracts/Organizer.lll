@@ -17,7 +17,6 @@
     (def 'CREATED_TIME (TIMESTAMP))
     (def 'OWNER (ORIGIN))
     (def 'MANAGER (CALLER))    ; would be the AccountManager
-    (def 'ELECTION_MANAGER 0xabcdef)    ; to be substituted in pdx
     
     ; macros for parameters
     (def 'CMD () (calldataload 0x0))

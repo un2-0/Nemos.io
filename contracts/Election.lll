@@ -14,7 +14,6 @@
     ; macros (UPPER_CASE)
     ; --------------------------------------------------------------------------
     ; macros for constants
-    (def 'ACCOUNT_MANAGER 0xabcdef)    ; to be substituted in pdx
     (def 'ORGANIZER (ORIGIN))    ; the only account who can edit the election
     (def 'CREATED_TIME (TIMESTAMP))
     (def 'MANAGER (CALLER))
@@ -107,11 +106,8 @@
         (when (= (CMD) "registerVoter") {
             ; check if the caller is the Organizer
             (unless (= (CALLER) ORGANIZER) (STOP))
-            ; check if the provided address is a valid user
-            [0x0]"checkUser"
-            [0x20]VOTER_NAME
-            (CALL (GASS) ACCOUNT_MANAGER 0 0x0 0x40 0x40 0x20)
-            (when (= @0x40 0) (STOP))
+
+            ; TODO check if the provided address is a valid user
 
             (llAddLink "voters" (VOTER_NAME) 1)
 
