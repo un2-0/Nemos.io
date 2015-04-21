@@ -1,206 +1,189 @@
 ; ------------------------------------------------------------------------------
-; OneVote
+; Election
 ; ------------------------------------------------------------------------------
-; The template for the "one voter, one vote" voting method
+; The template for the Election contract
 ; ------------------------------------------------------------------------------
 
-(def 'onevote () {
+(def 'election () {
 
     (include "./env.def")
     (include "./defs/stdkv.def")
     (include "./defs/stll.def")
 
     ; --------------------------------------------------------------------------
-    ; macros
+    ; macros (UPPER_CASE)
     ; --------------------------------------------------------------------------
-    (def 'cmd () (calldataload 0x0))
-    
-    ; for setting attributes
-    (def 'attributekey (calldataload 0x20))
-    (def 'attributeval (calldataload 0x40))
+    ; macros for constants
+    (def 'ACCOUNT_MANAGER 0xabcdef)    ; to be substituted in pdx
+    (def 'ORGANIZER (ORIGIN))    ; the only account who can edit the election
+    (def 'CREATED_TIME (TIMESTAMP))
+    (def 'MANAGER (CALLER))
+    ; macros for parameters
+    (def 'CMD () (calldataload 0x0))
+    (def 'LOG () (calldataload 0x20))
 
-    ; macro for checking edit permission: the caller is in admins and the status
-    ; of the contract is 1 - created but not ready
-    (def 'epcheck () (&& (= (llGet "admins" (CALLER)) 1)
-                         (= (singleGet "status") 1)
-                     )
-    )
-
-    ; --------------------------------------------------------------------------
-    ; variable attributes
-    ; --------------------------------------------------------------------------
-    (kvInit "vattrs" "none" "none" "none")
-    (kvSet "vattrs" "name" 0)
-    (kvSet "vattrs" "description" 0)
-    (kvSet "vattrs" "opentime" 0) ;?????????????????????????????????????????????
-    (kvSet "vattrs" "closetime" 0)
-    ; status:
-    ;   1 - created but not ready (the only status in which the contract can be
-    ;       edited)
-    ;   2 - ready (waiting to be opened)
-    ;   3 - on-going (opened but not closed)
-    ;   3 - closed
-    (kvSet "attributes" "status" 1)
+    (def 'ATTRIBUTE_KEY () (calldataload 0x20))
+    (def 'ATTRIBUTE_VALUE () (calldataload 0x40))
     
-    ; --------------------------------------------------------------------------
-    ; constant attributes
-    ; --------------------------------------------------------------------------
-    (kvInit "cattrs" "none" "none" "none"
-    (kvSet "vattrs" "creattime" (TIMESTAMP))
-    (kvSet "vattrs" "creator" (ORIGIN))
-    (kvSet "vattrs" "type" "ooon") ; ???????????????????????????????????????????
+    (def 'VOTER_NAME () (calldataload 0x20))
+
+    (def 'OPTION () (calldataload 0x20))
+    
+    (def 'BALLOT () (calldataload 0x20))
 
     ; --------------------------------------------------------------------------
-    ; admins, voters and votes
+    ; variables (lower_case)
     ; --------------------------------------------------------------------------
-    ; for recording the addresses of all the contract (account) that can edit
-    ; this poll before it is ready (the creator will always be one of them)
-    (kvInit "admins" "none" "none" "none")
-    (kvSet "admins" (ORIGIN) 1)
-    
+    (llInit "logs" "none" "none" "none")
+    (singleInit "voting_rules" "none" "none" "none")
     (llInit "voters" "none" "none" "none")
-    (llInit "votes" "none" "none" "none")
-    
-    ; --------------------------------------------------------------------------
-    ; candidates and votes
-    ; --------------------------------------------------------------------------
-    (llInit "cands")
-    (kvInit "votes")
+    (llInit "ballots" "none" "none" "none")
+    (llInit "options" "none" "none" "none")
+
+    (llInit "legal_attribute_keys" "none" "none" "none")
+    (llAddLink "legal_attribute_keys" "name" "name")
+    (llAddLink "legal_attribute_keys" "description" "description")
+    (llAddLink "legal_attribute_keys" "open_time" "open_time")
+    (llAddLink "legal_attribute_keys" "close_time" "close_time")
+    (llAddLink "legal_attribute_keys" "voting_rules" "voting_rules")
+    (llAddLink "legal_attribute_keys" "counting_rules" "counting_rules")
+    (llAddLink "legal_attribute_keys" "result" "result")
+    (llAddLink "legal_attribute_keys" "status" "status")
+
+    (kvInit "attributes" "none" "none" "none")
+    ; status:
+    ;   1 - created (the only status in which the contract can be edited)
+    ;   2 - ready (all attributes except open_time and close_time are set)
+    ;   3 - waiting (waiting to be opened)
+    ;   4 - on-going (opened but not closed)
+    ;   5 - closed
+    (kvSet "attributes" "status" 1)
 
     (return 0 (lll{
-        [[0xcccc]](gass)
-        
+        [[0xcccc]](GASS)    ; ??????????????????????????????????????????????????
+
         ; ----------------------------------------------------------------------
-        ; Set a variable attribute
+        ; Add a log entry. (called by the Organizer)
         ; ----------------------------------------------------------------------
-        ; Calldata: "setattr" attributekey attributeval
-        ; - Legal attributekeys include:
-        ;   "name", "description", "opentime", "closetime" and "status"
+        ; Calldata: "log" LOG
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "setattr") {
-            (unless (epcheck) (STOP))
-            (kvSet (attributekey) (attributeval))
+        (when (= (CMD) "log") {
+            ; check if the caller is the organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
+            
+            ; add a log entry
+            (llAddLink "logs" (TIMESTAMP) LOG)
             
             [0x0]1
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Add a voter
+        ; Set an attribute.
         ; ----------------------------------------------------------------------
-        ; Calldata: "addvoter" voteraddr
-        ; Returns: 0 - fail | 1 -success
+        ; Calldata: "setAttribute" ATTRIBUTE_KEY ATTRIBUTE_VALUE
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "addvoter") {
-            (unless (epcheck) (STOP))
+        (when (= (CMD) "setAttribute") {
+            ; check if the caller is the organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
+            ; check if the key is legal
+            (when (= (llGet "legal_attribute_keys" (ATTRIBUTE_KEY)) 0) (STOP))
             
-            (llAddLink "voters" (candname) 1)
-            (kvSet "stat" (candname) 0)
+            ; do the setting
+            (kvSet (ATTRIBUTE_KEY) (ATTRIBUTE_VALUE))
+            
+            [0x0]1
+            (return 0x0 0x20)
         })
-        
+
         ; ----------------------------------------------------------------------
-        ; Add a candidate
+        ; Register a voter. (called by the Organizer)
         ; ----------------------------------------------------------------------
-        ; Calldata: "addcand" candname
+        ; Calldata: "registerVoter" VOTER_NAME (not the contract address)
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "addcand") {
-            (unless (epcheck) (STOP))
-            (llAddLink "cands" (candname) 1)
-            (kvSet "stat" (candname) 0)
+        (when (= (CMD) "registerVoter") {
+            ; check if the caller is the Organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
+            ; check if the provided address is a valid user
+            [0x0]"checkUser"
+            [0x20]VOTER_NAME
+            (CALL (GASS) ACCOUNT_MANAGER 0 0x0 0x40 0x40 0x20)
+            (when (= @0x40 0) (STOP))
+
+            (llAddLink "voters" (VOTER_NAME) 1)
+
+            [0x0]1
+            (return 0x0 0x20)
         })
-        
-        (when (&& (= (cmd) "init") (= (singleGet "inited") 0)) {
-			(singleSet "description" (hash))
-			[0x0](opnum)
-			(for ([0x20]1) (<= @0x20 @0x0) [0x20](+ @0x20 1)
-				(kvSet "ops" @0x20 0)
-			)
-			(singleSet "opnum" @0x0)
-			(singleSet "opened" (opentime))
-			(singleSet "closed" (closetime))
-			(singleSet "created" (createtime))
-			(singleSet "creator" (crtusrname))
-			(singleSet "plname" (plname))
-			(singleSet "inited" 1)
-			
-			[0x0]1
-			(return 0x0 0x20)
-		}
-	)
-; The following two blocks are to be removed because we can directly read the
-; value by their name in js.
-;(when (&& (= (cmd) "getopentime") (= (singleGet "inited") 1)) {
-;   [0x0]"opened"
-;   (return 0x0 0x20)
-;})
 
-;(when (&& (= (cmd) "getclosetime") (= (singleGet "inited") 1)) {
-;   [0x0]"closed"
-;   (return 0x0 0x20)
-;})
+        ; ----------------------------------------------------------------------
+        ; Add an option. (called by the Organizer)
+        ; ----------------------------------------------------------------------
+        ; Calldata: "addOption" OPTION
+        ; Returns: 0 - fail | 1 -success
+        ; ----------------------------------------------------------------------
+        (when (= (CMD) "addOption") {
+            ; check if the caller is the Organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
+            
+            (llAddLink "options" (OPTION) 1)
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
 
-		(when (&& (= (cmd) "setopentime") (= (singleGet "inited") 1)) {
-			(singleSet "opentime" (newopentime))
-
-			[0x0]1
-			(return 0x0 0x20)
-		})
-
-		(when (&& (= (cmd) "setclosetime") (= (singleGet "inited") 1)) {
-			(singleSet "closetime" (newclosetime))
-
-			[0x0]1
-			(return 0x0 0x20)
-		})
-
-		(when (&& (= (cmd) "setstatus") (= (singleGet "inited") 1))
-			{
-				(singleSet "status" (status))
-
-				[0x0]1
-				(return 0x0 0x20)
-			}
-		)
-
-		(when (&& (= (cmd) "vote") (= (singleGet "status") 1)) {
-			(kvSet "ops" (opnum) (+ (kvGet "ops" (opnum)) 1))
-
-			[0x0]1
-			(return 0x0 0x20)
-		})
-
-		(when (&& (= (cmd) "getstat") (= (singleGet "inited") 1)) {
-			[0x0](kvGet "ops" (opnum))
-			(return 0x0 0x20)
-		})
+        ; ----------------------------------------------------------------------
+        ; Record a ballot. (called by a voter)
+        ; ----------------------------------------------------------------------
+        ; Calldata: "addOption" BALLOT
+        ; Returns: 0 - fail | 1 -success
+        ; ----------------------------------------------------------------------
+        (when (&& (= (CMD) "recordBallot")) {
+            ; check if the caller is a registered voter
+            (when (= 0 (llGet "voters" (CALLER))) (STOP))
+            
+            (llAddLink "ballots" (CALLER) (BALLOT)
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
 
         ;-----------------------------------------------------------------------
-        ; Delete the poll
-        ; Only the creator of the poll can delete it.
+        ; Check the organizer. (called by the Organizer)
+        ;-----------------------------------------------------------------------
+        ; Calldata: "checkOrganizer"
+        ; Returns:
+        ;     0 - the caller is not its organizer
+        ;     1 - the caller is its organizer
+        ;-----------------------------------------------------------------------
+        (when (= (CMD) "checkOrganizer") {
+            (unless (= (CALLER ORGANIZER) (STOP))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Delete the Election. (called by the Organizer)
         ;-----------------------------------------------------------------------
         ; Calldata: "deletePoll"
         ; Returns:
         ;-----------------------------------------------------------------------
-        (when (= (cmd) "deletePoll") {
+        (when (= (CMD) "deletePoll") {
+            ; check if the call is the Organizer
+            (unless (= (CALLER) ORGANIZER) (STOP))
 
-            (unless (= (singleGet "creator") (CALLER)) (STOP))
-
-            ; get the address of the PollFactory contract
-            ; and save it in memory 0x60
-            [0x0]"getContractAddr"
-            [0x20]"PollFactory"
-            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x60 0x20)
+            ; remove the record in ElectionManager
+            [0x0]"rmElection"
+            (CALL (gass) @0x60 0 0x0 0x20 0x20 0x20)
             
-            ; delete the record in the PollFactory contract
-            [0x0]"deletePoll"
-            [0x20](singleGet "pollname")
-            (CALL (gass) @0x60 0 0x0 0x40 0x40 0x20)
-            
-            (unless (= @0x40 1) (STOP))
+            (unless (= @0x20 1) (STOP))
             (suicide (ADRESS))
         })
         
     } 0)) ; end of return
+
 })

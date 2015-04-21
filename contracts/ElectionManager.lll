@@ -19,11 +19,10 @@
     (def 'DAPPDOUG 0xabcdef)
     ; the address of AccountManager, will be substituded in pdx
     (def 'ACCOUNT_MANAGER 0xabcdef)
-    
+
     ; for parameters
     (def 'CMD () (CALLDATALOAD 0x0))
-    (def 'ELECTION_NAME () (CALLDATALOAD 0x20))
-    
+
     ; --------------------------------------------------------------------------
     ; variables
     ; --------------------------------------------------------------------------
@@ -34,14 +33,14 @@
         ; ----------------------------------------------------------------------
         ; Create a contract for a new election.
         ; ----------------------------------------------------------------------
-        ; Calldata: "createElection" ELECTION_NAME
+        ; Calldata: "createElection" ELECTION_ADDRESS
         ; Returns:
         ;     0 - fail
         ;     0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
         (when (= (CMD) "createElection") {
             ; first check if the name has already taken
-            (unless (= (llGet "elections" (ELECTION_NAME)) 0) (STOP))
+            (unless (= (llGet "elections" (ELECTION_ADDRESS)) 0) (STOP))
             
             ; then check if the caller is an organizer
             [0x0] "checkOrganizer"
@@ -50,29 +49,31 @@
 
             (when (= @0x40 0) (STOP))
             
-            ; create the contract and save its address in memory 0x0
-            [0x0](create 0 0 (lll {
+            ; create the contract and save its address in memory 0x20
+            [0x20](create 0 0 (lll {
                 (election)
             } 0))
-            [[@0x0]]1
+            [[@0x20]]1
             
-            (llAddLink "elections" (ELECTION_NAME) @0x0)
+            (llAddLink "elections" @0x0 @0x0)
+            
+            ; register the contract in the organizer's account
+            [0x0]"registerElection"
+            (CALL (GASS) @0x40 0 0x20 0x40 0x60 0x20)
 
-            (return 0x0 0x20)
+            (return 0x20 0x20)
         })
 
         ; ----------------------------------------------------------------------
         ; Delete an election (called by the election itself)
         ; ----------------------------------------------------------------------
-        ; Calldata: "rmElection" ELECTION_NAME
+        ; Calldata: "rmElection"
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (CMD) "rmElection") {
-            [0x0] (ElECTION_NAME)
-            [0x20] (llGet "elections" (ELECTION_NAME))
+            ; check if the election is recorded
+            (when (= 0 (llGet "elections" (CALLER))) (STOP))
 
-            ; if the caller is not the poll itself, then stop
-            (unless (= (CALLER) @0x20) (STOP))
             (llRmLink "elections" @0x0)
 
             [0x0]1
