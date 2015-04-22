@@ -109,3 +109,7 @@ function updateVotingNumInPage() {
         document.getElementById("voting_num").innerHTML = this.responseText;
     }
 }
+
+function jumpToLogin() {
+	window.location.href = "../index.html";
+}
