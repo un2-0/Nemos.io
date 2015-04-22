@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Show Result</title>
+
+<script>
+function jumpToHome() {
+	window.location.href = "../templates/UserHome.html";
+}
+</script>
 </head>
 <body>
  <form>
@@ -20,7 +26,7 @@
       <div><hr/></div>
 
       <div>
-        <button id = "homeButton" type="button">Back to home</button>
+        <button onclick ="jumpToHome()" id = "homeButton" type="button">Back to home</button>
       </div>
 
  </form>
