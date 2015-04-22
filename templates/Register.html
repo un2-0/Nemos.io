@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<!--[if IE 8 ]> <html lang="en" class="ie8"> <![endif]-->
-<!--[if IE 9 ]> <html lang="en" class="ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+
+ <html lang="en"> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Register</title>
 
 
-<!--[if lt IE 9]>
-<script src="js/html5shiv.js"></script>
-<![endif]-->
+
 
 <link href="css/normalize.css" rel="stylesheet"/>
 <link href="css/jquery-ui.css" rel="stylesheet"/>
@@ -37,47 +34,21 @@ body{font:normal 15px/1.5 Arial, Helvetica, Free Sans, sans-serif;color: #222;ba
         <section name="Step One">
 
           <div><label>Username:</label><input id="username" name="username" type="text"/></div>
+          <br>
           <div><label>Password:</label><input id="pass" name="password" type="password"/></div>
+          <br>
           <div><label>Email:</label><input id="email" name="email" data-ideal="required email" type="email"/></div>
-          <div><label>Date of Birth:</label><input name="date" class="datepicker" data-ideal="date" type="text" placeholder="mm/dd/yyyy"/></div>
-          <div><label>Upload your Avatar:</label><input id="file" name="file" multiple type="file"/></div>
-          <div><label>Personal Website:</label><input name="website" data-ideal="url" type="text"/></div>
+          <br>
+          <div><label>Register as:</label>
+            <label><input type="radio" name="radio" checked/>Voter</label>
+            <label><input type="radio" name="radio"/>Organizer</label>
+          </div>
+          
+         <br>
+          
         </section>
 
-        <section name="Step Two">
-          <div id="languages">
-            <label>Languages:</label>
-            <label><input type="checkbox" name="langs[]" value="English"/>French</label>
-            <label><input type="checkbox" name="langs[]" value="Chinese"/>Chinese</label>
-            <label><input type="checkbox" name="langs[]" value="Spanish"/>ENglish</label>
-            <label><input type="checkbox" name="langs[]" value="French"/>Spanish</label>
-          </div>
-          <div><label>XXXX:</label>
-            <label><input type="radio" name="radio" checked/>1</label>
-            <label><input type="radio" name="radio"/>2</label>
-            <label><input type="radio" name="radio"/>3</label>
-            <label><input type="radio" name="radio"/>4</label>
-          </div>
-        </section>
 
-        <section name="Step Three">
-          <div><label>Phone Number:</label><input type="tel" name="phone" data-ideal="phone"/></div>
-          <div><label>Nationality:</label>
-          <select id="states" name="states">
-            <option value="default">&ndash; Nationality &ndash;</option>
-            <option value="AL">Arab</option>
-            <option value="AK">China</option>
-            <option value="AZ">USA</option>
-            <option value="AR">France</option>
-            <option value="CA">Britain</option>
-            <option value="CO">Germany</option>
-            <option value="CT">Spain</option>
-            <option value="DE">Russia</option>
-          </select>
-        </div>
-        <div><label>PostCode:</label><input type="text" name="zip" data-ideal="zip"/></div>
-        <div><label>Description:</label><textarea id="comments" name="comments"></textarea></div>
-      </section>
 
       <div><hr/></div>
 
