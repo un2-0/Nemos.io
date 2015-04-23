@@ -1,0 +1,84 @@
+; ------------------------------------------------------------------------------
+; User
+; ------------------------------------------------------------------------------
+; The template for users, the accounts who can vote in elections.
+; ------------------------------------------------------------------------------
+(def 'user () {
+
+    ; init
+    (include "./env.def")
+    (include "./defs/single.def")
+    (include "./defs/stdll.def")
+    
+    ; --------------------------------------------------------------------------
+    ; macros (UPPER_CASE)
+    ; --------------------------------------------------------------------------
+    ; the computer which owns this contract
+    (def 'OWNER (ORIGIN))
+    ; the creator would be the AccountManager
+    (def 'MANAGER (CALLER))
+    (def 'CREATED_TIME (TIMESTAMP))
+    
+    ; macros for parameters
+    (def 'CMD () (calldataload 0x0))
+    (def 'ELECTION_ADDRESS (calldataload 0x20))
+    (def 'BALLOT (calldataload 0x40))
+    
+    ; --------------------------------------------------------------------------
+    ; variables (lower_case)
+    ; --------------------------------------------------------------------------
+    ; all the elections that the user can vote in
+    (llInit "elections" "none" "none" "none")
+
+    (return 0 (lll {
+        [[0xcccc]](GASS)    ; ??????????????????????????????????????????????????
+
+        ; body
+        
+        ; ----------------------------------------------------------------------
+        ; Register an election in which this user can vote.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerElection" ELECTION_ADDRESS
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (CMD) "registerElection") {
+            ; check if the caller is an Organizer
+            [0x0]"checkOrganizer"
+            [0x20](CALLER)
+            (CALL (gass) MANAGER 0 0x0 0x40 0x40 0x20)
+            
+            (when (= @0x40 0) (STOP))
+            
+            ; check if the organizer creates the election
+            [0x0]"checkOrganizer"
+            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            
+            (unless (= @0x40 (CALLER)) (STOP))
+            
+            (llAddLink "elections" (ELECTION_ADDRESS) (ELECTION_ADDRESS))
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Deregister an election that the user can vote in
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deregisterElection" ELECTION_ADDRESS
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (CMD) "deregisterElection") {
+            ; check if the caller is an Organizer
+            [0x0]"checkOrganizer"
+            [0x20](CALLER)
+            (CALL (GASS) MANAGER 0 0x0 0x40 0x40 0x20)
+            
+            (when (= @0x40 0) (STOP))
+            
+            ; check if the organizer creates the election
+            [0x0]"checkOrganizer"
+            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
+            
+            (unless (= @0x40 (CALLER)) (STOP))
+            
+            (llRmLink "elections" (ELECTION_ADDRESS))
+        })
+    })
+})
