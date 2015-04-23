@@ -1,11 +1,12 @@
 
-function jumpToUserHome() {
-	window.alert("test");
-	window.location.href = "../VoterHome/VoterHome.html";
+function jumpToVoterHome() {
+	window.location.href = "VoterHome/VoterHome.html";
 }
 
 function jumpToOrganizerHome() {
-	window.location.href = "../OrganizerHome/OrganizerHome.html";
+	window.alert("test3");
+	window.location.href = "OrganizerHome/OrganizerHome.html";
+	window.alert("test4");
 }
 
 
