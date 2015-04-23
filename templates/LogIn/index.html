@@ -5,6 +5,9 @@
 <title>SmartVote Login</title>
 <link rel="stylesheet" type="text/css" href="../../css/style.css" />
 <link rel="stylesheet" type="text/css" href="../../css/body.css" />
+<script src="scripts/SmartVote.js" type="text/javascript"></script>
+<script src="scripts/utils.js" type="text/javascript"></script>
+
 </head>
 <body>
 	<div class="container">
@@ -12,28 +15,35 @@
 		<form action="">
 			<h1>SmartVote</h1>
 			<div>
-				<input type="text" placeholder="Username" required="" id="username" />
+				<input type="text" placeholder="Username" id="username" />
 			</div>
 			<div>
-				<input type="password" placeholder="Password" required=""
-					id="password" />
+				<input type="password" placeholder="Password" id="password" />
 			</div>
 			<div class="">
 				<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>
 			</div>
 			<div>
 				<!-- <input type="submit" value="Log in" /> -->
-				<input type="submit" onclick="jump()" value="log in"
-					class="btn btn-primary" id="js-btn-login" /> <a href="#">Forgot
-					your password?</a>
+				<input type="submit" onclick="jumpToUserHome()"
+					value="login as Voter" class="btn btn-primary" id="js-btn-login" />
+				<input type="submit" onclick="jumpToOrganizerHome()"
+					value="login as ORG" class="btn btn-primary" id="js-btn-login" />
+				<br></br>
+				<br></br> <a href="../Registration/Register.html">Register</a> <a
+					href="../RetrivePassword/RetrivePassword.html">Forgot your
+					password?</a>
 				<!-- <a href="#">Register</a> -->
 			</div>
+
+
+
 		</form>
 		<!-- form -->
-		<div class="button">
-			<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>
-			<a href="https://github.com/E-Movement/SmartVote">What is
-				SmartVote?</a>
+		<div class="button" style="text-align: center;">
+			<!--  <span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>-->
+			<a href="https://github.com/E-Movement/SmartVote" target="_blank">What
+				is SmartVote?</a>
 		</div>
 		<!-- button --> </section>
 		<!-- content -->
@@ -49,9 +59,6 @@
 						</p>
 					</div>
 </body>
-<script>
-	function jump() {
-		window.location.href = "../CreatePoll/CreatePoll.html";
-	}
-</script>
+
+
 </html>
