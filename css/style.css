@@ -151,7 +151,7 @@ a:hover{ text-decoration: underline; }
 	-ms-transition: all 0.5s ease;
 	-o-transition: all 0.5s ease;
 	transition: all 0.5s ease;
-	background: #eae7e7 url(../images/8bcLQqF.png) no-repeat;
+	background: #eae7e7 url(../images/indexIcons.png) no-repeat;
 	border: 1px solid #c8c8c8;
 	color: #777;
 	font: 13px Helvetica, Arial, sans-serif;
@@ -213,10 +213,13 @@ a:hover{ text-decoration: underline; }
 #content form div a {
 	color: #004a80;
     float: right;
-    font-size: 12px;
-    margin: 30px 15px 0 0;
+    font-size: 14px;
+    margin: 5px 5px 0 0;
     text-decoration: underline;
 }
+
+
+
 .button {
 	background: rgb(247,249,250);
 	background: -moz-linear-gradient(top,  rgba(247,249,250,1) 0%, rgba(240,240,240,1) 100%);
