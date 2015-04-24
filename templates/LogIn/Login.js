@@ -1,5 +1,6 @@
 
 function jumpToVoterHome() {
+	window.alert("test3");
 	window.location.href = "VoterHome/VoterHome.html";
 }
 

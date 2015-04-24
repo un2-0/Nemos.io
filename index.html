@@ -7,20 +7,17 @@
 <link rel="stylesheet" type="text/css" href="./css/body.css" />
 
 
-<script>
 
-function jumpToVoterHome() {
-	window.alert("test3");
-	window.location.href = "templates/VoterHome/VoterHome.html" ;
-}
-</script>
 
 <script> 
+
 function jumpToOrganizerHome() {
 	
-	window.location.href = "OrganizerHome/OrganizerHome.html";
+	window.location.href = "../templates/OrganizerHome/OrganizerHome.html";
 	window.alert("test4");
-} </script>
+}
+
+</script>
 
 
 
@@ -43,16 +40,17 @@ function jumpToOrganizerHome() {
 			</div>
 			<div>
 				<!-- <input type="submit" value="Log in" /> -->
-				<input type="submit" onclick="jumpToVoterHome()"
-					value="login as Voter" class="btn btn-primary" id="js-btn-login" />
+				<input type="submit" 
+					value="login as Voter" class="btn btn-primary" id="asVoter" />
 				<input type="submit" onclick="jumpToOrganizerHome()"
-					value="login as ORG" class="btn btn-primary" id="js-btn-login" />
-				<br></br>
-				<br></br> <a href="../Registration/Register.html">Register</a> <a
+					value="login as ORG" class="btn btn-primary" />
+				<br/>
+				<br/>
+				 <a href="../Registration/Register.html">Register</a> <a
 					href="../RetrivePassword/RetrivePassword.html">Forgot your
 					password?</a>
 				<!-- <a href="#">Register</a> -->
-				<button onclick="jumpToVoterHome()">Click me</button>
+				<button onclick="jumpToVoterHome()" id="test">Click me</button>
 				<button onclick="jumpToOrganizerHome()">Click me</button>
 			</div>
 
@@ -71,14 +69,26 @@ function jumpToOrganizerHome() {
 	<!-- container -->
 
 
-	<br><br><br><br>
+	<br/><br/><br/><br/>
 					<div style="text-align: center;">
 						<p>
 							Powered by: <a href="https://github.com/E-Movement"
 								target="_blank">E-Movement</a>
 						</p>
 					</div>
+<script>
+window.onload = init;
+
+function init() {
+	var btn = document.getElementById("test");
+	btn.innerHTML = "CLICK!";
+	btn.onClick = jumpToVoterHome;
+}
+
+function jumpToVoterHome() {
+	window.alert("test3");
+	location.href = "http://zhihu.com";
+}
+</script>
 </body>
-
-
 </html>
