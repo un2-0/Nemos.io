@@ -1,63 +1,65 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html >
+<html>
 <head>
-<meta  charset=utf-8" />
+<meta charset=utf-8 " />
 <title>SmartVote Login</title>
 <link rel="stylesheet" type="text/css" href="./css/style.css" />
 <link rel="stylesheet" type="text/css" href="./css/body.css" />
 
-
-
-
-<script> 
-
-function jumpToOrganizerHome() {
-	
-	window.location.href = "../templates/OrganizerHome/OrganizerHome.html";
-	window.alert("test4");
-}
-
+<script>
+		function jumpToVoterHome() {
+			window.alert("test1");
+			window.location.href = "./templates/VoterHome/VoterHome.html";
+		}
 </script>
 
+<script>
+		function jumpToOrganizerHome() {
+			window.alert("test2");
+			window.location.href = "./templates/OrganizerHome/OrganizerHome.html";
 
-
-
-
+		}
+</script>
 </head>
 <body>
 	<div class="container">
 		<section id="content">
 		<form action="">
 			<h1>SmartVote</h1>
+			<!-- input username and password -->
 			<div>
 				<input type="text" placeholder="Username" id="username" />
 			</div>
 			<div>
 				<input type="password" placeholder="Password" id="password" />
 			</div>
-			<div class="">
-				
-			</div>
+			</form>
 			<div>
 				<!-- <input type="submit" value="Log in" /> -->
-				<input type="submit" 
-					value="login as Voter" class="btn btn-primary" id="asVoter" />
-				<input type="submit" onclick="jumpToOrganizerHome()"
-					value="login as ORG" class="btn btn-primary" />
-				<br/>
-				<br/>
-				 <a href="../Registration/Register.html">Register</a> <a
-					href="../RetrivePassword/RetrivePassword.html">Forgot your
-					password?</a>
-				<!-- <a href="#">Register</a> -->
-				<button onclick="jumpToVoterHome()" id="test">Click me</button>
-				<button onclick="jumpToOrganizerHome()">Click me</button>
+				<!-- <input type="submit" value="login as Voter" class="btn btn-primary"
+				onclick="jumpToVoterHome()" id="asVoter" style="text-align: left; /> 
+			
+				<input type="submit"
+					onclick="jumpToOrganizerHome()" value="login as ORG" class="btn btn-primary" />  -->
+					
+				<!--the two buttons to login  -->
+				<div style="text-align: centre;">
+				<button type="button" onclick="jumpToVoterHome()">Voter Login</button>
+				<button type="button" onclick="jumpToOrganizerHome()">Organizer Login</button>
+				</div>	
+				
+				<br />
+				
+				<div style="text-align: right;" >
+				<!--link to the register page  -->
+				<a href="templates/Registration/Register.html" >Register</a> 
+				<br><br>
+				<!--link to retrieve user password page  -->
+				<a href="templates/RetrivePassword/RetrivePassword.html" style="text-align: right;">Forgot your password?</a>
+				</div>
+				
+					 
 			</div>
-
-
-
-		</form>
-		<!-- form -->
 		<div class="button" style="text-align: center;">
 			<!--  <span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>-->
 			<a href="https://github.com/E-Movement/SmartVote" target="_blank">What
@@ -69,26 +71,17 @@ function jumpToOrganizerHome() {
 	<!-- container -->
 
 
-	<br/><br/><br/><br/>
-					<div style="text-align: center;">
-						<p>
-							Powered by: <a href="https://github.com/E-Movement"
-								target="_blank">E-Movement</a>
-						</p>
-					</div>
-<script>
-window.onload = init;
+	<br />
+	<br />
+	<br />
 
-function init() {
-	var btn = document.getElementById("test");
-	btn.innerHTML = "CLICK!";
-	btn.onClick = jumpToVoterHome;
-}
+	<div style="text-align: center;">
+		<p>
+			Powered by: <a href="https://github.com/E-Movement" target="_blank">E-Movement</a>
+		</p>
+	</div>
 
-function jumpToVoterHome() {
-	window.alert("test3");
-	location.href = "http://zhihu.com";
-}
-</script>
+
+
 </body>
 </html>
