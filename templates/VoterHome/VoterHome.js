@@ -1,4 +1,7 @@
-function LodingVoterElections() {
+
+window.onload(loadInformation());
+
+function loadInformation(){
 	
 }
 
