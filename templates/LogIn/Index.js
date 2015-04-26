@@ -1,45 +1,66 @@
-/**
- * 
- */
 var	sender = new HttpAPI();
 baseUrl = "/apis/SmartVote";
 
 function login_as_organiser(){
-	/*this request "organiserLogin" require a JSON string response which contains:
+	/*this request "organiserLogin" requires a piece of data "process" in http response which contains:
+	 * 
 	 * "process" : createNew (if created a new organiser account for this computer)
 	 *			   registered (if this computer has been registered as organiser)
-	 *
-	 *	
-	
 	*/
-	var result = sender.send("GET", baseUrl+ "/organiserLogin&", null);
 	
-	result = JSON.parse(result);
-	
-	if(result.process === "createNew" && result.res === "success"){
-		window.alert("You haven't registerd as organiser, created a new account for you");
+	sender.sendAsync("GET", baseUrl+ "/organiserLogin&", null, function(res){ 
 		
-	
-	} else if (result.process === "createNew" && result.res === "fail"){
-		window.alert("You haven't registerd as organiser, failed to create a new account for you");
-	} else if (result.process === "registered" && result.res === "success") {
-		
-	} else if (result.process === "registered" && result.res === "fail") {
-		window.alert("fail to log you in");
-	} else {
-		window.alert("fail to log you in, for unknown reason.");
-	}
-	
-	
-	var fName = document.getElementById('filenameGet').value;
-	sender.sendAsync("GET", baseUrl + "/files/" + fName, null, function(re) {
-		if (re.status === 200) {
-			console.log(re);
-			var body = re.response;
+		if (res.status === 200) {
+			console.log(res);
+			var body = res.response;
 			body = JSON.parse(body);
-	        document.getElementById('output').value = decodeURI(body.data);
+			if (body.process === "createNew") {
+				window.alert("you have not registered as organiser, created an account for you");
+				window.location.href = "./templates/OrganizerHome/OrganizerHome.html";
+			} else if (body.process === "registered"){
+				window.alert("account detected, loging you in");
+				window.location.href = "./templates/OrganizerHome/OrganizerHome.html";
+			} else {
+				window.alert("bad response, fail to log in");
+			}
+	        
 	    } else {
-			document.getElementById('output').value = "File not found";
+			window.alert("failed to login");
 		}
 	});
-};
+	
+}
+
+
+function login_as_Voter(){
+	/*this request "voterLogin" requires a piece of data "process" in http response which contains:
+	 * 
+	 * "process" : createNew (if created a new voter account for this computer)
+	 *			   registered (if this computer has been registered as voter)
+	*/
+	
+	sender.sendAsync("GET", baseUrl+ "/VoterLogin&", null, function(res){ 
+		
+		if (res.status === 200) {
+			console.log(res);
+			var body = res.response;
+			body = JSON.parse(body);
+			if (body.process === "createNew") {
+				window.alert("you have not registered as Voter, created an account for you");
+				window.location.href = "./templates/VoterHome/VoterHome.html";
+			} else if (body.process === "registered"){
+				window.alert("account detected, loging you in");
+				window.location.href = "./templates/VoterHome/VoterHome.html";
+			} else {
+				window.alert("bad response, fail to log in");
+			}
+	        
+	    } else {
+			window.alert("failed to login");
+		}
+	});
+	
+}	
+	
+	
+	
