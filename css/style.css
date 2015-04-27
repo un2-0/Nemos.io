@@ -17,6 +17,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	vertical-align: baseline;
 	background: transparent;
 }
+
 body {
 	background: #DCDDDF ;
 	color: #000;
@@ -218,9 +219,7 @@ a:hover{ text-decoration: underline; }
     text-decoration: underline;
 }
 
-
-
-.button {
+#intro {
 	background: rgb(247,249,250);
 	background: -moz-linear-gradient(top,  rgba(247,249,250,1) 0%, rgba(240,240,240,1) 100%);
 	background: -webkit-linear-gradient(top,  rgba(247,249,250,1) 0%,rgba(240,240,240,1) 100%);
@@ -241,7 +240,8 @@ a:hover{ text-decoration: underline; }
 	border-top: 1px solid #CFD5D9;
 	padding: 15px 0;
 }
-.button a {
+
+#intro a {
 	background: url(../images/indexIcons.png) 0 -112px no-repeat;
 	color: #7E7E7E;
 	font-size: 17px;
@@ -253,7 +253,8 @@ a:hover{ text-decoration: underline; }
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 }
-.button a:hover {
+
+#intro a:hover {
 	background-position: 0 -135px;
 	color: #00aeef;
 }
