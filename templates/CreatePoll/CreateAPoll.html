@@ -54,7 +54,6 @@
 	color: #fff;
 }
 </style>
-
 <script type="text/javascript">
 	$(function() {
 		var uls = $('.sidebar-nav > ul > *').clone();
@@ -62,7 +61,6 @@
 		$('#main-menu').append(uls.clone());
 	});
 </script>
-
 <script src="../../lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
 	$("[rel=tooltip]").tooltip();
@@ -72,20 +70,23 @@
 		});
 	});
 </script>
-
 </head>
+
+
+<!-- need to utilize JS to control the navi bar. For example, if the user is just a regular voter,
+the "create a poll" function should be disabled. -->
+
 <body class=" theme-blue">
-
+	<!-- in case the user is using lower version IE. -->
 	<!-- Demo page code -->
-
-
-
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+
 	<!-- Le fav and touch icons -->
+	<!-- currentlt useless icons and stuff, 4.27.2015 -->
 	<link rel="shortcut icon" href="../assets/ico/favicon.ico">
 	<link rel="apple-touch-icon-precomposed" sizes="144x144"
 		href="../assets/ico/apple-touch-icon-144-precomposed.png">
@@ -232,7 +233,7 @@
 										class="form-control">
 								</div>
 								<div class="form-group">
-									<label>Your Email</label> <input type="text"
+									<label>Your Email</label> <input type="email"
 										class="form-control">
 								</div>
 
@@ -248,22 +249,30 @@
 										<option value=8>Eight</option>
 									</select>
 								</div>
-								
 								<!-- Probably need to use JS to write a method for adding more candidates -->
 								<div class="form-group">
 									<label>Candidate One</label> <input type="text"
 										class="form-control">
 								</div>
 								<div class="form-group">
-									<label>Candidation</label> <input type="text"
+									<label>Candidate Two</label> <input type="text"
 										class="form-control">
 								</div>
 								<div class="form-group">
-									<label>Candidation</label> <input type="text"
+									<label>Candidate Three</label> <input type="text"
 										class="form-control">
 								</div>
-								
-								
+								<div class="form-group">
+									<label>Max Votes</label> <input type="number"
+										class="form-control">
+								</div>
+								<div class="form-group">
+									<label>End Date</label> <input type="date" class="form-control">
+								</div>
+								<div class="form-group">
+									<label>End Time</label> <input type="Time" class="form-control">
+								</div>
+
 
 								<div class="form-group">
 									<!-- <label>Time Zone</label> <select name="DropDownTimezone"
@@ -343,9 +352,17 @@
 
 					<div class="btn-toolbar list-toolbar">
 						<button class="btn btn-primary">
-							<i class="fa fa-save"></i> Save
+							<i class="fa fa-save"></i> Create
 						</button>
-						<a href="#myModal" data-toggle="modal" class="btn btn-danger">Delete</a>
+						<button class="btn btn-danger" value="reset">
+							<i class="btn btn-danger"> </i>Reset
+						</button>
+
+						<!-- 
+						currently useless button, 4.27.2015
+						<a href="#myModal" data-toggle="modal" class="btn btn-danger">Reset</a>
+						 -->
+
 					</div>
 				</div>
 			</div>
