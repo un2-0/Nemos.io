@@ -211,7 +211,10 @@ the "create a poll" function should be disabled. -->
 
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
-				<li><a href="#profile" data-toggle="tab">Password</a></li>
+				<!-- currenly useless, 4.27.2015 Kun
+				this nav bar could include more options, such as voting rules and counting
+				method. -->
+				<!-- <li><a href="#profile" data-toggle="tab">Password</a></li> -->
 			</ul>
 
 			<div class="row">
@@ -340,11 +343,13 @@ the "create a poll" function should be disabled. -->
 
 							<form id="tab2">
 								<div class="form-group">
-									<label>New Password</label> <input type="password"
+								<!-- each poll has a permission code. The poller needs to enter the
+								permission code to edit a poll.  -->
+									<label>Permission Code</label> <input type="password"
 										class="form-control">
 								</div>
 								<div>
-									<button class="btn btn-primary">Update</button>
+									<button class="btn btn-primary">Edit</button>
 								</div>
 							</form>
 						</div>
