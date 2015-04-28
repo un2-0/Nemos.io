@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <div id="content">
-      <form>
+      <form id="loginForm">
         <h1>SmartVote</h1>
         <!-- input username and password -->
         <input type="text" placeholder="Username" id="username" />
@@ -21,7 +21,7 @@
         </p>
       </form>
 
-      <p><button id="loginBtn">Login</button></p>
+      <p><button onclick="login()" id="loginBtn">Login</button></p>
       <p><button id="regBtn">Register</button></p>
 
       <div>
@@ -35,7 +35,7 @@
 
   </div>
 
-  <script type="text/javascript" src="templates/index.js"></script>
+  <script type="text/javascript" src="templates/Login.js"></script>
   <script type="text/javascript" src="templates/API/utils.js"></script>
 
 </body>
