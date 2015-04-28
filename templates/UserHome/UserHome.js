@@ -1,9 +1,10 @@
 
-window.onload(loadInformation());
 
 function loadInformation(){
 	//window.alert("initialing");
 
+	window.alert(sessionStorage.userName);
+	
 	var elections = document.getElementById("VoterDisplayElection");
 	var out = "";
 	

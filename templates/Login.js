@@ -16,29 +16,60 @@ function login(){
 		form.reset();
 	} 
 	
-
-	var userinfo = { username : userName , password : passWord };
+	var userinfo = { username : userName.value , password : passWord.value };
+	console.log(userinfo);
+	
+	
+	//for test
+	//Note that: browser in Eclipse doesnt support session storage,plz test in chrome
+	sessionStorage.userName = userName.value;
+	window.alert("userinfo.username:"+userinfo.username +"   userinfo.password: "+userinfo.password+"   username in session: "+ sessionStorage.userName);
+	window.location.href = "templates/UserHome/UserHome.html";
+	
 	
 	
 	/*this request "Login" requires data below in http response: 
-	 * 
+	 *  "result" =  "success"(if username and password all good)
+	 *  			"userDoesntExist" (if user id doesnt exist)
+	 *  			"wrongPassWord" (if user id exist but the password is wrong)
+	 *  
+	 *  "accountAddr" contains the addrs of the user's account, if the result is not "success", this will
+	 *  				be null or "";
 	 *
 	*/
-	sender.sendAsync("GET", baseUrl+ "/Login&", null, function(res){ 
+	sender.sendAsync("GET", baseUrl+ "/Login&", JSON.stringify(userinfo), function(res){ 
 		
-		if (res.status === 200) {
+		if (res.status == 200) {
 			console.log(res);
 			var body = res.response;
 			
 			body = JSON.parse(body);
-			if (body.process === "createNew") {
-				window.alert("you have not registered as Voter, created an account for you");
-				window.location.href = "./templates/VoterHome/VoterHome.html";
-			} else if (body.process === "registered"){
-				window.alert("account detected, loging you in");
-				window.location.href = "./templates/VoterHome/VoterHome.html";
+			
+			if (body.result === "success") {
+				
+				sessionStorage.userName = userName.value;
+				
+				if (body.accountAddr == "" || body.accountAddr === null) {
+					window.alert("no user accountAddr in response");
+				} else {
+					sessionStorage.accountAddr = body.accountAddr;
+				}
+
+				window.location.href = "templates/UserHome/UserHome.html";
+				
+			} else if (body.result === "userDoesntExist") {
+				
+				window.alert("Sorry, the user name does not exist");
+				form.reset();
+				
+			} else if (body.result === "wrongPassWord"){
+				
+				window.alert("Sorry, your password is wrong");
+				form.reset();
+				
 			} else {
-				window.alert("bad response, fail to log in");
+				
+				window.alert("bad response");
 			}
 	        
 	    } else {
@@ -46,4 +77,8 @@ function login(){
 		}
 	});
 	
+}
+
+function jumpToRegistration(){
+	window.location.href = "templates/Registration/Register.html";
 }
