@@ -10,34 +10,35 @@ function SmartVote() {
 	// pass that object into the appropriate sub handler (should one exist).
 	// Sub handlers needs to return a response object.
 	this.handle = function (httpReq) {
-
 		Println("Receiving request...");
-		Println("http request:");
-		Println(httpReq);
-		// httpReq = "map[
-		//                Method:getContractAddress
-		//                Host:localhost:3000
-		//                Header:map[
-		//                           Connection:[keep-alive]
-		//                           Origin:[http://localhost:3000]
-		//                           Referer:[http://localhost:3000/SmartVote/backendTests.html]
-		//                           User-Agent:[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36]
-		//                           Accept:[*/*]
-		//                           Accept-Encoding:[gzip, deflate, sdch]
-		//                           Accept-Language:[zh,en;q=0.8,en-GB;q=0.6]
-		//                ]
-		//                Body:
-		//                URL:map[
-		//                        User:<nil>
-		//                        Host:
-		//                        Path:/apis/SmartVote/contractName=DOUG
-		//                        RawQuery:
-		//                        Fragment:
-		//                        Scheme:
-		//                        Opaque:
-		//                ]
-		//            ]"
+		// Println("http request:");
+		// Println(typeof (httpReq));    // object
+		// Println(httpReq);
+		// The structure of httpReq: 
+		// httpReq = {
+		//    Method:GET     // or POST
+		//    Host:localhost:3000
+		//    Header:{...}
+		//    Body:     // query goes here if POST
+		//    URL:{
+		//        User:<nil>
+		//        Host:
+		//        Path:/apis/SmartVote/getContractAddress
+		//        RawQuery:contractName=DOUG     // empty if POST
+		//        Fragment:
+		//        Scheme:
+		//        Opaque:
+		//    }
+		// }
+
 		var urlObj = network.parseUrl(httpReq);
+		// Println(urlObj);
+		// The structure of urlObj
+		// urlObj = {
+		//     path:[getContractAddress]
+		//     options:{contractName:DOUG}     // empty if POST
+		//     error:
+		// }
 
 		// Error 400 bad request
 		if (urlObj.error !== "") {
@@ -109,7 +110,7 @@ function SmartVote() {
 		return vote(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2]);
 	}
 
-	// for testing, using with
+	// for testing
 	handlers.getContractAddress = function(urlObj) {
 	    Println(JSON.stringify(urlObj));
 	    // parse parameters
@@ -121,6 +122,7 @@ function SmartVote() {
 	    return network.getHttpResponseJSON(response);
 	}
 
+	// functions to talk with contracts
 	function getPolls() {
 		return network.getHttpResponseJSON(svApi.showPolls());
 	}
