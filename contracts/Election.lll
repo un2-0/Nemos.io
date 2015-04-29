@@ -26,8 +26,6 @@
 
     (def 'vtraddr () (calldataload 0x20)) ;User address of the voter
 
-    (def 'permissionString () (calldataload 0x20)) ;Permission string
-
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
     (def 'option () (calldataload 0x20)) ;The index of option voted
@@ -62,10 +60,12 @@
 
     (llInit "legalAttributeKeys")
     (llAddLink "legalAttributeKeys" "owner" "owner")
+    (llAddLink "legalAttributeKeys" "hash" "hash")
     (llAddLink "legalAttributeKeys" "opened" "opened")
     (llAddLink "legalAttributeKeys" "closed" "closed")
-    (llAddLink "legalAttributeKeys" "result" "result")
     (llAddLink "legalAttributeKeys" "status" "status")
+    (llAddLink "legalAttributeKeys" "hasPermList" "hasPermList")
+    (llAddLink "legalAttributeKeys" "permList" "permList")
 
     (singleInit "status" 0)
     ; status:
