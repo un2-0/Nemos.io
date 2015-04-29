@@ -7,7 +7,7 @@ function SmartVoteAPI() {
 	var plfAddr = "";
 	var monkAddr = "";
 	var mysubs = [];
-	
+
 	var txData = {};
 
 	// Codes for polling
@@ -80,7 +80,7 @@ function SmartVoteAPI() {
 		txData[txHash] = txObj;
 		Println("Added tx data");
 	}
-	
+
 	this.createPollAccount = function(plname) {
 		var txData = [];
 		Println("Creating poll in blockchain.");
@@ -103,7 +103,7 @@ function SmartVoteAPI() {
 		var hash = sendMsg(plname2Addr(plname), txData);
 		return hash;
 	}
-	
+
 	this.setStatus = function(plname, status) {
 		var txData = [];
 		txData.push("setstatus");
@@ -111,7 +111,7 @@ function SmartVoteAPI() {
 		var hash = sendMsg(plname2Addr(plname), txData);
 		return hash;
 	}
-	
+
 	this.checkStatus = function(plname) {
 		return parseInt(esl.single.Value(plname2Addr(plname), sutil.stringToHex("status")), 16);
 	}
@@ -147,7 +147,7 @@ function SmartVoteAPI() {
 	this.getOpnum = function(plname) {
 		return esl.single.Value(plname2Addr(plname), sutil.stringToHex("opnum")).slice(2);
 	}
-	
+
 	this.refreshPoll = function(plname) {
 		plAddr = plname2Addr(plname);
 		var opentime = esl.single.Value(plAddr, StringToHex("opentime"));
@@ -161,7 +161,7 @@ function SmartVoteAPI() {
 			setStatus(plname, 0)
 		}
 	}
-	
+
 	this.vote = function(plname, opnum) {
 		var txData = [];
 		opnum = parseInt(opnum);
@@ -196,7 +196,7 @@ function SmartVoteAPI() {
 		stat = stat.slice(0, stat.length - 1);
 		return stat;
 	}
-	
+
 	function plname2Addr(plname) {
 		var pubAddr = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
 		return esl.kv.Value(plfAddr, sutil.stringToHex("polls"), pubAddr);

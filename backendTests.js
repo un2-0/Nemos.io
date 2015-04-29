@@ -4,13 +4,13 @@ var sendBtn;
 
 var methods = {};
 
-methods["echo"] = {
-    sender : echo,
+methods["getRequestParams"] = {
+    sender : getRequestParams,
     params : {"msg" : "Massage: "}
 }
 
 methods["getContractAddress"] = {
-    sender : echo,
+    sender : getContractAddress,
     params : {"contractName" : "Contract Name: "} // name : label content
 };
 
@@ -81,19 +81,32 @@ function setSendBtn(sender) {
     sendBtn.onclick = sender;
 }
 
+function showRequest(method, url, body) {
+    document.getElementById("methodSent").innerHTML = method;
+    document.getElementById("urlSent").innerHTML = url;
+    document.getElementById("bodySent").innerHTML = JSON.stringify(body);
+}
+
+function showRespond() {
+    window.alert("in showRespond");
+}
 
 // sender functions
-function echo() {
-    var methodName = methodSelector.options[methodSelector.selectedIndex].value;
-    var str = methodName + "$";
+function getRequestParams() {
+    var method = methodSelector.options[methodSelector.selectedIndex].value;
+    var kvPairs = [];
     var paramInputs = document.getElementsByClassName("param");
     for (var i = 0; i < paramInputs.length; i++) {
-        paramInputs[i];
-        str = str + paramInputs[i].id + "=" + paramInputs[i].value + "&";
+        kvPairs.push(paramInputs[i].id + "=" + paramInputs[i].value);
     }
-    window.alert(str);
+    url = baseURL + "/" + kvPairs.join("&");
+    body = null;
+
+    showRequest(method, url, body);
+    return [method, url, body];
 }
 
 function getContractAddress() {
-    // TODO
+    var requestParams = getRequestParams();
+    httpAPI.sendAsync(requestParams[0], requestParams[1], requestParams[2], showRespond);
 }
