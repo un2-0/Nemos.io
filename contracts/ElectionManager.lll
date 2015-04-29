@@ -7,78 +7,122 @@
 
 {
     ; init
+    (include "./Election.lll")
     (include "./defs/stdll.def")
     (include "./env.def")
-    (include "./Election.lll")
 
     ; --------------------------------------------------------------------------
     ; macros
     ; --------------------------------------------------------------------------
     ; for constants
-    (def 'DOUG 0xabcdef)
+    (def 'DAPPDOUG 0xdaffe)
 
     ; for parameters
-    (def 'CMD () (CALLDATALOAD 0x0))
+    (def 'cmd () (calldataload 0x0))
+
+    (def 'elecaddr () (calldataload 0x20)) ;Address of the election
+
+    (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
+    (def 'elecname () (calldataload 0x40)) ;Name of the election
 
     ; --------------------------------------------------------------------------
     ; variables
     ; --------------------------------------------------------------------------
-    (llInit "elections" "none" "none" "none")    ; all elections
+    (llInit "electionNameToElectionIndex")
+    (llInit "electionAddressToElectionIndex")
+    (llInit "electionIndexToElectionAddress")
+    (llInit "electionIndexToElectionName")
+    (kvInit "lastModified")
+    (singleInit "electionIndex" 0)
 
     (return 0 (lll {
-        ; body
+
         ; ----------------------------------------------------------------------
         ; Create a contract for a new election.
         ; ----------------------------------------------------------------------
-        ; Calldata: "createElection" ELECTION_ADDRESS
+        ; Calldata: "createElection" crtrusrname elecname
         ; Returns:
         ;     0 - fail
         ;     0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "createElection") {
+        (when (= (cmd) "createElection") {
+            [0xC0](elecname) ;Restore the name of election in case of conflict
+            [0xA0](crtraddr) ;Restore the address of user in case of conflict
+
             ; first check if the name has already taken
-            (unless (= (llGet "elections" (ELECTION_ADDRESS)) 0) (STOP))
+            (unless (= (llGet "electionNameToElectionIndex" (elecname)) 0) (STOP))
             
-            ; then check if the caller is an organizer
-            [0x0]"checkContract
-            [0x20]"AccountManager"
-            (CALL (GASS) DOUG 0 0x0 0x40 0x40 0x20)
-            (when (= @0x40 0) (STOP))
-            [0x0]"checkOrganizer"
-            [0x20](CALLER)
-            (CALL (GASS) @0x40 0 0x0 0x40 0x40 0x20)
-            (when (= @0x40 0) (STOP))
+            ;Get the address of accountManager
+            [0x0]"checkName"
+            [0x20]"accountManager"
+            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x40 0x20)
+
+            ;Then check if the caller has permission to create election
+            [0x0]"checkBlacklist"
+            [0x20]@0xA0
+            (CALL (gass) @0x40 0 0x0 0x40 0x40 0x20)
+
+            (unless (= @0x40 0) (STOP))
             
             ; create the contract and save its address in memory 0x20
-            [0x20](create 0 0 (lll {
+            [0x0](create 0 0 (lll {
                 (election)
             } 0))
-            [[@0x20]]1
-            
-            (llAddLink "elections" @0x0 @0x0)
-            
-            ; register the contract in the organizer's account
-            [0x0]"registerElection"
-            (CALL (GASS) @0x40 0 0x20 0x40 0x60 0x20)
 
-            (return 0x20 0x20)
+            [[@0x0]]1
+
+            (singleSet "electionIndex" (+ (singleGet "electionIndex") 1))
+            (llAddLink "electionNameToElectionIndex" @0xC0 (singleGet "electionIndex"))
+            (llAddLink "electionAddressToElectionIndex" @0x0 (singleGet "electionIndex"))
+            (llAddLink "electionIndexToElectionName" (singleGet "electionIndex") @0xC0)
+            (llAddLink "electionIndexToElectionAddress" (singleGet "electionIndex" @0x0))
+            
+            [0x20]"setPerm"
+            [0x40]"electionAccount"
+            [0x60]@0x0
+            [0x80]1
+            (CALL (gass) DAPPDOUG 0 0x20 0x80 0x20 0x20)
+
+            [0x20]"init"
+            [0x40]@0xA0
+            (CALL (gass) @0x0 0 0x20 0x40 0x20 0x20)
+
+            (kvSet "lastModified" @0x0 (TIMESTAMP))
+
+            (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Delete an election (called by the election itself)
+        ; Check an election
         ; ----------------------------------------------------------------------
-        ; Calldata: "rmElection"
+        ; Calldata: "checkElection"
+        ; Returns:
+        ;     0 - fail
+        ;     0xADDRESS - the address of the contract
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "checkElection") {
+            [0x0]@@(calldataload 0x20)
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Delete an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "removeElection"
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "rmElection") {
-            ; check if the election is recorded
-            (when (= 0 (llGet "elections" (CALLER))) (STOP))
-
-            (llRmLink "elections" @0x0)
+        (when (= (cmd) "removeElection") {
+            [0x0](CALLER) ;Address of the election
+            [0x20](llGet "electionAddressToElectionIndex" @0x0) ;Index of the election name
+            (llRmLink "electionAddressToElectionIndex" @0x0)
+            (llRmLink "electionIndexToElectionAddress" @0x20)
+            [0xA0](llGet "electionIndexToElectionName" @0x20) ;Name of the election name
+            (llRmLink "electionIndexToElectionName" @0x20)
+            (llRmLink "electionNameToElectionIndex" @0xA0)
+            (kvSet "lastModified" @0x20 0)
 
             [0x0]1
             (return 0x0 0x20)
         })
     })
-
 }
