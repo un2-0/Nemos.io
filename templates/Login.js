@@ -28,7 +28,11 @@ function login(){
 	
 	
 	
-	/*this request "Login" requires data below in http response: 
+	/*Data in "Login" request:
+	 *  "username": username
+	 * 	"password": password
+	 * 
+	 * Data should be in "Login" response: 
 	 *  "result" =  "success"(if username and password all good)
 	 *  			"userDoesntExist" (if user id doesnt exist)
 	 *  			"wrongPassWord" (if user id exist but the password is wrong)

@@ -13,11 +13,7 @@ function loadInformation(){
 	}else {
 		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"not login " +" <i class='fa fa-caret-down'></i>";
 	}
-	
-	//showDefaultContent();
-	
-	
-	
+
 	sender.sendAsync("GET", baseUrl+ "/organiserLogin&", null, function(res){ 
 		
 		if (res.status === 200) {
