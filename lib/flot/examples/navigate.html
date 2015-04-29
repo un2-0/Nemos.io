@@ -1,47 +1,51 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
- <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Flot Examples</title>
-    <link href="layout.css" rel="stylesheet" type="text/css">
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="../jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="../jquery.flot.js"></script>
-    <script language="javascript" type="text/javascript" src="../jquery.flot.navigate.js"></script>
-    <style type="text/css">
-    #placeholder .button {
-        position: absolute;
-        cursor: pointer;
-    }
-    #placeholder div.button {
-        font-size: smaller;
-        color: #999;
-        background-color: #eee;
-        padding: 2px;
-    }
-    .message {
-        padding-left: 50px;
-        font-size: smaller;
-    }
-    </style>
- </head>
- <body>
-    <h1>Flot Examples</h1>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Flot Examples</title>
+<link href="layout.css" rel="stylesheet" type="text/css">
+<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="../jquery.js"></script>
+<script language="javascript" type="text/javascript"
+	src="../jquery.flot.js"></script>
+<script language="javascript" type="text/javascript"
+	src="../jquery.flot.navigate.js"></script>
+<style type="text/css">
+#placeholder .button {
+	position: absolute;
+	cursor: pointer;
+}
 
-    <div id="placeholder" style="width:600px;height:300px;"></div>
+#placeholder div.button {
+	font-size: smaller;
+	color: #999;
+	background-color: #eee;
+	padding: 2px;
+}
 
-    <p class="message"></p>
+.message {
+	padding-left: 50px;
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+	<h1>Flot Examples</h1>
 
-    <p>With the navigate plugin it is easy to add panning and zooming.
-    Drag to pan, double click to zoom (or use the mouse scrollwheel).</p>
+	<div id="placeholder" style="width: 600px; height: 300px;"></div>
 
-    <p>The plugin fires events (useful for synchronizing several
-    plots) and adds a couple of public methods so you can easily build
-    a little user interface around it, like the little buttons at the
-    top right in the plot.</p>
-    
+	<p class="message"></p>
 
-<script type="text/javascript">
+	<p>With the navigate plugin it is easy to add panning and zooming.
+		Drag to pan, double click to zoom (or use the mouse scrollwheel).</p>
+
+	<p>The plugin fires events (useful for synchronizing several plots)
+		and adds a couple of public methods so you can easily build a little
+		user interface around it, like the little buttons at the top right in
+		the plot.</p>
+
+
+	<script type="text/javascript">
 $(function () {
     // generate data set from a parametric function with a fractal
     // look
@@ -114,5 +118,5 @@ $(function () {
 });
 </script>
 
- </body>
+</body>
 </html>

@@ -1,51 +1,54 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
- <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Flot Examples</title>
-    <link href="layout.css" rel="stylesheet" type="text/css">
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="../jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="../jquery.flot.js"></script>
- </head>
-    <body>
-    <h1>Flot Examples</h1>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Flot Examples</title>
+<link href="layout.css" rel="stylesheet" type="text/css">
+<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="../jquery.js"></script>
+<script language="javascript" type="text/javascript"
+	src="../jquery.flot.js"></script>
+</head>
+<body>
+	<h1>Flot Examples</h1>
 
-    <div id="placeholder" style="width:600px;height:300px;"></div>
+	<div id="placeholder" style="width: 600px; height: 300px;"></div>
 
-    <p>Example of loading data dynamically with AJAX. Percentage change in GDP (source: <a href="http://epp.eurostat.ec.europa.eu/tgm/table.do?tab=table&init=1&plugin=1&language=en&pcode=tsieb020">Eurostat</a>). Click the buttons below.</p>
+	<p>
+		Example of loading data dynamically with AJAX. Percentage change in
+		GDP (source: <a
+			href="http://epp.eurostat.ec.europa.eu/tgm/table.do?tab=table&init=1&plugin=1&language=en&pcode=tsieb020">Eurostat</a>).
+		Click the buttons below.
+	</p>
 
-    <p>The data is fetched over HTTP, in this case directly from text
-    files. Usually the URL would point to some web server handler
-    (e.g. a PHP page or Java/.NET/Python/Ruby on Rails handler) that
-    extracts it from a database and serializes it to JSON.</p>
+	<p>The data is fetched over HTTP, in this case directly from text
+		files. Usually the URL would point to some web server handler (e.g. a
+		PHP page or Java/.NET/Python/Ruby on Rails handler) that extracts it
+		from a database and serializes it to JSON.</p>
 
-    <p>
-      <input class="fetchSeries" type="button" value="First dataset"> -
-      <a href="data-eu-gdp-growth.json">data</a> -
-      <span></span>
-    </p>
+	<p>
+		<input class="fetchSeries" type="button" value="First dataset">
+		- <a href="data-eu-gdp-growth.json">data</a> - <span></span>
+	</p>
 
-    <p>
-      <input class="fetchSeries" type="button" value="Second dataset"> -
-      <a href="data-japan-gdp-growth.json">data</a> -
-      <span></span>
-    </p>
+	<p>
+		<input class="fetchSeries" type="button" value="Second dataset">
+		- <a href="data-japan-gdp-growth.json">data</a> - <span></span>
+	</p>
 
-    <p>
-      <input class="fetchSeries" type="button" value="Third dataset"> -
-      <a href="data-usa-gdp-growth.json">data</a> -
-      <span></span>
-    </p>
+	<p>
+		<input class="fetchSeries" type="button" value="Third dataset">
+		- <a href="data-usa-gdp-growth.json">data</a> - <span></span>
+	</p>
 
-    <p>If you combine AJAX with setTimeout, you can poll the server
-       for new data.</p>
+	<p>If you combine AJAX with setTimeout, you can poll the server for
+		new data.</p>
 
-    <p>
-      <input class="dataUpdate" type="button" value="Poll for data">
-    </p>
+	<p>
+		<input class="dataUpdate" type="button" value="Poll for data">
+	</p>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 $(function () {
     var options = {
         lines: { show: true },
@@ -139,5 +142,5 @@ $(function () {
 });
 </script>
 
- </body>
+</body>
 </html>

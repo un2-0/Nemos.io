@@ -1,43 +1,54 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
- <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Flot Examples</title>
-    <link href="layout.css" rel="stylesheet" type="text/css">
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="../jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="../jquery.flot.js"></script>
-    <script language="javascript" type="text/javascript" src="../jquery.flot.selection.js"></script>
- </head>
-    <body>
-    <h1>Flot Examples</h1>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Flot Examples</title>
+<link href="layout.css" rel="stylesheet" type="text/css">
+<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="../jquery.js"></script>
+<script language="javascript" type="text/javascript"
+	src="../jquery.flot.js"></script>
+<script language="javascript" type="text/javascript"
+	src="../jquery.flot.selection.js"></script>
+</head>
+<body>
+	<h1>Flot Examples</h1>
 
-    <div id="placeholder" style="width:600px;height:300px"></div>
+	<div id="placeholder" style="width: 600px; height: 300px"></div>
 
-    <p>1000 kg. CO<sub>2</sub> emissions per year per capita for various countries (source: <a href="http://en.wikipedia.org/wiki/List_of_countries_by_carbon_dioxide_emissions_per_capita">Wikipedia</a>).</p>
+	<p>
+		1000 kg. CO<sub>2</sub> emissions per year per capita for various
+		countries (source: <a
+			href="http://en.wikipedia.org/wiki/List_of_countries_by_carbon_dioxide_emissions_per_capita">Wikipedia</a>).
+	</p>
 
-    <p>Flot supports selections through the selection plugin.
-       You can enable rectangular selection
-       or one-dimensional selection if the user should only be able to
-       select on one axis. Try left-click and drag on the plot above
-       where selection on the x axis is enabled.</p>
+	<p>Flot supports selections through the selection plugin. You can
+		enable rectangular selection or one-dimensional selection if the user
+		should only be able to select on one axis. Try left-click and drag on
+		the plot above where selection on the x axis is enabled.</p>
 
-    <p>You selected: <span id="selection"></span></p>
+	<p>
+		You selected: <span id="selection"></span>
+	</p>
 
-    <p>The plot command returns a plot object you can use to control
-       the selection. Click the buttons below.</p>
+	<p>The plot command returns a plot object you can use to control
+		the selection. Click the buttons below.</p>
 
-    <p><input id="clearSelection" type="button" value="Clear selection" />
-       <input id="setSelection" type="button" value="Select year 1994" /></p>
+	<p>
+		<input id="clearSelection" type="button" value="Clear selection" /> <input
+			id="setSelection" type="button" value="Select year 1994" />
+	</p>
 
-    <p>Selections are really useful for zooming. Just replot the
-       chart with min and max values for the axes set to the values
-       in the "plotselected" event triggered. Enable the checkbox
-       below and select a region again.</p>
+	<p>Selections are really useful for zooming. Just replot the chart
+		with min and max values for the axes set to the values in the
+		"plotselected" event triggered. Enable the checkbox below and select a
+		region again.</p>
 
-    <p><label><input id="zoom" type="checkbox" />Zoom to selection.</label></p>
+	<p>
+		<label><input id="zoom" type="checkbox" />Zoom to selection.</label>
+	</p>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 $(function () {
     var data = [
         {
@@ -110,5 +121,5 @@ $(function () {
 });
 </script>
 
- </body>
+</body>
 </html>

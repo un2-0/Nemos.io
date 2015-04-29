@@ -1,78 +1,78 @@
 body {
-    background-color: #FFFFFF;
-    font-family: Georgia, "Times New Roman", Times, serif;
-    margin: 0px;
+	background-color: #FFFFFF;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin: 0px;
 }
 
 #allContent {
-    width: 1000px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background-color: #FFFFFF;
-    margin-left: auto;
-    margin-right: auto;
+	width: 1000px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background-color: #FFFFFF;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #header {
-    background-color: #FFFFFF;
-    margin: 10px 10px 0px 10px;
-    padding: 15px;
-    border-style: dashed;
-    border-width: 1px;
+	background-color: #FFFFFF;
+	margin: 10px 10px 0px 10px;
+	padding: 15px;
+	border-style: dashed;
+	border-width: 1px;
 }
 
-#tableContainer{
-    display: table;	
-    border-spacing: 10px;
+#tableContainer {
+	display: table;
+	border-spacing: 10px;
 }
 
 #tableRow {
-    display: table-row;
+	display: table-row;
 }
 
 #main {
-    display: table-cell;
-    background-color: #FFFFFF;
-    padding: 15px;
-    width: 650px;
-    vertical-align: top;
-    border-style: dashed;
-    border-width: 1px;
+	display: table-cell;
+	background-color: #FFFFFF;
+	padding: 15px;
+	width: 650px;
+	vertical-align: top;
+	border-style: dashed;
+	border-width: 1px;
 }
 
 .processing {
-    background: url("../images/processing.gif") no-repeat;
-    background-position: right;
+	background: url("../images/processing.gif") no-repeat;
+	background-position: right;
 }
 
 .approved {
-    background: url("../images/approved.gif") 202px -35px no-repeat;
-    background-position: right;
+	background: url("../images/approved.gif") 202px -35px no-repeat;
+	background-position: right;
 }
 
 .denied {
-    background: url("../images/denied.gif") no-repeat;
-    background-position: right;
-    background-color: #FF8282;
+	background: url("../images/denied.gif") no-repeat;
+	background-position: right;
+	background-color: #FF8282;
 }
 
 #sidebar {
-    display: table-cell;
-    background-color: #FFFFFF;
-    padding: 15px;
-    width: 320px;
-    vertical-align: top;
-    border-style: dashed;
-    border-width: 1px;
+	display: table-cell;
+	background-color: #FFFFFF;
+	padding: 15px;
+	width: 320px;
+	vertical-align: top;
+	border-style: dashed;
+	border-width: 1px;
 }
 
 #footer {
-    background-color: #FFFFFF;
-    color:#000000;
-    text-align: cetner;
-    padding: 15px;
-    margin: 0px 10px 10px 10px;
-    clear: left;
-    border-style: dashed;
-    border-width: 1px;
+	background-color: #FFFFFF;
+	color: #000000;
+	text-align: cetner;
+	padding: 15px;
+	margin: 0px 10px 10px 10px;
+	clear: left;
+	border-style: dashed;
+	border-width: 1px;
 }

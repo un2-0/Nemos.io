@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>SmartVote Login</title>
-  <link rel="stylesheet" type="text/css" href="./css/style.css" />
-  <link rel="stylesheet" type="text/css" href="./css/body.css" />
+<meta charset="utf-8" />
+<title>SmartVote Login</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<link rel="stylesheet" type="text/css" href="./css/body.css" />
 </head>
 
 <body>
-  <div class="container">
-    <div id="content">
-      <form id="loginForm">
-        <h1>SmartVote</h1>
-        <!-- input username and password -->
-        <input type="text" placeholder="Username" id="username" />
-        <input type="password" placeholder="Password" id="password" />
-        <p><a href="templates/RetrivePassword/RetrivePassword.html">
-             Forgot password?
-           </a>
-        </p>
-      </form>
+	<div class="container">
+		<div id="content">
+			<form id="loginForm">
+				<h1>SmartVote</h1>
+				<!-- input username and password -->
+				<input type="text" placeholder="Username" id="username" /> <input
+					type="password" placeholder="Password" id="password" />
+				<p>
+					<a href="templates/RetrivePassword/RetrivePassword.html">
+						Forgot password? </a>
+				</p>
+			</form>
 
-      <p><button onclick="login()" id="loginBtn">Login</button></p>
-      <p><button onclick="jumpToRegistration()" id="regBtn">Register</button></p>
+			<p>
+				<button onclick="login()" id="loginBtn">Login</button>
+			</p>
+			<p>
+				<button onclick="jumpToRegistration()" id="regBtn">Register</button>
+			</p>
 
-      <div>
-        <div id="intro">
-          <a href="https://github.com/E-Movement/SmartVote" target="_blank">
-            SmartVote on Github
-          </a>
-        </div>
-      </div>
-    </div>
+			<div>
+				<div id="intro">
+					<a href="https://github.com/E-Movement/SmartVote" target="_blank">
+						SmartVote on Github </a>
+				</div>
+			</div>
+		</div>
 
-  </div>
+	</div>
 
-  <script type="text/javascript" src="templates/Login.js"></script>
-  <script type="text/javascript" src="templates/API/utils.js"></script>
+	<script type="text/javascript" src="templates/Login.js"></script>
+	<script type="text/javascript" src="templates/API/utils.js"></script>
 
 </body>
 
