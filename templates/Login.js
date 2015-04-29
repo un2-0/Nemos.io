@@ -36,7 +36,6 @@ function login(){
 	 *  "result" =  "success"(if username and password all good)
 	 *  			"userDoesntExist" (if user id doesnt exist)
 	 *  			"wrongPassWord" (if user id exist but the password is wrong)
-	 *
 	*/
 	sender.sendAsync("GET", baseUrl+ "/Login&", JSON.stringify(userinfo), function(res){ 
 		
