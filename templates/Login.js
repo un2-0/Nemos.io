@@ -32,9 +32,6 @@ function login(){
 	 *  "result" =  "success"(if username and password all good)
 	 *  			"userDoesntExist" (if user id doesnt exist)
 	 *  			"wrongPassWord" (if user id exist but the password is wrong)
-	 *  
-	 *  "accountAddr" contains the addrs of the user's account, if the result is not "success", this will
-	 *  				be null or "";
 	 *
 	*/
 	sender.sendAsync("GET", baseUrl+ "/Login&", JSON.stringify(userinfo), function(res){ 
@@ -49,11 +46,6 @@ function login(){
 				
 				sessionStorage.userName = userName.value;
 				
-				if (body.accountAddr == "" || body.accountAddr === null) {
-					window.alert("no user accountAddr in response");
-				} else {
-					sessionStorage.accountAddr = body.accountAddr;
-				}
 
 				window.location.href = "templates/UserHome/UserHome.html";
 				
