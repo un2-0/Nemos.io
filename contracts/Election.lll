@@ -14,119 +14,244 @@
     ; macros (UPPER_CASE)
     ; --------------------------------------------------------------------------
     ; macros for constants
-    (def 'ORGANIZER (ORIGIN))    ; the only account who can edit the election
-    (def 'CREATED_TIME (TIMESTAMP))
-    (def 'MANAGER (CALLER))
+    (def 'CREATED (TIMESTAMP))
+    (def 'DAPPDOUG 0xabcdef)
+
     ; macros for parameters
-    (def 'CMD () (calldataload 0x0))
-    (def 'LOG () (calldataload 0x20))
+    (def 'cmd () (calldataload 0x0))
 
-    (def 'ATTRIBUTE_KEY () (calldataload 0x20))
-    (def 'ATTRIBUTE_VALUE () (calldataload 0x40))
-    
-    (def 'VOTER_NAME () (calldataload 0x20))
+    (def 'log () (calldataload 0x20))
 
-    (def 'OPTION () (calldataload 0x20))
-    
-    (def 'BALLOT () (calldataload 0x20))
+    (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
+
+    (def 'vtraddr () (calldataload 0x20)) ;User address of the voter
+
+    (def 'optionnum () (calldataload 0x20)) ;Number of options
+
+    (def 'option () (calldataload 0x20)) ;The index of option voted
+    (def 'newoptionresult () (calldataload 0x40)) ;New result of the option
+
+    (def 'singleAttributeKey () (calldataload 0x20))
+    (def 'singleAttributeValue () (calldataload 0x40))
+
+    (def 'attributeKey () (calldataload 0x20))
+
+    (def 'kvAttributeKey () (calldataload 0x40))
+    (def 'kvAttributeValue () (calldataload 0x60))
+
+    (def 'rmllAttributeKey () (calldataload 0x40))
+
+    (def 'addllAttributeKey () (calldataload 0x40))
+    (def 'addllAttributeValue () (calldataload 0x60))
 
     ; --------------------------------------------------------------------------
     ; variables (lower_case)
     ; --------------------------------------------------------------------------
-    (llInit "logs" "none" "none" "none")
-    (singleInit "voting_rules" "none" "none" "none")
-    (llInit "voters" "none" "none" "none")
-    (llInit "ballots" "none" "none" "none")
-    (llInit "options" "none" "none" "none")
+    (singleInit "electionName" 0)
+    (singleInit "hash" 0) ;Hash of description
+    (singleInit "owner" 0)
+    (singleInit "optionNumber" 0)
+    (singleInit "opened" 0)
+	(singleInit "closed" 0)
+    (kvInit "hasPermList")
+    (kvInit "permList")
+    (llInit "logs")
+    (llInit "voters")
 
-    (llInit "legal_attribute_keys" "none" "none" "none")
-    (llAddLink "legal_attribute_keys" "name" "name")
-    (llAddLink "legal_attribute_keys" "description" "description")
-    (llAddLink "legal_attribute_keys" "open_time" "open_time")
-    (llAddLink "legal_attribute_keys" "close_time" "close_time")
-    (llAddLink "legal_attribute_keys" "voting_rules" "voting_rules")
-    (llAddLink "legal_attribute_keys" "counting_rules" "counting_rules")
-    (llAddLink "legal_attribute_keys" "result" "result")
-    (llAddLink "legal_attribute_keys" "status" "status")
+    (llInit "legalAttributeKeys")
+    (llAddLink "legalAttributeKeys" "owner" "owner")
+    (llAddLink "legalAttributeKeys" "hash" "hash")
+    (llAddLink "legalAttributeKeys" "opened" "opened")
+    (llAddLink "legalAttributeKeys" "closed" "closed")
+    (llAddLink "legalAttributeKeys" "status" "status")
+    (llAddLink "legalAttributeKeys" "hasPermList" "hasPermList")
+    (llAddLink "legalAttributeKeys" "permList" "permList")
 
-    (kvInit "attributes" "none" "none" "none")
+    (singleInit "status" 0)
     ; status:
+    ;   0 - empty
     ;   1 - created (the only status in which the contract can be edited)
-    ;   2 - ready (all attributes except open_time and close_time are set)
-    ;   3 - waiting (waiting to be opened)
-    ;   4 - on-going (opened but not closed)
-    ;   5 - closed
-    (kvSet "attributes" "status" 1)
+    ;   2 - options set
+    ;   3 - all attributes except opened and closed are set
+    ;   4 - waiting to be opened
+    ;   5 - on-going (opened but not closed)
+    ;   6 - closed
 
     (return 0 (lll{
-        [[0xcccc]](GASS)    ; ??????????????????????????????????????????????????
+        [[0xcccc]](GASS)
 
         ; ----------------------------------------------------------------------
-        ; Add a log entry. (called by the Organizer)
+        ; Init a new election.
         ; ----------------------------------------------------------------------
-        ; Calldata: "log" LOG
+        ; Calldata: "init" crtraddr
+        ; Returns:
+        ;     0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (&& (= (cmd) "init") (= (singleGet "status") 0) {
+            (singleSet "owner" (crtraddr))
+			(singleSet "status" 1)
+
+			[0x0]1
+			(return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Add a log entry. (called by the owner)
+        ; ----------------------------------------------------------------------
+        ; Calldata: "log" log
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "log") {
-            ; check if the caller is the organizer
-            (unless (= (CALLER) ORGANIZER) (STOP))
-            
-            ; add a log entry
-            (llAddLink "logs" (TIMESTAMP) LOG)
+        (when (= (cmd) "log" ) {
+            ;Check if the caller is the owner
+
+            ;Add a log entry
+            (llAddLink "logs" (TIMESTAMP) log)
             
             [0x0]1
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Set an attribute.
+        ; Set an single attribute.
         ; ----------------------------------------------------------------------
-        ; Calldata: "setAttribute" ATTRIBUTE_KEY ATTRIBUTE_VALUE
+        ; Calldata: "setSingleAttribute" singleAttributeKey singleAttributeValue
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "setAttribute") {
-            ; check if the caller is the organizer
-            (unless (= (CALLER) ORGANIZER) (STOP))
-            ; check if the key is legal
-            (when (= (llGet "legal_attribute_keys" (ATTRIBUTE_KEY)) 0) (STOP))
+        (when (= (cmd) "setSingleAttribute") {
+            ;Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (singleAttributeKey)) 1) (STOP))
             
-            ; do the setting
-            (kvSet (ATTRIBUTE_KEY) (ATTRIBUTE_VALUE))
+            ;Execute the setting
+            (singleSet (singleAttributeKey) (singleAttributeValue))
             
             [0x0]1
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Register a voter. (called by the Organizer)
+        ; Set an kv attribute.
         ; ----------------------------------------------------------------------
-        ; Calldata: "registerVoter" VOTER_NAME (not the contract address)
+        ; Calldata: "setKvAttribute" attributeKey kvAttributeKey kvAttributeValue
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "setKvAttribute") {
+            ;Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
+            
+            ;Execute the setting
+            (kvSet (attributeKey) (kvAttributeKey) (kvAttributeValue))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Add an ll attribute.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "addllAttribute" attributeKey addllAttributeKey addllAttributeValue
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "addllAttribute") {
+            ;Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
+            
+            ;Check if the key exists
+            (unless (= (llGet (attributeKey) (addllAttributeKey)) 0) (STOP))
+
+            ;Execute the setting
+            (llAddLink (attributeKey) (addllAttributeKey) (addllAttributeValue))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Remove an ll attribute.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "rmllAttribute" attributeKey rmllAttributeKey
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "rmllAttribute") {
+            ;Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
+            
+            ;Check if the key exists
+            (unless (= (llGet (attributeKey) (addllAttributeKey)) 1) (STOP))
+
+            ;Execute the setting
+            (llRmLink (attributeKey) (rmllAttributeKey))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Set options.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "setOptions" optionnum
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "setOptions") {
+            ;Check if the caller has the permission to set
+
+            (kvInit "ballots") ;Initialize ballot counting
+            (kvInit "votingRecord") ;Initialize voting record
+
+            [0x0](optionnum)
+			(for {[0xE0]1} (<= @0xE0 @0x0) [0xE0](+ @0xE0 1)
+				(kvSet "ballots" @0xE0 0)
+			)
+
+            (when (= (singleGet "status") 1) (singleSet "status" 2))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Register a voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerVoter" vtraddr
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "registerVoter") {
-            ; check if the caller is the Organizer
-            (unless (= (CALLER) ORGANIZER) (STOP))
+        (when (= (cmd) "registerVoter") {
+            ;Check if the caller has the permission to set
 
             ; TODO check if the provided address is a valid user
 
-            (llAddLink "voters" (VOTER_NAME) 1)
+            ;Check if the voter exists in the list
+            (unless (= (llGet "voters" (vtraddr)) 0) (STOP))
+
+            (llAddLink "voters" (vtraddr) 1)
 
             [0x0]1
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Add an option. (called by the Organizer)
+        ; Deregister a voter.
         ; ----------------------------------------------------------------------
-        ; Calldata: "addOption" OPTION
+        ; Calldata: "deregisterVoter" vtraddr
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "addOption") {
-            ; check if the caller is the Organizer
-            (unless (= (CALLER) ORGANIZER) (STOP))
-            
-            (llAddLink "options" (OPTION) 1)
-            
+        (when (= (cmd) "deregisterVoter") {
+            ;Check if the caller has the permission to set
+
+            ; TODO check if the provided address is a valid user
+
+            ;Check if the voter exists in the list
+            (unless (= (llGet "voters" (vtraddr)) 1) (STOP))
+
+            (llRmLink "voters" (vtraddr))
+
             [0x0]1
             (return 0x0 0x20)
         })
@@ -134,52 +259,58 @@
         ; ----------------------------------------------------------------------
         ; Record a ballot. (called by a voter)
         ; ----------------------------------------------------------------------
-        ; Calldata: "addOption" BALLOT
+        ; Calldata: "recordBallot" BALLOT
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
-        (when (&& (= (CMD) "recordBallot")) {
-            ; check if the caller is a registered voter
-            (when (= 0 (llGet "voters" (CALLER))) (STOP))
+        (when (&& (= (cmd) "recordBallot")) {
+            ;Check if the caller is a registered voter
+            (unless (= (llGet "voters" (CALLER)) 1) (STOP))
             
-            (llAddLink "ballots" (CALLER) (BALLOT)
+            (kvSet "ballots" (option) (newoptionresult))
+
+            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
             
             [0x0]1
             (return 0x0 0x20)
         })
 
         ;-----------------------------------------------------------------------
-        ; Check the organizer. (called by the Organizer)
+        ; Check the owner. (called by the owner) Necessary?????????
         ;-----------------------------------------------------------------------
-        ; Calldata: "checkOrganizer"
+        ; Calldata: "checkOwner"
         ; Returns:
-        ;     0 - the caller is not its organizer
-        ;     1 - the caller is its organizer
+        ;     0 - the caller is not its owner
+        ;     1 - the caller is its owner
         ;-----------------------------------------------------------------------
-        (when (= (CMD) "checkOrganizer") {
-            (unless (= (CALLER ORGANIZER) (STOP))
+        (when (= (cmd) "checkOwner") {
+            (unless (= (CALLER owner) (STOP))
             
             [0x0]1
             (return 0x0 0x20)
         })
 
         ;-----------------------------------------------------------------------
-        ; Delete the Election. (called by the Organizer)
+        ; Remove the Election. (called by the owner)
         ;-----------------------------------------------------------------------
-        ; Calldata: "deletePoll"
+        ; Calldata: "removeElection"
         ; Returns:
         ;-----------------------------------------------------------------------
-        (when (= (CMD) "deletePoll") {
-            ; check if the call is the Organizer
-            (unless (= (CALLER) ORGANIZER) (STOP))
+        (when (= (cmd) "removeElection") {
+            ; check if the call is the owner
+            (unless (= (CALLER) owner) (STOP))
+
+            ;Get the address of electionManager
+            [0x0]"checkName"
+            [0x20]"electionManager"
+            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x40 0x20)
 
             ; remove the record in ElectionManager
-            [0x0]"rmElection"
-            (CALL (gass) @0x60 0 0x0 0x20 0x20 0x20)
+            [0x0]"removeElection"
+            (CALL (gass) @0x40 0 0x0 0x20 0x20 0x20)
             
             (unless (= @0x20 1) (STOP))
-            (suicide (ADRESS))
-        })
-        
-    } 0)) ; end of return
 
+            (suicide (ORIGIN))
+        })        
+    } 0))
 })

@@ -80,9 +80,11 @@
 </script>
 
 <script type="text/javascript" src="UserHome.js"> </script>
-
+<script type="text/javascript" src="UserHomeAPI.js"> </script>
 
 </head>
+
+<!--HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-->
 <body class=" theme-blue" onload="loadInformation()">
 
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -91,7 +93,7 @@
     <![endif]-->
 
 	<!-- Le fav and touch icons -->
-	<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+	<!-- link rel="shortcut icon" href="../assets/ico/favicon.ico">
 	<link rel="apple-touch-icon-precomposed" sizes="144x144"
 		href="../assets/ico/apple-touch-icon-144-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" sizes="114x114"
@@ -99,7 +101,7 @@
 	<link rel="apple-touch-icon-precomposed" sizes="72x72"
 		href="../assets/ico/apple-touch-icon-72-precomposed.png">
 	<link rel="apple-touch-icon-precomposed"
-		href="../assets/ico/apple-touch-icon-57-precomposed.png">
+		href="../assets/ico/apple-touch-icon-57-precomposed.png"-->
 
 
 	<!--[if lt IE 7 ]> <body class="ie ie6"> <![endif]-->
@@ -118,7 +120,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="" href="index.html"><span class="navbar-brand"><span
+			<a class=""><span class="navbar-brand"><span
 					class="fa fa-paper-plane"></span> SmartVote</span></a>
 		</div>
 
@@ -126,25 +128,23 @@
 		<div class="navbar-collapse collapse" style="height: 1px;">
 			<ul id="main-menu" class="nav navbar-nav navbar-right">
 				<li class="dropdown hidden-xs"><a href="#"
-					class="dropdown-toggle" data-toggle="dropdown"> <span
-						class="glyphicon glyphicon-user padding-right-small"
-						style="position: relative; top: 3px;"></span> Shayne Flint <i
-						class="fa fa-caret-down"></i>
-				</a> <!-- user icon in the upper riht corner  -->
+					class="dropdown-toggle" data-toggle="dropdown" id = "welcomer"> </a> 
+						
+				<!-- user icon in the upper riht corner  -->
 					<ul class="dropdown-menu">
 						<li><a href="./">My Account</a></li>
 						<li class="divider"></li>
 						<li><a href="./">xxxx</a></li>
-						<li><a href="./">xxxx</a></li>
-						<li><a tabindex="-1" href="./">xxxx</a></li>
+						<!--li><a href="./">xxxx</a></li-->
+						<!--li><a tabindex="-1" href="./">xxxx</a></li-->
 						<li class="divider"></li>
-						<li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+						<li><a tabindex="-1" onclick="jumpToLogin()">Logout</a></li>
 					</ul></li>
 			</ul>
 
 		</div>
 	</div>
-	</div>
+
 
 
 	<!-- sidebar in the left side of the screen  -->
@@ -154,11 +154,9 @@
 				data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i>
 					Dashboard<i class="fa fa-collapse"></i></a></li>
 			<li><ul class="dashboard-menu nav nav-list collapse in">
-					<li><a href="index.html"><span class="fa fa-caret-right"></span>
-							Main</a></li>
-					<li><a href="users.html"><span class="fa fa-caret-right"></span>
-							On-Going Polls List</a></li>
-					<li><a onclick="creatPoll()" href="../CreatePoll/CreateAPoll.html/"><span class="fa fa-caret-right"></span>
+					<li><a onclick="showDefaultContent()">Main</a></li>
+					<li><a onclick="showElections()">Related Polls list</a></li>
+					<li><a onclick="createPoll()">
 							Create a Poll</a></li>
 					<li><a href="media.html"><span class="fa fa-caret-right"></span>
 							Under-Construction</a></li>
@@ -166,7 +164,7 @@
 							class="fa fa-caret-right"></span> Under-Construction</a></li>
 				</ul></li>
 
-			<li><a href="#" data-target=".accounts-menu"
+			<!--li><a href="#" data-target=".accounts-menu"
 				class="nav-header collapsed" data-toggle="collapse"><i
 					class="fa fa-fw fa-briefcase"></i> Account <i
 					class="fa fa-collapse"></i></a></li>
@@ -177,7 +175,7 @@
 							class="fa fa-caret-right"></span> Sign Up</a></li>
 					<li><a href="reset-password.html"><span
 							class="fa fa-caret-right"></span> Reset Password</a></li>
-				</ul></li>
+				</ul></li-->
 
 			<li><a href="#" data-target=".legal-menu"
 				class="nav-header collapsed" data-toggle="collapse"><i
@@ -199,8 +197,8 @@
 	</div>
 
 	<!-- User/organizer notifications-->
-	<div class="content">
-		<div class="header">
+	<div class="content" id = "contentContainer">
+		 <div class="header">
 			<div class="stats">
 				<p class="stat">
 					<span class="label label-info">5</span> Invitations
@@ -213,8 +211,6 @@
 				</p>
 			</div>
 
-
-		<!-- the small navitation bar in the top of the content chunk -->
 			<h1 class="page-title">Dashboard</h1>
 			<ul class="breadcrumb">
 				<li><a href="index.html">Home</a></li>
@@ -222,12 +218,7 @@
 			</ul>
 
 		</div>
-		<div class="main-content">
-
-
-
-<!-- the main area beside sidebar(The largest chunk in the screen)  -->
-			<!-- the statistics area  -->
+		<div class="main-content" id = "mainContentContainer">
 			<div class="panel panel-default">
 				<a href="#page-stats" class="panel-heading" data-toggle="collapse">Latest
 					Stats</a>
@@ -239,7 +230,7 @@
 								<input class="knob" data-width="200" data-min="0"
 									data-max="3000" data-displayPrevious="true" value="2500"
 									data-fgColor="#92A3C2" data-readOnly=true;>
-								<h3 class="text-muted text-center">On going Polls</h3>
+								<h3 class="text-muted text-center">Related Poll lists</h3>
 							</div>
 						</div>
 						<div class="col-md-3 col-sm-6">
@@ -271,8 +262,6 @@
 				</div>
 			</div>
 
-
-			<!-- the chunk under the statistics area -->
 			<div class="row">
 				<div class="col-sm-6 col-md-6">
 					<div class="panel panel-default">
@@ -346,7 +335,6 @@
 				</div>
 			</div>
 
-			<!-- the chunk under the statistics area -->
 			<div class="row">
 				<div class="col-sm-6 col-md-6">
 					<div class="panel panel-default">
@@ -404,7 +392,6 @@
 					</div>
 				</div>
 
-				<!-- the chunk under the statistics area -->
 				<div class="col-sm-6 col-md-6">
 					<div class="panel panel-default">
 						<a href="#widget2container" class="panel-heading"
@@ -432,7 +419,6 @@
 			<footer>
 				<hr>
 
-				<!-- footer to visit emovement website -->
 				<p class="pull-right">
 					A <a href="https://github.com/E-Movement/SmartVote" target="_blank">Techlauncher
 						Project</a> by <a href="https://github.com/E-Movement/SmartVote"
