@@ -1,23 +1,49 @@
 function SmartVote() {
 
 	var COMMITTING = true;
-	
-	var handlers = {};	
+
+	var handlers = {};
 	svApi = new SmartVoteAPI();
 
 	// Used to handle all incoming requests. It is set as the callback for
 	// incominghttp requests. It parses the request URL into an object, then
 	// pass that object into the appropriate sub handler (should one exist).
 	// Sub handlers needs to return a response object.
-	this.handle = function(httpReq) {
+	this.handle = function (httpReq) {
 
-		Println("Receiving");
+		Println("Receiving request...");
+		Println("http request:");
+		Println(httpReq);
+		// httpReq = "map[
+		//                Method:getContractAddress
+		//                Host:localhost:3000
+		//                Header:map[
+		//                           Connection:[keep-alive]
+		//                           Origin:[http://localhost:3000]
+		//                           Referer:[http://localhost:3000/SmartVote/backendTests.html]
+		//                           User-Agent:[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36]
+		//                           Accept:[*/*]
+		//                           Accept-Encoding:[gzip, deflate, sdch]
+		//                           Accept-Language:[zh,en;q=0.8,en-GB;q=0.6]
+		//                ]
+		//                Body:
+		//                URL:map[
+		//                        User:<nil>
+		//                        Host:
+		//                        Path:/apis/SmartVote/contractName=DOUG
+		//                        RawQuery:
+		//                        Fragment:
+		//                        Scheme:
+		//                        Opaque:
+		//                ]
+		//            ]"
 		var urlObj = network.parseUrl(httpReq);
 
 		// Error 400 bad request
 		if (urlObj.error !== "") {
 			return null;
 		}
+
 		var res = urlObj.path[0].split("&")[0];
 		Println("res       " + res);
 		var hFunc = handlers[res];
@@ -25,30 +51,29 @@ function SmartVote() {
 		if (typeof (hFunc) !== "function") {
 			network.getHttpResponse(400,{},"Bad request: no resource named: " + res + ".");
 		}
-		var resp = hFunc(urlObj, httpReq);
-
+		var resp = hFunc(urlObj);
 		Println("resp:          " + resp);
 
+        // Weak check, but this is clearly not a valid response.
+        if (typeof (resp) !== "object" || resp.Body === undefined
+                || resp.Header === undefined || resp.Status === undefined) {
+            return null;
+        }
+
 		if (JSON.stringify(resp).length < 10000) {
-			Println("RESPONSE OBJECT: " + JSON.stringify(resp).length);
+			Println("RESPONSE OBJECT: " + JSON.stringify(resp));
 		} else {
 			Println("RESPONSE OBJECT: " + JSON.stringify(resp).substr(0, 10000) + " ...{truncated}");
 		};
 
-		// Weak check, but this is clearly not a valid response.
-		if (typeof (resp) !== "object" || resp.Body === undefined
-				|| resp.Header === undefined || resp.Status === undefined) {
-			return null;
-		}
-		Println("resp:          " + resp);
 		return resp;
 	}
 
-	handlers.showVotings = function(urlObj, httpReq) {
+	handlers.showVotings = function(urlObj) {
 		return getPolls();
 	}
 
-	handlers.addVt = function(urlObj, httpReq) {
+	handlers.addVt = function(urlObj) {
 		return createPollAccount(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2], urlObj.path.toString().split("&")[3], urlObj.path.toString().split("&")[4], urlObj.path.toString().split("&")[5], urlObj.path.toString().split("&")[6], urlObj.path.toString().split("&")[7]);
 	}
 
@@ -82,6 +107,18 @@ function SmartVote() {
 
 	handlers.vote = function(urlObj, httpReq) {
 		return vote(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2]);
+	}
+
+	// for testing, using with
+	handlers.getContractAddress = function(urlObj) {
+	    Println(JSON.stringify(urlObj));
+	    // parse parameters
+	    
+	    // get the wanted values
+	    
+	    // create the response JSON object
+	    var response;
+	    return network.getHttpResponseJSON(response);
 	}
 
 	function getPolls() {
@@ -148,7 +185,7 @@ function SmartVote() {
 		}
 		println("ccccccccccccccccc" + svApi.test1(plname));
 	}
-	
+
 	this.test3 = function() {
 		var n = 20;
 		var s = n.toString(16);
@@ -159,6 +196,7 @@ function SmartVote() {
 	this.init = function() {
 		svApi.init();
 	}
+
 };
 
 // Initialization

@@ -93,15 +93,18 @@
 	;General structure
 
 	;Minimum Viable Doug Set Up
-	(llInit "permnames" "none" "none" "none")
-	(llAddLink "permnames" "doug" 1)
-	(llAddLink "permnames" "pollfactory" 2)
-	(llAddLink "permnames" "pollaccount" 3)
+	(llInit "permNames" "none" "none" "none")
+	(llAddLink "permNames" "doug" 1)
+	(llAddLink "permNames" "electionManager" 2)
+	(llAddLink "permNames" "electionAccount" 3)
+	(llAddLink "permNames" "accountManager" 4)
+	(llAddLink "permNames" "userAccount" 5)
 
-	(arrayInit "perms" "none" "none" "none" 3) ;Gives Caller all permissions
+	(arrayInit "perms" "none" "none" "none" 4) ;Gives Caller all permissions
 	(arraySetE "perms" (CALLER) 1 1)
 	(arraySetE "perms" (CALLER) 2 1)
 	(arraySetE "perms" (CALLER) 3 1)
+	(arraySetE "perms" (CALLER) 4 1)
 
 	(def 'BLcheck (addr) (= (arrayGetE "perms" addr 1) 1))
 
@@ -119,14 +122,12 @@
 	(llInit "DOUG" "none" "none" "none")
 	(llAddLink "DOUG" "DOUG" (Address))
 
-	[[0x38155ef3698a43b24b054d816a8a5f79fc148623]] 0x1111 ;NEED TO REMOVE THIS
-
 	(return 0 (lll {
 
 	;DOUG Functions
 	;=================================================================================
 
-		(when (= (cmd) "checkname")
+		(when (= (cmd) "checkName")
 			{
 				[0x0](llGet "DOUG" (name))
 				(return 0x0 0x20) ; Return the Address
@@ -148,14 +149,14 @@
 	;DOUG Variables
 	;=========================================================================================
 
-		(when (= (cmd) "getvar")
+		(when (= (cmd) "getVar")
 			{
 				[0x0](singleGet (name))
 				(return 0x0 0x20) ; Return the Address
 			}
 		)
 
-		(when (= (cmd) "setvar")
+		(when (= (cmd) "setVar")
 			{
 				(unless (BLcheck (ORIGIN)) (STOP))
 				(singleSet (name) (value))
@@ -168,17 +169,17 @@
 	;Permissions Functions
 	;=========================================================================================
 
-		(when (= (cmd) "checkperm")
+		(when (= (cmd) "checkPerm")
 			{
-				[0x0](arrayGetE "perms" (target) (llGet "permnames" (name)))
+				[0x0](arrayGetE "perms" (target) (llGet "permNames" (name)))
 				(return 0x0 0x20) ;Return requested value
 			}
 		)
 
-		(when (= (cmd) "setperm")
+		(when (= (cmd) "setPerm")
 			{
 				(unless (BLcheck (ORIGIN)) (STOP))
-				[0x0](llGet "permnames" (name))
+				[0x0](llGet "permNames" (name))
 				(when (= @0x0 0) (STOP))
 				(arraySetE "perms" (target) @0x0 (permnum))
 				[0x0]1
@@ -186,11 +187,11 @@
 			}
 		)
 
-		(when (= (cmd) "addperm")
+		(when (= (cmd) "addPerm")
 			{
 
 				(unless (BLcheck (ORIGIN)) (STOP))
-				(llAddLink "permnames" (name) (+ @@(llLenSlot "permnames") 1))
+				(llAddLink "permNames" (name) (+ @@(llLenSlot "permNames") 1))
 
 				[0x0]1
 				(return 0x0 0x20)

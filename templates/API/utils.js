@@ -1,3 +1,5 @@
+var baseURL = "/apis/SmartVote";
+
 function createRequest() {
     try {
         request = new XMLHttpRequest();
