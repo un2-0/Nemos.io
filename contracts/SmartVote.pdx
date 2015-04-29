@@ -5,19 +5,35 @@ deploy:
 	"./contracts/SmartVoteDOUG.lll" => {{DOUG}}
 !}DOUG
 
-!{PF
+!{EM
 modify-deploy:
-	"./contracts/PollFactory.lll" => {{PF}}
+	"./contracts/ElectionManager.lll" => {{EM}}
 	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
-!}PF
+!}EM
+
+!{AM
+modify-deploy:
+	"./contracts/AccountManager.lll" => {{AM}}
+	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
+!}AM
 
 !{setup
 transact:
-	{{DOUG}} => "setperm" "doug" {{PF}} 1
+	{{DOUG}} => "setPerm" "doug" {{EM}} 1
 
 transact:
-	{{DOUG}} => "setperm" "pollfactory" {{PF}} 1
+	{{DOUG}} => "setPerm" "electionManager" {{EM}} 1
 
 transact:
-	{{DOUG}} => "register" "pollfactory" {{PF}}
+	{{DOUG}} => "register" "electionManager" {{EM}}
+
+transact:
+	{{DOUG}} => "setPerm" "doug" {{AM}} 1
+
+transact:
+	{{DOUG}} => "setPerm" "accountManager" {{AM}} 1
+
+transact:
+	{{DOUG}} => "register" "accountManager" {{AM}}
 !}setup
+
