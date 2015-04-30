@@ -74,13 +74,6 @@
     (llInit "voters")
 
     (llInit "legalAttributeKeys")
-    (llAddLink "legalAttributeKeys" "owner" "owner")
-    (llAddLink "legalAttributeKeys" "hash" "hash")
-    (llAddLink "legalAttributeKeys" "opened" "opened")
-    (llAddLink "legalAttributeKeys" "closed" "closed")
-    (llAddLink "legalAttributeKeys" "status" "status")
-    (llAddLink "legalAttributeKeys" "hasPermList" "hasPermList")
-    (llAddLink "legalAttributeKeys" "permList" "permList")
 
     (singleInit "status" 0)
     ; status:
@@ -105,6 +98,13 @@
         (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
             (singleSet "owner" (crtraddr))
             (singleSet "electionManagerAddress" (CALLER))
+            (llAddLink "legalAttributeKeys" "owner" 1)
+            (llAddLink "legalAttributeKeys" "hash" 1)
+            (llAddLink "legalAttributeKeys" "opened" 1)
+            (llAddLink "legalAttributeKeys" "closed" 1)
+            (llAddLink "legalAttributeKeys" "status" 1)
+            (llAddLink "legalAttributeKeys" "hasPermList" 1)
+            (llAddLink "legalAttributeKeys" "permList" 1)
 			(singleSet "status" 1)
 
 			[0x0]1
