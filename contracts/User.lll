@@ -3,6 +3,8 @@
 ; ------------------------------------------------------------------------------
 ; - init
 ; - setPassword
+; - registerVoter
+; - deregisterVoter
 ; - addLlAttribute
 ; - rmLlAttribute
 ; - removeElection
@@ -27,7 +29,8 @@
     ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
 
-    (def 'elecaddr () (calldataload 0x20))
+    (def 'vtraddr () (calldataload 0x20))
+    (def 'elecaddr () (calldataload 0x40))
 
     (def 'pswrd () (calldataload 0x20))
 
@@ -74,6 +77,41 @@
             [0x0]1
             (return 0x0 0x20)
         })
+
+        ; ----------------------------------------------------------------------
+        ; Register a voter in an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerVoter" vtraddr elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "registerVoter") {
+            [0x20]"registerVoter"
+            [0x40](vtraddr)
+            (CALL (gass) (elecaddr) 0 0x20 0x40 0x60 0x20)
+
+            (unless (= @0x60 1) (STOP))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Deregister a voter in an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deregisterVoter" vtraddr elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "registerVoter") {
+            [0x20]"deregisterVoter"
+            [0x40](vtraddr)
+            (CALL (gass) (elecaddr) 0 0x20 0x40 0x60 0x20)
+
+            (unless (= @0x60 1) (STOP))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
 
         ; ----------------------------------------------------------------------
         ; Add a ll attribute.
@@ -138,7 +176,7 @@
         ; Destruct the user.
         ;-----------------------------------------------------------------------
         ; Calldata: "destructUser"
-        ; Returns: 0 - fail | 1 - success
+        ; Returns: suicide
         ;-----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
             ; remove the record in AccountManager

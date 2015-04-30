@@ -306,7 +306,7 @@
         ; Remove the Election. (called by the owner)
         ;-----------------------------------------------------------------------
         ; Calldata: "removeElection"
-        ; Returns: 0 - fail | 1 - success
+        ; Returns: suicide
         ;-----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
             ; check if the caller is the owner
