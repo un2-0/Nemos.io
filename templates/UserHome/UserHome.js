@@ -36,12 +36,16 @@ function showPolls(){
 	
 	contentContainer.appendChild(notification);
 	
+	//for test
+	loadBasicPollInformation("view");
 	
 	if(isSessionStorageEmpty() == false){
 		
 		temp = {username: sessionStorage.userName};
 		
 		notification.innerHTML = "loading elections of current user...";
+		
+		loadBasicPollInformation("view");
 		
 		sender.sendAsync("POST", baseUrl+ "/getUserPolls", JSON.stringify(temp), function(res){
 			
@@ -64,13 +68,15 @@ function createPoll(){
 	
 	contentContainer.appendChild(notification);
 	
-	loadBasicPollInformation("view");
+	//for test
+	loadBasicPollInformation("create");
+	
 	
 	if (isSessionStorageEmpty() == false) {
 		contentContainer.innerHTML = "";
 		
 		
-		
+		loadBasicPollInformation("create");
 		
 		
 		temp = {username: sessionStorage.userName};
