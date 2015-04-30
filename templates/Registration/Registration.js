@@ -17,7 +17,6 @@ function matchPassword() {
 	else
 		return true; 
 		}
-}
 
 //not been tested yet.
 function checkForm(form)

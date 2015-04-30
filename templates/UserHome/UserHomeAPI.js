@@ -46,6 +46,13 @@ function loadBasicPollInformation(viewOrCreate) {
 	labelPN.setAttribute("for", "pollName");
 	
 	
+	var organizerName = document.createElement("output");
+	organizerName.id = "organizerName";
+	organizerName.value = sessionStorage.userName;
+	var labelON = document.createElement("label");
+	labelON.innerHTML = "Oraniser Name(creator):  ";
+	labelON.setAttribute("for", "organizerName");
+	
 	var openTime = document.createElement("input");
 	openTime.id = "openTime";
 	openTime.setAttribute("type", "date");
@@ -78,6 +85,15 @@ function loadBasicPollInformation(viewOrCreate) {
 	
 	//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
 	
+	
+	basicInfo.appendChild(labelON);
+	basicInfo.appendChild(document.createElement("br"));
+	basicInfo.appendChild(organizerName);
+	
+	basicInfo.appendChild(document.createElement("br"));
+	basicInfo.appendChild(document.createElement("br"));
+	
+	
 	basicInfo.appendChild(labelPN);
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(pollName);
@@ -85,6 +101,7 @@ function loadBasicPollInformation(viewOrCreate) {
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(document.createElement("br"));
 	
+
 	basicInfo.appendChild(labelOT);
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(openTime);
@@ -117,15 +134,21 @@ function loadBasicPollInformation(viewOrCreate) {
 		
 		var pollName = document.createElement("output");
 		pollName.id = "pollName";
-		pollName.setAttribute("type", "text");
 		var labelPN = document.createElement("label");
 		labelPN.innerHTML = "Poll Name:  ";
 		labelPN.setAttribute("for", "pollName");
 		
 		
+		var organizerName = document.createElement("output");
+		organizerName.id = "organizerName";
+		organizerName.value = sessionStorage.userName;
+		var labelON = document.createElement("label");
+		labelON.innerHTML = "Oraniser Name(creator):  ";
+		labelON.setAttribute("for", "organizerName");
+		
+		
 		var openTime = document.createElement("output");
 		openTime.id = "openTime";
-		openTime.setAttribute("type", "date");
 		var labelOT = document.createElement("label");
 		labelOT.innerHTML = "Open Time:  ";
 		labelOT.setAttribute("for", "openTime");
@@ -133,7 +156,6 @@ function loadBasicPollInformation(viewOrCreate) {
 		
 		var closeTime = document.createElement("output");
 		closeTime.id = "closeTime";
-		closeTime.setAttribute("type", "date");
 		var labelCT = document.createElement("label");
 		labelCT.innerHTML = "Close Time:  ";
 		labelCT.setAttribute("for", "closeTime");
@@ -161,12 +183,21 @@ ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
 		
 		//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
 		
+		basicInfo.appendChild(labelON);
+		basicInfo.appendChild(document.createElement("br"));
+		basicInfo.appendChild(organizerName);
+		
+		basicInfo.appendChild(document.createElement("br"));
+		basicInfo.appendChild(document.createElement("br"));
+		
 		basicInfo.appendChild(labelPN);
 		basicInfo.appendChild(document.createElement("br"));
 		basicInfo.appendChild(pollName);
 		
 		basicInfo.appendChild(document.createElement("br"));
 		basicInfo.appendChild(document.createElement("br"));
+		
+		
 		
 		basicInfo.appendChild(labelOT);
 		basicInfo.appendChild(document.createElement("br"));
