@@ -5,14 +5,16 @@ var sendBtn;
 var operations = {};
 
 operations["echo"] = {
-    sender : echo,
     params : {"msg" : "Massage: "}
 }
 
 operations["getContractAddress"] = {
-    sender : getContractAddress,
     params : {"contractName" : "Contract Name: "} // name : label content
 };
+
+operations["login"] = {
+    params : {"username" : "User Name: ", "password" : "Password: "}
+}
 
 var contracts = {};
 
@@ -23,6 +25,7 @@ function init() {
     httpAPI = new HttpAPI();
     console.log("successfully get a HttpAPI object");
     sendBtn = document.getElementById("sendBtn");
+    sendBtn.onclick = generalSender;
     setUpOperationSelector();
 }
 
@@ -51,7 +54,6 @@ function operationChange() {
     var operation = operations[operationName];
     if (operation) {
         setKVArea(operation.params);
-        setSendBtn(operation.sender);
     } else
         window.alert("No such operation");
 }
@@ -121,7 +123,7 @@ function echo () {
     showRequest(method, url, body);
 }
 
-function getContractAddress() {
+function generalSender() {
     var method = "POST";
     var operation = getOperationSelected();
     var query = getQuery();
