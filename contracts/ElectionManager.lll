@@ -15,12 +15,13 @@
     (include "./env.def")
 
     ; --------------------------------------------------------------------------
-    ; macros
+    ; Constants
     ; --------------------------------------------------------------------------
-    ; for constants
     (def 'DAPPDOUG 0xdaffe)
 
-    ; for parameters
+    ; --------------------------------------------------------------------------
+    ; Parameters
+    ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
 
     (def 'elecaddr () (calldataload 0x20)) ;Address of the election
@@ -29,7 +30,7 @@
     (def 'elecname () (calldataload 0x40)) ;Name of the election
 
     ; --------------------------------------------------------------------------
-    ; variables
+    ; Variables
     ; --------------------------------------------------------------------------
     (llInit "electionNameToElectionIndex")
     (llInit "electionAddressToElectionIndex")

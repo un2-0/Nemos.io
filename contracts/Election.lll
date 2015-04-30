@@ -23,12 +23,13 @@
     (include "./defs/stdkv.def")
 
     ; --------------------------------------------------------------------------
-    ; macros (UPPER_CASE)
+    ; Constants
     ; --------------------------------------------------------------------------
-    ; macros for constants
     (def 'CREATED (TIMESTAMP))
 
-    ; macros for parameters
+    ; --------------------------------------------------------------------------
+    ; Parameters
+    ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
 
     (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
@@ -56,7 +57,7 @@
     (def 'addLlAttributeValue () (calldataload 0x60))
 
     ; --------------------------------------------------------------------------
-    ; variables (lower_case)
+    ; Variables
     ; --------------------------------------------------------------------------
     (singleInit "electionName" 0)
     (singleInit "hash" 0) ;Hash of description
