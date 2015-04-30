@@ -33,7 +33,6 @@
     ; --------------------------------------------------------------------------
     (singleInit "lastElection" 0)
     (kvInit "lastModified")
-    (llInit "electionNameToElectionAddress")
     (llInit "electionAddressToElectionName")
     (llInit "electionList")
     (llInit "reverseElectionList")
@@ -51,9 +50,6 @@
         (when (= (cmd) "createElection") {
             [0xC0](elecname) ;Restore the name of election in case of conflict
             [0xA0](crtraddr) ;Restore the address of user in case of conflict
-
-            ;First check if the name has already taken
-            (unless (= (llGet "electionNameToElectionAddress" (elecname)) 0) (STOP))
             
             ;Get the address of accountManager
             [0x0]"checkName"
@@ -87,7 +83,6 @@
             })
 
             (singleSet "lastElection" @0x0)
-            (llAddLink "electionNameToElectionAddress" @0xC0 @0x0)
             (llAddLink "electionAddressToElectionName" @0x0 @0xC0)
             
             [0x20]"setPerm"
@@ -165,8 +160,6 @@
                 (llAddLink "reverseElectionList" @0x40 @0x20)
             })
 
-            [0x20](llGet "electionAddressToElectionName" @0x0) ;Name of the election
-            (llRmLink "electionNameToElectionAddress" @0x20)
             (llRmLink "electionAddressToElectionName" @0x0)
             (kvSet "lastModified" @0x0 0)
 
