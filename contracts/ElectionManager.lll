@@ -44,12 +44,12 @@
         ; ----------------------------------------------------------------------
         ; Calldata: "createElection" crtrusrname elecname
         ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the newly created contract
+        ;       0 - fail
+        ;       0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createElection") {
-            [0xC0](elecname) ;Restore the name of election in case of conflict
-            [0xA0](crtraddr) ;Restore the address of user in case of conflict
+            [0xC0](elecname) ;Store the name of election in case of conflict
+            [0xA0](crtraddr) ;Store the address of user in case of conflict
             
             ;Get the address of accountManager
             [0x0]"checkName"
@@ -105,8 +105,8 @@
         ; ----------------------------------------------------------------------
         ; Calldata: "checkElection"
         ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the contract
+        ;       0 - fail
+        ;       0xADDRESS - the address of the contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "checkElection") {
             [0x0]@@(calldataload 0x20)

@@ -93,14 +93,11 @@
     ;   6 - closed
 
     (return 0 (lll {
-        [[0xcccc]](GASS)
-
         ; ----------------------------------------------------------------------
         ; Init a new election.
         ; ----------------------------------------------------------------------
         ; Calldata: "init" crtraddr
-        ; Returns:
-        ;     0 - fail | 1 - success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
             (singleSet "owner" (crtraddr))
@@ -236,7 +233,7 @@
         ; Register a voter.
         ; ----------------------------------------------------------------------
         ; Calldata: "registerVoter" vtraddr
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "registerVoter") {
             ;TODO Check if the caller has the permission to set
@@ -256,7 +253,7 @@
         ; Deregister a voter.
         ; ----------------------------------------------------------------------
         ; Calldata: "deregisterVoter" vtraddr
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "deregisterVoter") {
             ;TODO Check if the caller has the permission to set
@@ -276,7 +273,7 @@
         ; Record a ballot.
         ; ----------------------------------------------------------------------
         ; Calldata: "recordBallot" vtraddr option newoptionresult
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "recordBallot")) {
             ;Check if the caller is a registered voter
@@ -295,8 +292,8 @@
         ;-----------------------------------------------------------------------
         ; Calldata: "checkOwner"
         ; Returns:
-        ;     0 - the caller is not its owner
-        ;     1 - the caller is its owner
+        ;       0 - the caller is not its owner
+        ;       1 - the caller is its owner
         ;-----------------------------------------------------------------------
         (when (= (cmd) "checkOwner") {
             (unless (= (CALLER) owner) (STOP))
@@ -309,7 +306,7 @@
         ; Remove the Election. (called by the owner)
         ;-----------------------------------------------------------------------
         ; Calldata: "removeElection"
-        ; Returns:
+        ; Returns: 0 - fail | 1 - success
         ;-----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
             ; check if the caller is the owner
