@@ -17,13 +17,14 @@ function login(){
 	} 
 	
 	var userinfo = { username : userName.value , password : passWord.value };
+	//userinfo.test = "1222333";
 	console.log(userinfo);
 	
 	
 	//for test
 	//Note that: browser in Eclipse doesnt support session storage,plz test in chrome
 	sessionStorage.userName = userName.value;
-	window.alert("userinfo.username:"+userinfo.username +"   userinfo.password: "+userinfo.password+"   username in session: "+ sessionStorage.userName);
+	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName);
 	window.location.href = "templates/UserHome/UserHome.html";
 	
 	
@@ -37,7 +38,7 @@ function login(){
 	 *  			"userDoesntExist" (if user id doesnt exist)
 	 *  			"wrongPassWord" (if user id exist but the password is wrong)
 	*/
-	sender.sendAsync("GET", baseUrl+ "/Login&", JSON.stringify(userinfo), function(res){ 
+	sender.sendAsync("GET", baseUrl+ "/Login", JSON.stringify(userinfo), function(res){ 
 		
 		if (res.status == 200) {
 			console.log(res);
