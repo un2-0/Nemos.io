@@ -1,7 +1,18 @@
 ; ------------------------------------------------------------------------------
 ; Election
 ; ------------------------------------------------------------------------------
-; The template for the Election contract
+; - init
+; - addLog
+; - setSingleAttribute
+; - setKvAttribute
+; - addLlAttritbute
+; - rmLlAttritbute
+; - setOptions
+; - registerVoter
+; - deregisterVoter
+; - recordBallot
+; - checkOwner
+; - removeElection
 ; ------------------------------------------------------------------------------
 
 (def 'election () {
@@ -39,10 +50,10 @@
     (def 'kvAttributeKey () (calldataload 0x40))
     (def 'kvAttributeValue () (calldataload 0x60))
 
-    (def 'rmllAttributeKey () (calldataload 0x40))
+    (def 'rmLlAttributeKey () (calldataload 0x40))
 
-    (def 'addllAttributeKey () (calldataload 0x40))
-    (def 'addllAttributeValue () (calldataload 0x60))
+    (def 'addLlAttributeKey () (calldataload 0x40))
+    (def 'addLlAttributeValue () (calldataload 0x60))
 
     ; --------------------------------------------------------------------------
     ; variables (lower_case)
@@ -100,10 +111,10 @@
         ; ----------------------------------------------------------------------
         ; Add a log entry. (called by the owner)
         ; ----------------------------------------------------------------------
-        ; Calldata: "log" log
+        ; Calldata: "addLog" log
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "log") {
+        (when (= (cmd) "addLog") {
             ;TODO Check if the caller is the owner
 
             ;Add a log entry
@@ -154,20 +165,20 @@
         ; ----------------------------------------------------------------------
         ; Add a ll attribute.
         ; ----------------------------------------------------------------------
-        ; Calldata: "addllAttribute" attributeKey addllAttributeKey addllAttributeValue
+        ; Calldata: "addLlAttribute" attributeKey addLlAttributeKey addLlAttributeValue
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "addllAttribute") {
+        (when (= (cmd) "addLlAttribute") {
             ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
             
             ;Check if the key exists
-            (unless (= (llGet (attributeKey) (addllAttributeKey)) 0) (STOP))
+            (unless (= (llGet (attributeKey) (addLlAttributeKey)) 0) (STOP))
 
             ;Execute the setting
-            (llAddLink (attributeKey) (addllAttributeKey) (addllAttributeValue))
+            (llAddLink (attributeKey) (addLlAttributeKey) (addLlAttributeValue))
             
             [0x0]1
             (return 0x0 0x20)
@@ -176,20 +187,20 @@
         ; ----------------------------------------------------------------------
         ; Remove a ll attribute.
         ; ----------------------------------------------------------------------
-        ; Calldata: "rmllAttribute" attributeKey rmllAttributeKey
+        ; Calldata: "rmLlAttribute" attributeKey rmLlAttributeKey
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "rmllAttribute") {
+        (when (= (cmd) "rmLlAttribute") {
             ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
             
             ;Check if the key exists
-            (unless (= (llGet (attributeKey) (addllAttributeKey)) 1) (STOP))
+            (unless (= (llGet (attributeKey) (addLlAttributeKey)) 1) (STOP))
 
             ;Execute the setting
-            (llRmLink (attributeKey) (rmllAttributeKey))
+            (llRmLink (attributeKey) (rmLlAttributeKey))
             
             [0x0]1
             (return 0x0 0x20)
