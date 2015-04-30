@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Backend Test</title>
+</head>
+
+<body>
+	<h1>Backend Test</h1>
+
+	<div id="allContent">
+
+		<div class="test" id="trival">
+			<p>
+			<h4>Operation</h4>
+			<select id="operation">
+			</select>
+			<p>
+			<hr>
+
+			<h4>key-value pairs</h4>
+			<div id="kvArea">To be changed</div>
+			<hr>
+
+			<button id="sendBtn">send</button>
+			<hr>
+
+			<h4>Request</h4>
+			<p>
+				The method sent is: <span id="methodSent"></span>
+			</p>
+			<p>
+				The url sent is: <span id="urlSent"></span>
+			</p>
+			<p>
+				The body sent is: <span id="bodySent"></span>
+			</p>
+			<hr>
+
+			<h4>Respond</h4>
+		</div>
+
+	</div>
+	<script src="templates/API/utils.js"></script>
+	<script src="communicationTest.js"></script>
+</body>
+</html>
