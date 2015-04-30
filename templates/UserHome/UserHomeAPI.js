@@ -178,7 +178,7 @@ ddddddddddddddddddddddddddddddddddddddddddddd\
 ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
 		
 		contentContainer.appendChild(biContainer);
-		contentContainer.appendChild(basicInfo);
+		biContainer.appendChild(basicInfo);
 		
 		
 		//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
@@ -223,4 +223,76 @@ ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
 	}
 	
 	
+}
+
+
+function loadPollModuleSelection() {
+	
+	var moduleSelectionContainer = document.createElement("form");
+	moduleSelectionContainer.id = "moduleSelectionContainer";
+	
+	var moduleSelectionContainerLabel = document.createElement("label");
+	moduleSelectionContainerLabel.setAttribute("for", "moduleSelectionContainer");
+	moduleSelectionContainerLabel.innerHTML = "Please select a poll module: ";
+	
+	var selectPollModules = document.createElement("select");
+	selectPollModules.id = "selectPollModules";
+	selectPollModules.name = "selectPollModules";
+	
+	var module1 = document.createElement("option");
+	module1.id = "module 1";
+	module1.value = "module1";
+	module1.innerHTML = "module 1";
+	
+	var module2 = document.createElement("option");
+	module2.id = "module 2";
+	module2.value = "module2";
+	module2.innerHTML = "module 2";
+	
+	
+	contentContainer.appendChild(moduleSelectionContainerLabel);
+	contentContainer.appendChild(document.createElement("br"));
+	contentContainer.appendChild(moduleSelectionContainer);
+	
+	moduleSelectionContainer.appendChild(selectPollModules);
+	
+	contentContainer.appendChild(document.createElement("br"));
+	var moduleLoader = document.createElement("div");
+	moduleLoader.id = "moduleLoader";
+	contentContainer.appendChild(moduleLoader);
+	
+	
+	selectPollModules.appendChild(module1);
+	selectPollModules.appendChild(module2);
+	
+	
+	module1.selected = true;
+	module1Creation(moduleLoader);
+	
+	selectPollModules.addEventListener("change",function(){
+		if(module1.selected){
+			module1Creation(moduleLoader);
+		}else if (module2.selected){
+			module2Creation(moduleLoader);
+		}
+		
+	});
+	
+}
+
+
+
+
+
+//---------------------------------------poll-creation modules----------------------------------------------
+function module1Creation(moduleLoader) {
+	moduleLoader.innerHTML = "";
+	window.alert("module 1 selected");
+	moduleLoader.innerHTML = "module 1 load test";
+}
+
+function module2Creation(moduleLoader) {
+	moduleLoader.innerHTML = "";
+	window.alert("module 2 selected");
+	moduleLoader.innerHTML = "module 2 load test";
 }

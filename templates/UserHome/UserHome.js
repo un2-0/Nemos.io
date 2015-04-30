@@ -71,6 +71,7 @@ function createPoll(){
 	
 	//for test
 	loadBasicPollInformation("create");
+	loadPollModuleSelection();
 	
 	
 	if (isSessionStorageEmpty() == false) {
@@ -78,6 +79,7 @@ function createPoll(){
 	
 		loadBasicPollInformation("create");
 		
+		loadPollModules();
 		
 		temp = {username: sessionStorage.userName};
 		
