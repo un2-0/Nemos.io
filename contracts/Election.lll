@@ -28,8 +28,8 @@
 
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
-    (def 'option () (calldataload 0x20)) ;The index of option voted
-    (def 'newoptionresult () (calldataload 0x40)) ;New result of the option
+    (def 'option () (calldataload 0x40)) ;The index of option voted
+    (def 'newoptionresult () (calldataload 0x60)) ;New result of the option
 
     (def 'singleAttributeKey () (calldataload 0x20))
     (def 'singleAttributeValue () (calldataload 0x40))
@@ -102,7 +102,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "log" ) {
-            ;Check if the caller is the owner
+            ;TODO Check if the caller is the owner
 
             ;Add a log entry
             (llAddLink "logs" (TIMESTAMP) log)
@@ -118,7 +118,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "setSingleAttribute") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (singleAttributeKey)) 1) (STOP))
@@ -137,7 +137,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "setKvAttribute") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
@@ -156,7 +156,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "addllAttribute") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
@@ -178,7 +178,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "rmllAttribute") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
             ;Check if the key is legal
             (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
@@ -200,7 +200,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "setOptions") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
             (kvInit "ballots") ;Initialize ballot counting
             (kvInit "votingRecord") ;Initialize voting record
@@ -223,9 +223,9 @@
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "registerVoter") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
-            ; TODO check if the provided address is a valid user
+            ;TODO Check if the provided address is a valid user
 
             ;Check if the voter exists in the list
             (unless (= (llGet "voters" (vtraddr)) 0) (STOP))
@@ -243,9 +243,9 @@
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "deregisterVoter") {
-            ;Check if the caller has the permission to set
+            ;TODO Check if the caller has the permission to set
 
-            ; TODO check if the provided address is a valid user
+            ;TODO Check if the provided address is a valid user
 
             ;Check if the voter exists in the list
             (unless (= (llGet "voters" (vtraddr)) 1) (STOP))
@@ -257,18 +257,18 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Record a ballot. (called by a voter)
+        ; Record a ballot.
         ; ----------------------------------------------------------------------
-        ; Calldata: "recordBallot" BALLOT
+        ; Calldata: "recordBallot" vtraddr option newoptionresult
         ; Returns: 0 - fail | 1 -success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "recordBallot")) {
             ;Check if the caller is a registered voter
-            (unless (= (llGet "voters" (CALLER)) 1) (STOP))
+            (unless (= (llGet "voters" (vtraddr)) 1) (STOP))
             
             (kvSet "ballots" (option) (newoptionresult))
 
-            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
+            (kvSet "votingRecord" (vtraddr) (TIMESTAMP))
             
             [0x0]1
             (return 0x0 0x20)
