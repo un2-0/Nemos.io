@@ -38,7 +38,7 @@ function login(){
 	 *  			"userDoesntExist" (if user id doesnt exist)
 	 *  			"wrongPassWord" (if user id exist but the password is wrong)
 	*/
-	sender.sendAsync("GET", baseUrl+ "/Login", JSON.stringify(userinfo), function(res){ 
+	sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
 		
 		if (res.status == 200) {
 			console.log(res);
