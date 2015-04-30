@@ -10,7 +10,7 @@ operations["echo"] = {
 }
 
 operations["getContractAddress"] = {
-    sender : testForPOST,
+    sender : getContractAddress,
     params : {"contractName" : "Contract Name: "} // name : label content
 };
 
@@ -87,54 +87,46 @@ function showRequest(method, url, body) {
     document.getElementById("bodySent").innerHTML = JSON.stringify(body);
 }
 
-function showRespond() {
-    window.alert("in showRespond");
+function showResponse(XMLHttpReq) {
+    //window.alert("in showResponse");
+    document.getElementById("statusCode").innerHTML = XMLHttpReq.status;
+    document.getElementById("response").innerHTML = XMLHttpReq.response;
+
+    console.log(XMLHttpReq);
 }
 
 function getOperationSelected() {
     return operationSelector.options[operationSelector.selectedIndex].value;
 }
 
-function getNVPairString() {
-    var nvPairs = [];
+function getQuery() {
+    var query = {};
     var paramInputs = document.getElementsByClassName("param");
     for (var i = 0; i < paramInputs.length; i++) {
-        nvPairs.push(paramInputs[i].id + "=" + paramInputs[i].value);
+        query[paramInputs[i].id] = paramInputs[i].value;
     }
-    return nvPairs.join("&");
+    return query;
 }
 
-function makeUrlForGET(operation, nvPairStr) {
-    return baseURL + "/" + operation + "?" + nvPairStr;
+function makeUrl(operation) {
+    return baseURL + "/" + operation;
 }
-
-// sender functions
 
 function echo () {
     var method = "";
     var operation = getOperationSelected();
-    var nvPairStr = getNVPairString();
-    var url = makeUrlForGET(operation, nvPairStr)
+    var query = getQuery();
+    var url = makeUrl(operation)
     var body = null;
     showRequest(method, url, body);
 }
 
 function getContractAddress() {
-    var method = "GET";
-    var operation = getOperationSelected();
-    var nvPairStr = getNVPairString();
-    var url = makeUrlForGET(operation, nvPairStr);
-    var body = null;
-    showRequest(method, url, body);
-    httpAPI.sendAsync(method, url, body, showRespond);
-}
-
-function testForPOST() {
     var method = "POST";
     var operation = getOperationSelected();
-    var nvPairStr = getNVPairString();
-    var url = baseURL + "/" + operation + "?";
-    var body = nvPairStr;
+    var query = getQuery();
+    var url = makeUrl(operation);
+    var body = JSON.stringify(query);
     showRequest(method, url, body);
-    httpAPI.sendAsync(method, url, body, showRespond);
+    httpAPI.sendAsync(method, url, body, showResponse);
 }

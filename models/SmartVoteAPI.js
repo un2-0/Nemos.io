@@ -158,7 +158,7 @@ function SmartVoteAPI() {
 			setStatus(plname, 1);
 		}
 		else if (status == 1){
-			setStatus(plname, 0)
+			setStatus(plname, 0);
 		}
 	}
 
@@ -197,6 +197,10 @@ function SmartVoteAPI() {
 		return stat;
 	}
 
+	this.contractName2Addr = function (contractName) {
+	    return esl.ll.Main(dougAddr, sutil.stringToHex("DOUG"), sutil.stringToHex(contractName));
+	}
+
 	function plname2Addr(plname) {
 		var pubAddr = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
 		return esl.kv.Value(plfAddr, sutil.stringToHex("polls"), pubAddr);
@@ -207,7 +211,7 @@ function SmartVoteAPI() {
 		// Start subscribing to tx events.
 		//this.sub();
 		Println("DOUG address: " + dougAddr);
-		plfAddr = esl.ll.Main(dougAddr, sutil.stringToHex("DOUG"), sutil.stringToHex("pollfactory"));
+		plfAddr = this.contractName2Addr("pollfactory");
 		Println("plfAddr: " + plfAddr);
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);

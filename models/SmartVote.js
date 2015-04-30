@@ -11,20 +11,23 @@ function SmartVote() {
 	// Sub handlers needs to return a response object.
 	this.handle = function (httpReq) {
 		Println("Receiving request...");
+		
+		// all our queries go in body
+		
 		// Println("http request:");
 		// Println(typeof (httpReq));    // object
 		// Println(httpReq);
-		// The structure of httpReq: 
+		// The structure of httpReq:
 		// httpReq = {
 		//    Method:GET     // or POST
 		//    Host:localhost:3000
 		//    Header:{...}
-		//    Body:     // query goes here if POST
+		//    Body:     // query goes here, no matter GET or POST
 		//    URL:{
 		//        User:<nil>
 		//        Host:
 		//        Path:/apis/SmartVote/getContractAddress
-		//        RawQuery:contractName=DOUG     // empty if POST
+		//        RawQuery: // always empty
 		//        Fragment:
 		//        Scheme:
 		//        Opaque:
@@ -32,11 +35,10 @@ function SmartVote() {
 		// }
 
 		var urlObj = network.parseUrl(httpReq);
-		// Println(urlObj);
 		// The structure of urlObj
 		// urlObj = {
 		//     path:[getContractAddress]
-		//     options:{contractName:DOUG}     // empty if POST
+		//     options: // always empty
 		//     error:
 		// }
 
@@ -45,15 +47,21 @@ function SmartVote() {
 			return null;
 		}
 
-		var res = urlObj.path[0].split("&")[0];
-		Println("res       " + res);
+		var res = urlObj.path[0];
+		Println("res: " + res);
 		var hFunc = handlers[res];
 		// Return an error.
 		if (typeof (hFunc) !== "function") {
-			network.getHttpResponse(400,{},"Bad request: no resource named: " + res + ".");
+            // return ??????????????????????????????????????????????????????????
+			network.getHttpResponse(400, {},
+			        "Bad request: no resource named: " + res + ".");
 		}
-		var resp = hFunc(urlObj);
-		Println("resp:          " + resp);
+
+		var query = JSON.parse(httpReq.Body);
+		Println("query-------------------------------------------------------");
+		Println(query);
+		var resp = hFunc(query);
+		Println("resp: " + resp);
 
         // Weak check, but this is clearly not a valid response.
         if (typeof (resp) !== "object" || resp.Body === undefined
@@ -111,15 +119,15 @@ function SmartVote() {
 	}
 
 	// for testing
-	handlers.getContractAddress = function(urlObj) {
-	    Println(JSON.stringify(urlObj));
-	    // parse parameters
-	    
-	    // get the wanted values
-	    
+	handlers.getContractAddress = function(query) {
 	    // create the response JSON object
 	    var response;
-	    return network.getHttpResponseJSON(response);
+	    if (query.contractName) {
+	        var response = svApi.contractName2Addr(query.contractName);
+	        return network.getHttpResponseJSON(response);
+	    } else {
+            return network.getHttpResponse(400, {}, "Bad query.");
+	    }
 	}
 
 	// functions to talk with contracts
@@ -199,7 +207,7 @@ function SmartVote() {
 		svApi.init();
 	}
 
-};
+}
 
 // Initialization
 var sv = new SmartVote();
