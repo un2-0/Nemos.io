@@ -11,12 +11,6 @@ modify-deploy:
 	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
 !}EM
 
-!{AM
-modify-deploy:
-	"./contracts/AccountManager.lll" => {{AM}}
-	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
-!}AM
-
 !{setup
 transact:
 	{{DOUG}} => "setPerm" "doug" {{EM}} 1

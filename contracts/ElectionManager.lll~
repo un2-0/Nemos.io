@@ -129,38 +129,18 @@
             (llRmLink "electionNameToElectionAddress" @0x20)
             (llRmLink "electionAddressToElectionName" @0x0)
             [0x20](llGet "reverseElectionList" @0x0)
-
-            ;If the election to be removed is tail
             (when (= @0x0 (singleGet "lastElection")) {
-                (when (= @0x20 "HEAD") { ;If the election to be removed is head
+                (when (= @0x20 "HEAD") {
                     (llRmLink "electionList" "HEAD")
                     (singleSet "lastElection" 0)
                 })
-                (unless (= @0x20 "HEAD") { ;If the election to be removed is not head
+                (unless (= @0x20 "HEAD") {
                     (llRmLink "electionList" @0x20)
                     (singleSet "lastElection" @0x20)
                 })
                 (llRmLink "reverseElectionList" @0x0)
             })
-
-            ;If the election to be removed is head
             (when (= @0x20 "HEAD") {
-                [0x40](llGet "electionList" @0x0)
-                (llRmLink "electionList" @0x0)
-                (llRmLink "reverseElectionList" @0x0)
-                (llAddLink "electionList" "HEAD" @0x40)
-                (llAddLink "reverseElectionList" @0x40 "HEAD")
-            })
-
-            ;If the election to be removed is not head or tail
-            (unless (|| (= @0x0 (singleGet "lastElection")) (= @0x20 "HEAD")) {
-                [0x40](llGet "electionList" @0x0)
-                (llRmLink "electionList" @0x0)
-                (llRmLink "electionList" @0x20)
-                (llRmLink "reverseElectionList" @0x0)
-                (llRmLink "reverseElectionList" @0x40)
-                (llAddLink "electionList" @0x20 @0x40)
-                (llAddLink "reverseElectionList" @0x40 @0x20)
             })
             (kvSet "lastModified" @0x0 0)
 

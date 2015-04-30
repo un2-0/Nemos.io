@@ -1,0 +1,18 @@
+#File Deployment
+
+!{DOUG
+deploy:
+	"./contracts/SmartVoteDOUG.lll" => {{DOUG}}
+!}DOUG
+
+!{setup
+transact:
+	{{DOUG}} => "setPerm" "doug" {{EM}} 1
+
+transact:
+	{{DOUG}} => "setPerm" "electionManager" {{EM}} 1
+
+transact:
+	{{DOUG}} => "register" "electionManager" {{EM}}
+!}setup
+
