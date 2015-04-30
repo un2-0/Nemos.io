@@ -119,7 +119,7 @@ function SmartVote() {
 	}
 
 	// for testing
-	handlers.getContractAddress = function(query) {
+	handlers.getContractAddress = function (query) {
 	    // create the response JSON object
 	    var response;
 	    if (query.contractName) {
@@ -129,6 +129,14 @@ function SmartVote() {
             return network.getHttpResponse(400, {}, "Bad query.");
 	    }
 	}
+	
+    handlers.login = function (query) {
+        Println(query.username);
+        Println(query.password);
+        var response = {};
+        response.result = "success";
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
 
 	// functions to talk with contracts
 	function getPolls() {

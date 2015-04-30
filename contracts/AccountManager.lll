@@ -2,59 +2,45 @@
 ; AccountManager
 ; ------------------------------------------------------------------------------
 ; - create users
-; - create organizers
 ; - keep track of all organizers
 ; - keep track of all users
 ; - entrance to the voter-election registration
 ; ------------------------------------------------------------------------------
 
 {
-    ; init
+    ; --------------------------------------------------------------------------
+    ; References
+    ; --------------------------------------------------------------------------
+    (include "./User.lll")
+    (include "./defs/single.def")
+    (include "./defs/stdll.def")
+    (include "./defs/stdkv.def")
     (include "./env.def")
-    (include "./defs/stll.def")
     
     ; --------------------------------------------------------------------------
-    ; macros (UPPER_CASE)
+    ; Constants
     ; --------------------------------------------------------------------------
-    ; macros for constants
-    (def 'DOUG 0xabcdef)
+    (def 'DAPPDOUG 0xdaffe)
     (def 'ELECTION_MANAGER 0xabcdef)
 
-    ; macros for parameters
+    ; --------------------------------------------------------------------------
+    ; Parameters
+    ; --------------------------------------------------------------------------
     (def 'CMD () (calldataload 0x0))
     (def 'ORGANIZER_NAME () (calldataload 0x20))
     (def 'USER_NAME () (calldataload 0x20))
     (def 'ELECTION_ADDRESS () (calldataload 0x40))
 
     ; --------------------------------------------------------------------------
-    ; variables (lower_case)
+    ; Variables
     ; --------------------------------------------------------------------------
-    (llInit "organizers" "none" "none" "none")
-    (llInit "users" "none" "none" "none")
+    (llInit "userNameToUserAddress")
+    (llInit "userAddressToUserName")
+    (singleInit "lastUser")
 
     (return 0 (lll {
         ; ----------------------------------------------------------------------
-        ; Create an organizer from the Organizer template
-        ; ----------------------------------------------------------------------
-        ; Calldata: "createOrganizer"
-        ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the newly created contract
-        ; ----------------------------------------------------------------------
-        (when (= (CMD) "createOrganizer") {
-            ; create the contract
-            [0x0](create 0 0 (lll {
-                      (organizer)
-                  } 0))
-            [[@0x0]]1
-
-            (llAddLink "organizers" (ORIGIN) @0x0)
-
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Create a user from the User template
+        ; Create a contract for a new user.
         ; ----------------------------------------------------------------------
         ; Calldata: "createUser"
         ; Returns:
@@ -64,10 +50,10 @@
         (when (= (CMD) "createUser") {
             ; create the contract
             [0x0](create 0 0 (lll {
-                     (user)
-                 } 0))
+                      (organizer)
+                  } 0))
             [[@0x0]]1
-            
+
             (llAddLink "users" (ORIGIN) @0x0)
 
             (return 0x0 0x20)
