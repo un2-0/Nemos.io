@@ -1,8 +1,9 @@
 var contentContainer;
 var notification;
 var	sender = new HttpAPI();
+var temp;
 baseUrl = "/apis/SmartVote";
-window.onload = init;
+window.onload(init());
 
 
 function init() {
@@ -20,7 +21,7 @@ function loadInformation(){
 	//window.alert("initialing");
 
 	//window.alert(sessionStorage.userName);
-
+	
 	if(isSessionStorageEmpty() == false){
 		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+ sessionStorage.userName +"<i class='fa fa-caret-down'></i>";
 	}else {
@@ -29,19 +30,24 @@ function loadInformation(){
 
 }
 
-function showElections(){
+function showPolls(){
 	 
 	contentContainer.innerHTML = "";
 	
 	contentContainer.appendChild(notification);
-
+	
+	//for test
+	loadBasicPollInformation("view");
+	
 	if(isSessionStorageEmpty() == false){
 		
-		var temp = {username: sessionStorage.userName};
+		temp = {username: sessionStorage.userName};
 		
 		notification.innerHTML = "loading elections of current user...";
 		
-		sender.sendAsync("GET", baseUrl+ "/getUserElections", JSON.stringify(temp), function(res){
+		loadBasicPollInformation("view");
+		
+		sender.sendAsync("POST", baseUrl+ "/getUserPolls", JSON.stringify(temp), function(res){
 			
 			
 			
@@ -57,8 +63,34 @@ function showElections(){
 }
 
 function createPoll(){
+	
 	contentContainer.innerHTML = "";
+	
 	contentContainer.appendChild(notification);
+	
+	//for test
+	loadBasicPollInformation("create");
+	
+	
+	if (isSessionStorageEmpty() == false) {
+		contentContainer.innerHTML = "";
+		
+		
+		loadBasicPollInformation("create");
+		
+		
+		temp = {username: sessionStorage.userName};
+		
+		sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp), function(res){
+			
+			
+			
+		});
+		
+	} else {
+		notification.innerHTML = "no user account logged in, failed to create poll";
+	}
+	
 	
 	
 }
@@ -67,16 +99,5 @@ function createPoll(){
 function jumpToLogin() {
 	window.location.href = "../../index.html";
 }
-//---------------------------internal use function----------------------------------------------------
 
-function isSessionStorageEmpty() {
-	
-	if(sessionStorage.userName !== "" && sessionStorage.userName != null){
-	 return false;
-	}else{
-		return true;
-	}
-	
-	
-}
 
