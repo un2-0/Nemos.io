@@ -67,7 +67,7 @@
     (singleInit "optionNumber" 0)
     (singleInit "opened" 0)
     (singleInit "closed" 0)
-    (singleInit "electionManagerAddr" 0)
+    (singleInit "electionManagerAddress" 0)
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
@@ -104,7 +104,7 @@
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
             (singleSet "owner" (crtraddr))
-            (singleSet "electionManagerAddr" (CALLER))
+            (singleSet "electionManagerAddress" (CALLER))
 			(singleSet "status" 1)
 
 			[0x0]1
@@ -299,7 +299,7 @@
         ;     1 - the caller is its owner
         ;-----------------------------------------------------------------------
         (when (= (cmd) "checkOwner") {
-            (unless (= (CALLER owner) (STOP))
+            (unless (= (CALLER) owner) (STOP))
             
             [0x0]1
             (return 0x0 0x20)
