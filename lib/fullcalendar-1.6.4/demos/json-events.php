@@ -18,7 +18,6 @@ echo json_encode ( array (
 				'end' => "$year-$month-22",
 				'url' => "http://yahoo.com/" 
 		) 
-)
- );
+) );
 
 ?>

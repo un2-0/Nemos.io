@@ -305,10 +305,25 @@ h3.page-tagline {
 	}
 }
 
-.inbox .nav-tabs .glyphicon:not (.no-margin ){
-	margin-right: 10px
-}
+.inbox
+ 
+.nav-tabs
+ 
+.glyphicon
+:not
+ 
+(
+.no-margin
+ 
+){
+margin-right
+:
+ 
+10
+px
 
+
+}
 .inbox .tab-pane .list-group-item:first-child {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0
