@@ -5,24 +5,24 @@
 ; ------------------------------------------------------------------------------
 
 (def 'election () {
-
+    ;References
     (include "./env.def")
+    (include "./defs/single.def")
+    (include "./defs/stdll.def")
     (include "./defs/stdkv.def")
-    (include "./defs/stll.def")
 
     ; --------------------------------------------------------------------------
     ; macros (UPPER_CASE)
     ; --------------------------------------------------------------------------
     ; macros for constants
     (def 'CREATED (TIMESTAMP))
-    (def 'DAPPDOUG 0xabcdef)
 
     ; macros for parameters
     (def 'cmd () (calldataload 0x0))
 
-    (def 'log () (calldataload 0x20))
-
     (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
+
+    (def 'log () (calldataload 0x20))
 
     (def 'vtraddr () (calldataload 0x20)) ;User address of the voter
 
@@ -52,7 +52,8 @@
     (singleInit "owner" 0)
     (singleInit "optionNumber" 0)
     (singleInit "opened" 0)
-	(singleInit "closed" 0)
+    (singleInit "closed" 0)
+    (singleInit "electionManagerAddr" 0)
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
@@ -77,7 +78,7 @@
     ;   5 - on-going (opened but not closed)
     ;   6 - closed
 
-    (return 0 (lll{
+    (return 0 (lll {
         [[0xcccc]](GASS)
 
         ; ----------------------------------------------------------------------
@@ -87,8 +88,9 @@
         ; Returns:
         ;     0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (&& (= (cmd) "init") (= (singleGet "status") 0) {
+        (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
             (singleSet "owner" (crtraddr))
+            (singleSet "electionManagerAddr" (CALLER))
 			(singleSet "status" 1)
 
 			[0x0]1
@@ -101,7 +103,7 @@
         ; Calldata: "log" log
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "log" ) {
+        (when (= (cmd) "log") {
             ;TODO Check if the caller is the owner
 
             ;Add a log entry
@@ -112,7 +114,7 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Set an single attribute.
+        ; Set a single attribute.
         ; ----------------------------------------------------------------------
         ; Calldata: "setSingleAttribute" singleAttributeKey singleAttributeValue
         ; Returns: 0 - fail | 1 - success
@@ -131,7 +133,7 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Set an kv attribute.
+        ; Set a kv attribute.
         ; ----------------------------------------------------------------------
         ; Calldata: "setKvAttribute" attributeKey kvAttributeKey kvAttributeValue
         ; Returns: 0 - fail | 1 - success
@@ -150,7 +152,7 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Add an ll attribute.
+        ; Add a ll attribute.
         ; ----------------------------------------------------------------------
         ; Calldata: "addllAttribute" attributeKey addllAttributeKey addllAttributeValue
         ; Returns: 0 - fail | 1 - success
@@ -172,7 +174,7 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Remove an ll attribute.
+        ; Remove a ll attribute.
         ; ----------------------------------------------------------------------
         ; Calldata: "rmllAttribute" attributeKey rmllAttributeKey
         ; Returns: 0 - fail | 1 - success
@@ -296,17 +298,12 @@
         ; Returns:
         ;-----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
-            ; check if the call is the owner
+            ; check if the caller is the owner
             (unless (= (CALLER) owner) (STOP))
-
-            ;Get the address of electionManager
-            [0x0]"checkName"
-            [0x20]"electionManager"
-            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x40 0x20)
 
             ; remove the record in ElectionManager
             [0x0]"removeElection"
-            (CALL (gass) @0x40 0 0x0 0x20 0x20 0x20)
+            (CALL (gass) (singleGet "electionManagerAddr") 0 0x0 0x20 0x20 0x20)
             
             (unless (= @0x20 1) (STOP))
 

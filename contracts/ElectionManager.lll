@@ -6,9 +6,11 @@
 ; ------------------------------------------------------------------------------
 
 {
-    ; init
+    ;References
     (include "./Election.lll")
+    (include "./defs/single.def")
     (include "./defs/stdll.def")
+    (include "./defs/stdkv.def")
     (include "./env.def")
 
     ; --------------------------------------------------------------------------
