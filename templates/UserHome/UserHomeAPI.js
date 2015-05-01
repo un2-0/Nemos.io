@@ -1,6 +1,9 @@
 var contentContainer;
 
-var temp;
+var temp1;
+var temp2;
+var temp3;
+var temp4;
 
 window.onload = init;
 
@@ -353,12 +356,57 @@ function module1Creation(moduleLoader) {
 		rulesNum.setAttribute("max",canoptNum.value);	
 	});
 	
+	
 	parasContainer.setAttribute("onsubmit","return false;");
+	
 	parasContainer.addEventListener("submit",function(){
-		canOptContainerLabel.innerHTML = "Set information for " + canoptNum.value + " candidates/options, and each voter can vote for " + rulesNum.value + " candidates/options";
 		
+		canOptContainer.innerHTML = "";
+		canOptContainerLabel.innerHTML = "Set information for " + canoptNum.value + " candidates/options, and each voter can vote for " + rulesNum.value + " candidates/options: ";
 		
-		
+		 for (var i = 0; i < canoptNum.value; i++) {
+			 temp1 = document.createElement("input");
+			 temp1.setAttribute("type","text");
+			 temp1.id = "canOpt"+i;
+			 temp1.required = true;
+			 
+			 temp2 = document.createElement("textarea");
+			 temp2.id = "canDes"+i;
+			 temp2.setAttribute("rows", "10");
+			 temp2.setAttribute("cols", "50");
+			 temp2.required = true;
+			 
+			 temp3 = document.createElement("label");
+			 temp3.id = "canOptLabel"+i;
+			 temp3.setAttribute("for", temp1.id);
+			 temp3.innerHTML = "Candidate/Option " +(i+1)+" name: ";
+	//		 temp3.innerHTML = temp1.id;
+			 
+			 temp4 = document.createElement("label");
+			 temp4.id = "canDesLabel"+i;
+			 temp4.setAttribute("for", temp2.id);
+			 temp4.innerHTML = "Candidate/Option " +(i+1)+" description: ";
+	//		 temp4.innerHTML = temp2.id;
+			 
+			 
+			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(temp3);
+			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(temp1);
+			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(temp4);
+			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(temp2);
+			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(document.createElement("hr"));	
+			 
+			 temp1 = null;
+			 temp2 = null;
+			 temp3 = null;
+			 temp4 = null;
+		}
+		 
+		 
 	});
 
 	
