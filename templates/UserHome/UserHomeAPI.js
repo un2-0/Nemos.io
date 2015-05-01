@@ -489,7 +489,13 @@ function module1Creation(moduleLoader) {
 		 canOptContainer.addEventListener("submit",function(){
 			 window.alert("all good ready for sending request to decerver");
 			 
-			 
+			temp1 = {username: sessionStorage.userName};
+				
+			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp1), function(res){
+					
+					
+					
+			});
 			 
 			 
 		 });

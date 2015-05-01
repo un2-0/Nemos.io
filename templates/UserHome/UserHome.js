@@ -55,7 +55,8 @@ function showPolls(){
 		
 	}else {
 		//window.alert("User account undifined");
-		contentContainer.appendChild(notification);
+		//contentContainer.innerHTML = "";
+		//contentContainer.appendChild(notification);
 		notification.innerHTML = "no user account logged in, failed to load elections";
 		return;
 	}	
@@ -78,18 +79,9 @@ function createPoll(){
 	
 		loadBasicPollInformation("create");
 		
-		loadPollModules();
-		
-		temp = {username: sessionStorage.userName};
-		
-		sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp), function(res){
-			
-			
-			
-		});
-		
 	} else {
-		contentContainer.appendChild(notification);
+		//contentContainer.innerHTML = "";
+		//contentContainer.appendChild(notification);
 		notification.innerHTML = "no user account logged in, failed to create poll";
 	}
 	
