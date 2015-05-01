@@ -90,7 +90,7 @@ function createPoll(){
 		
 	} else {
 		contentContainer.appendChild(notification);
-		//notification.innerHTML = "no user account logged in, failed to create poll";
+		notification.innerHTML = "no user account logged in, failed to create poll";
 	}
 	
 	

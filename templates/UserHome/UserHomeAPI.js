@@ -36,6 +36,7 @@ function loadBasicPollInformation(viewOrCreate) {
 	if(viewOrCreate === "create"){
 	
 	var biContainer = document.createElement("div");
+	biContainer.id = "biContainer";
 	
 	var basicInfo = document.createElement("form");
 	basicInfo.id = "basicInfo";
@@ -88,37 +89,23 @@ function loadBasicPollInformation(viewOrCreate) {
 	checkBtn.setAttribute("type","submit");
 	checkBtn.value = "Next";
 	
-	basicInfo.setAttribute("onsubmit","return false;");
+	var goBackBtn = document.createElement("button");
+	goBackBtn.innerHTML = "go back to basic information setting";
+	goBackBtn.id = "goBackBtn";
+	goBackBtn.hidden = true;
 	
-	basicInfo.addEventListener("submit",function(){
+	var pollDetailContainer = document.createElement("div");
+	pollDetailContainer.id = "pollDetailContainer";
 	
-		var currentDate = new Date();
-		
-		var OTDate = new Date(openTime.value);
-		var CTDate = new Date(closeTime.value);
-		
-		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
-		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
-
-		if(currentDate > OTDate){
-			window.alert("illegal open time (open time should be after current time)");
-
-		}else if (currentDate > CTDate){
-			window.alert("illegal close time (close time should be after current time)");
-
-		}else if (OTDate >= CTDate){
-			window.alert("open time should be before close time");
-
-		}else {
-			loadPollModuleSelection();
-		}
 	
-});
 	
 	
 	contentContainer.appendChild(biContainer);
-	contentContainer.appendChild(basicInfo);
+	contentContainer.appendChild(goBackBtn);
+	contentContainer.appendChild(pollDetailContainer);
 	
+	biContainer.appendChild(basicInfo);
+
 	
 	//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
 	
@@ -164,6 +151,56 @@ function loadBasicPollInformation(viewOrCreate) {
 	
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(document.createElement("br"));
+	
+basicInfo.setAttribute("onsubmit","return false;");
+	
+	basicInfo.addEventListener("submit",function(){
+	
+		var currentDate = new Date();
+		
+		var OTDate = new Date(openTime.value);
+		var CTDate = new Date(closeTime.value);
+		
+		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
+		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
+
+		if(currentDate > OTDate){
+			window.alert("illegal open time (open time should be after current time)");
+
+		}else if (currentDate > CTDate){
+			window.alert("illegal close time (close time should be after current time)");
+
+		}else if (OTDate >= CTDate){
+			window.alert("open time should be before close time");
+
+		}else {
+			loadPollModuleSelection(pollDetailContainer);
+			pollName.disabled = true;
+			openTime.disabled = true;
+			closeTime.disabled = true;
+			pollDes.disabled = true;
+			checkBtn.hidden = true;
+			goBackBtn.hidden = false;
+		}
+	
+});
+	
+	
+	goBackBtn.addEventListener("click",function(){
+		 
+		pollName.disabled = false;
+		openTime.disabled = false;
+		closeTime.disabled = false;
+		pollDes.disabled = false;
+		checkBtn.hidden = false;	 
+		 goBackBtn.hidden = true;
+		 
+		 pollDetailContainer.innerHTML = "";
+		 
+		 
+	 });
+	
+	
 	
 	} else if (viewOrCreate === "view"){
 		
@@ -268,7 +305,9 @@ ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
 }
 
 
-function loadPollModuleSelection() {
+function loadPollModuleSelection(pollDetailContainer) {
+	
+	
 	
 	var moduleSelectionContainer = document.createElement("form");
 	moduleSelectionContainer.id = "moduleSelectionContainer";
@@ -292,16 +331,19 @@ function loadPollModuleSelection() {
 	module2.innerHTML = "module 2";
 	
 	
-	contentContainer.appendChild(moduleSelectionContainerLabel);
-	contentContainer.appendChild(document.createElement("br"));
-	contentContainer.appendChild(moduleSelectionContainer);
+	
+	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(moduleSelectionContainerLabel);
+	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(moduleSelectionContainer);
 	
 	moduleSelectionContainer.appendChild(selectPollModules);
 	
-	contentContainer.appendChild(document.createElement("br"));
+	
+	pollDetailContainer.appendChild(document.createElement("br"));
 	var moduleLoader = document.createElement("div");
 	moduleLoader.id = "moduleLoader";
-	contentContainer.appendChild(moduleLoader);
+	pollDetailContainer.appendChild(moduleLoader);
 	
 	
 	selectPollModules.appendChild(module1);
@@ -319,6 +361,8 @@ function loadPollModuleSelection() {
 		}
 		
 	});
+	
+	
 	
 }
 
@@ -370,8 +414,9 @@ function module1Creation(moduleLoader) {
 	
 	var setParaBtn = document.createElement("input");
 	setParaBtn.setAttribute("type","submit");
-	setParaBtn.innerHTML = "Next";
+	setParaBtn.value = "Next";
 	setParaBtn.id = "setParaBtn";
+
 	
 	var canOptContainer = document.createElement("form");
 	canOptContainer.id = "canOptContainer";
@@ -448,15 +493,12 @@ function module1Creation(moduleLoader) {
 			 
 			 
 		 });
-		 
-		 
+	 
 		 canOptContainer.appendChild(subPollBtn);
-		 
 		 
 	});
 
-	
-	
+
 	moduleLoader.appendChild(parasContainerLabel);
 	moduleLoader.appendChild(document.createElement("br"));
 	moduleLoader.appendChild(parasContainer);
