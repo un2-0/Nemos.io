@@ -41,6 +41,7 @@ function loadBasicPollInformation(viewOrCreate) {
 	var pollName = document.createElement("input");
 	pollName.id = "pollName";
 	pollName.setAttribute("type", "text");
+	pollName.required = true;
 	var labelPN = document.createElement("label");
 	labelPN.innerHTML = "Poll Name:  ";
 	labelPN.setAttribute("for", "pollName");
@@ -55,7 +56,8 @@ function loadBasicPollInformation(viewOrCreate) {
 	
 	var openTime = document.createElement("input");
 	openTime.id = "openTime";
-	openTime.setAttribute("type", "date");
+	openTime.setAttribute("type", "datetime-local");
+	openTime.required = true;
 	var labelOT = document.createElement("label");
 	labelOT.innerHTML = "Open Time:  ";
 	labelOT.setAttribute("for", "openTime");
@@ -63,7 +65,8 @@ function loadBasicPollInformation(viewOrCreate) {
 	
 	var closeTime = document.createElement("input");
 	closeTime.id = "closeTime";
-	closeTime.setAttribute("type", "date");
+	closeTime.setAttribute("type", "datetime-local");
+	closeTime.required = true;
 	var labelCT = document.createElement("label");
 	labelCT.innerHTML = "Close Time:  ";
 	labelCT.setAttribute("for", "closeTime");
@@ -73,6 +76,7 @@ function loadBasicPollInformation(viewOrCreate) {
 	pollDes.id = "pollDes";
 	pollDes.setAttribute("rows", "10");
 	pollDes.setAttribute("cols", "70");
+	pollDes.required = true;
 	var labelDes = document.createElement("label");
 	labelDes.innerHTML = "Poll Description:  ";
 	labelDes.setAttribute("for", "pollDes");
@@ -122,6 +126,8 @@ function loadBasicPollInformation(viewOrCreate) {
 	
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(document.createElement("br"));
+	
+	basicInfo.setAttribute("onsubmit","return false;");
 	
 	} else if (viewOrCreate === "view"){
 		
@@ -287,9 +293,108 @@ function loadPollModuleSelection() {
 //---------------------------------------poll-creation modules----------------------------------------------
 function module1Creation(moduleLoader) {
 	moduleLoader.innerHTML = "";
-	window.alert("module 1 selected");
-	moduleLoader.innerHTML = "module 1 load test";
+	//window.alert("module 1 selected");
+	//moduleLoader.innerHTML = "module 1 load test";
+	
+	var parasContainer = document.createElement("form");
+	parasContainer.id = "parasContainer";
+	
+	var parasContainerLabel = document.createElement("label");
+	parasContainerLabel.innerHTML = "Set parameters for module-1 poll:  ";
+	parasContainerLabel.setAttribute("for", "parasContainer");
+	
+	var canoptNum = document.createElement("input");
+	canoptNum.setAttribute("type","number");
+	canoptNum.id = "canoptNum";
+	canoptNum.name = "canoptNum";
+	canoptNum.required = true;
+	canoptNum.setAttribute("min",1);
+	canoptNum.setAttribute("max",50);
+	
+	var canoptNumLabel = document.createElement("label");
+	canoptNumLabel.id = "canoptNumLabel";
+	canoptNumLabel.innerHTML = "Decided how many candidates/opions in this poll <strong>(1~50)</strong>:  ";
+	canoptNumLabel.setAttribute("for", "canoptNum");
+	
+	
+	var rulesNum = document.createElement("input");
+	rulesNum.setAttribute("type","number");
+	rulesNum.id = "rulesNum";
+	rulesNum.name = "rulesNum";
+	rulesNum.required = true;
+	rulesNum.setAttribute("min",1);
+	rulesNum.setAttribute("max",50);
+	
+	canoptNum.addEventListener("change",function(){
+		rulesNum.setAttribute("max",canoptNum.value);	
+	});
+	
+	
+	var rulesNumLabel = document.createElement("label");
+	rulesNumLabel.id = "rulesNumLabel";
+	rulesNumLabel.innerHTML = "Decided a voter can vote for how many candidates/options <strong>(must less than or equal with the number of candidates/options)</strong>:  ";
+	rulesNumLabel.setAttribute("for", "rulesNum");
+	
+	var setParaBtn = document.createElement("input");
+	setParaBtn.setAttribute("type","submit");
+	setParaBtn.innerHTML = "Next";
+	setParaBtn.id = "setParaBtn";
+	
+	var canOptContainer = document.createElement("form");
+	canOptContainer.id = "canOptContainer";
+	
+	var canOptContainerLabel = document.createElement("label");
+	canOptContainerLabel.id = "canOptContainerLabel";
+	canOptContainerLabel.setAttribute("for", "canOptContainerLabel");
+	
+	
+	
+	canoptNum.addEventListener("change",function(){
+		rulesNum.setAttribute("max",canoptNum.value);	
+	});
+	
+	parasContainer.setAttribute("onsubmit","return false;");
+	parasContainer.addEventListener("submit",function(){
+		canOptContainerLabel.innerHTML = "Set information for " + canoptNum.value + " candidates/options, and each voter can vote for " + rulesNum.value + " candidates/options";
+		
+		
+		
+	});
+
+	
+	
+	moduleLoader.appendChild(parasContainerLabel);
+	moduleLoader.appendChild(document.createElement("br"));
+	moduleLoader.appendChild(parasContainer);
+	
+	
+	parasContainer.appendChild(document.createElement("br"));
+	parasContainer.appendChild(canoptNumLabel);
+	parasContainer.appendChild(document.createElement("br"));
+	parasContainer.appendChild(canoptNum);
+	parasContainer.appendChild(document.createElement("br"));
+	
+	parasContainer.appendChild(rulesNumLabel);
+	parasContainer.appendChild(document.createElement("br"));
+	parasContainer.appendChild(rulesNum);
+	parasContainer.appendChild(document.createElement("br"));
+	parasContainer.appendChild(setParaBtn);
+	
+	
+	moduleLoader.appendChild(document.createElement("br"));
+	moduleLoader.appendChild(document.createElement("br"));
+	moduleLoader.appendChild(canOptContainerLabel);
+	moduleLoader.appendChild(document.createElement("br"));
+	moduleLoader.appendChild(canOptContainer);
+	
+	
+	
+	
+	
 }
+
+
+
 
 function module2Creation(moduleLoader) {
 	moduleLoader.innerHTML = "";
