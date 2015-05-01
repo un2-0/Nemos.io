@@ -1,5 +1,4 @@
 var contentContainer;
-
 var temp1;
 var temp2;
 var temp3;
@@ -39,7 +38,7 @@ function loadBasicPollInformation(viewOrCreate) {
 	var biContainer = document.createElement("div");
 	
 	var basicInfo = document.createElement("form");
-	
+	basicInfo.id = "basicInfo";
 	
 	var pollName = document.createElement("input");
 	pollName.id = "pollName";
@@ -84,6 +83,37 @@ function loadBasicPollInformation(viewOrCreate) {
 	labelDes.innerHTML = "Poll Description:  ";
 	labelDes.setAttribute("for", "pollDes");
 	
+	
+	var checkBtn = document.createElement("input");
+	checkBtn.setAttribute("type","submit");
+	checkBtn.value = "Next";
+	
+	basicInfo.setAttribute("onsubmit","return false;");
+	
+	basicInfo.addEventListener("submit",function(){
+	
+		var currentDate = new Date();
+		
+		var OTDate = new Date(openTime.value);
+		var CTDate = new Date(closeTime.value);
+		
+		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
+		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
+
+		if(currentDate > OTDate){
+			window.alert("illegal open time (open time should be after current time)");
+
+		}else if (currentDate > CTDate){
+			window.alert("illegal close time (close time should be after current time)");
+
+		}else if (OTDate >= CTDate){
+			window.alert("open time should be before close time");
+
+		}else {
+			loadPollModuleSelection();
+		}
+	
+});
 	
 	
 	contentContainer.appendChild(biContainer);
@@ -130,7 +160,10 @@ function loadBasicPollInformation(viewOrCreate) {
 	basicInfo.appendChild(document.createElement("br"));
 	basicInfo.appendChild(document.createElement("br"));
 	
-	basicInfo.setAttribute("onsubmit","return false;");
+	basicInfo.appendChild(checkBtn);
+	
+	basicInfo.appendChild(document.createElement("br"));
+	basicInfo.appendChild(document.createElement("br"));
 	
 	} else if (viewOrCreate === "view"){
 		
@@ -290,9 +323,6 @@ function loadPollModuleSelection() {
 }
 
 
-
-
-
 //---------------------------------------poll-creation modules----------------------------------------------
 function module1Creation(moduleLoader) {
 	moduleLoader.innerHTML = "";
@@ -345,6 +375,7 @@ function module1Creation(moduleLoader) {
 	
 	var canOptContainer = document.createElement("form");
 	canOptContainer.id = "canOptContainer";
+	canOptContainer.setAttribute("onsubmit","return false;");
 	
 	var canOptContainerLabel = document.createElement("label");
 	canOptContainerLabel.id = "canOptContainerLabel";
@@ -406,6 +437,21 @@ function module1Creation(moduleLoader) {
 			 temp4 = null;
 		}
 		 
+		 var subPollBtn = document.createElement("input");
+		 subPollBtn.setAttribute("type","submit");
+		 subPollBtn.value = "Create Poll";
+		 
+		 canOptContainer.addEventListener("submit",function(){
+			 window.alert("all good ready for sending request to decerver");
+			 
+			 
+			 
+			 
+		 });
+		 
+		 
+		 canOptContainer.appendChild(subPollBtn);
+		 
 		 
 	});
 
@@ -435,10 +481,7 @@ function module1Creation(moduleLoader) {
 	moduleLoader.appendChild(document.createElement("br"));
 	moduleLoader.appendChild(canOptContainer);
 	
-	
-	
-	
-	
+
 }
 
 
@@ -446,6 +489,6 @@ function module1Creation(moduleLoader) {
 
 function module2Creation(moduleLoader) {
 	moduleLoader.innerHTML = "";
-	window.alert("module 2 selected");
+	//window.alert("module 2 selected");
 	moduleLoader.innerHTML = "module 2 load test";
 }
