@@ -18,7 +18,7 @@ function matchPassword() {
 	else
 		return true; 
 		}
-}
+
 
 /*not been tested yet. 4.30.2015
  * 

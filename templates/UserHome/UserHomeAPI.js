@@ -322,11 +322,7 @@ function module1Creation(moduleLoader) {
 	var subPollBtn = document.createElement("input");
 	 subPollBtn.setAttribute("type","submit");
 	 subPollBtn.value = "creat poll";
-	
-	
-	//----------------------------------------------------------------------------------------------
-	
-	 
+ 
 	 
 	//---------------------------------------------------------------------------------------------- 
 	moduleLoader.appendChild(module1Form);
@@ -473,6 +469,9 @@ function module1Creation(moduleLoader) {
 		}
 	});
 
+	
+	
+	
 	module1Form.addEventListener("submit",function(){
 		
 		var currentDate = new Date();
