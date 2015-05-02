@@ -138,6 +138,7 @@ function SmartVoteAPI() {
 
 	this.setOpnum = function(plname, opnum) {
 		var txData = [];
+		opnum = parseInt(opnum);
 		txData.push("setopnum");
 		txData.push("0x" + opnum.toString(16));
 		var hash = sendMsg(plname2Addr(plname), txData);
@@ -172,7 +173,7 @@ function SmartVoteAPI() {
 	}
 
 	this.showPolls = function() {
-		var plnum = parseInt(esl.single.Value(plfAddr, sutil.stringToHex("plnum")), 16);
+		var plnum = esl.single.Value(plfAddr, sutil.stringToHex("plnum")).slice(2);
 		if (plnum == 0) {
 			Println("No poll in block chain.");
 			return 0;
@@ -191,7 +192,7 @@ function SmartVoteAPI() {
 		var stat = "";
 		var opnum = this.getOpnum(plname);
 		for (var i = 1; i <= opnum; i++) {
-			stat += parseInt(esl.kv.Value(plAddr, sutil.stringToHex("ops"), i), 16) + ";";
+			stat += parseInt(esl.kv.Value(plAddr, sutil.stringToHex("ops"), i).slice(2)) + ";";
 		}
 		stat = stat.slice(0, stat.length - 1);
 		return stat;

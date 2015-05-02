@@ -1,84 +1,191 @@
 ; ------------------------------------------------------------------------------
 ; User
 ; ------------------------------------------------------------------------------
-; The template for users, the accounts who can vote in elections.
+; - init
+; - setPassword
+; - registerVoter
+; - deregisterVoter
+; - addLlAttribute
+; - rmLlAttribute
+; - removeElection
+; - destructUser
 ; ------------------------------------------------------------------------------
 (def 'user () {
 
-    ; init
+    ; --------------------------------------------------------------------------
+    ; References
+    ; --------------------------------------------------------------------------
     (include "./env.def")
     (include "./defs/single.def")
     (include "./defs/stdll.def")
     
     ; --------------------------------------------------------------------------
-    ; macros (UPPER_CASE)
+    ; Constants
     ; --------------------------------------------------------------------------
-    ; the computer which owns this contract
-    (def 'OWNER (ORIGIN))
-    ; the creator would be the AccountManager
-    (def 'MANAGER (CALLER))
-    (def 'CREATED_TIME (TIMESTAMP))
-    
-    ; macros for parameters
-    (def 'CMD () (calldataload 0x0))
-    (def 'ELECTION_ADDRESS (calldataload 0x20))
-    (def 'BALLOT (calldataload 0x40))
+    (def 'CREATED (TIMESTAMP))
     
     ; --------------------------------------------------------------------------
-    ; variables (lower_case)
+    ; Parameters
     ; --------------------------------------------------------------------------
-    ; all the elections that the user can vote in
-    (llInit "elections" "none" "none" "none")
+    (def 'cmd () (calldataload 0x0))
+
+    (def 'vtraddr () (calldataload 0x20))
+    (def 'elecaddr () (calldataload 0x40))
+
+    (def 'pswrd () (calldataload 0x20))
+
+    (def 'attributeKey () (calldataload 0x20))
+
+    (def 'rmLlAttributeKey () (calldataload 0x40))
+
+    (def 'addLlAttributeKey () (calldataload 0x40))
+    (def 'addLlAttributeValue () (calldataload 0x60))
+    
+    ; --------------------------------------------------------------------------
+    ; Variables
+    ; --------------------------------------------------------------------------
+    (singleInit "password" 0)
+    (singleInit "hash" 0) ;Hash of description of user
+    (singleInit "accountManagerAddress" 0)
+
+    (llInit "legalAttributeKeys")
+    (llAddLink "legalAttributeKeys" "hash" 1)
 
     (return 0 (lll {
-        [[0xcccc]](GASS)    ; ??????????????????????????????????????????????????
-
-        ; body
-        
         ; ----------------------------------------------------------------------
-        ; Register an election in which this user can vote.
+        ; Init the user.
         ; ----------------------------------------------------------------------
-        ; Calldata: "registerElection" ELECTION_ADDRESS
+        ; Calldata: "init"
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
-        (when (= (CMD) "registerElection") {
-            ; check if the caller is an Organizer
-            [0x0]"checkOrganizer"
-            [0x20](CALLER)
-            (CALL (gass) MANAGER 0 0x0 0x40 0x40 0x20)
-            
-            (when (= @0x40 0) (STOP))
-            
-            ; check if the organizer creates the election
-            [0x0]"checkOrganizer"
-            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
-            
-            (unless (= @0x40 (CALLER)) (STOP))
-            
-            (llAddLink "elections" (ELECTION_ADDRESS) (ELECTION_ADDRESS))
+        (when (= (cmd) "init") {
+            (singleSet "accountManagerAddress" (CALLER))
+
+            [0x0]1
+            (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Deregister an election that the user can vote in
+        ; Set the password.
         ; ----------------------------------------------------------------------
-        ; Calldata: "deregisterElection" ELECTION_ADDRESS
+        ; Calldata: "setPassword" pswrd
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
-        (when (= (CMD) "deregisterElection") {
-            ; check if the caller is an Organizer
-            [0x0]"checkOrganizer"
-            [0x20](CALLER)
-            (CALL (GASS) MANAGER 0 0x0 0x40 0x40 0x20)
-            
-            (when (= @0x40 0) (STOP))
-            
-            ; check if the organizer creates the election
-            [0x0]"checkOrganizer"
-            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x40 0x20)
-            
-            (unless (= @0x40 (CALLER)) (STOP))
-            
-            (llRmLink "elections" (ELECTION_ADDRESS))
+        (when (= (cmd) "setPassword") {
+            (singleSet "password" pswrd)
+
+            [0x0]1
+            (return 0x0 0x20)
         })
-    })
+
+        ; ----------------------------------------------------------------------
+        ; Register a voter in an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerVoter" vtraddr elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "registerVoter") {
+            [0x20]"registerVoter"
+            [0x40](vtraddr)
+            (CALL (gass) (elecaddr) 0 0x20 0x40 0x60 0x20)
+
+            (unless (= @0x60 1) (STOP))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Deregister a voter in an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deregisterVoter" vtraddr elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "registerVoter") {
+            [0x20]"deregisterVoter"
+            [0x40](vtraddr)
+            (CALL (gass) (elecaddr) 0 0x20 0x40 0x60 0x20)
+
+            (unless (= @0x60 1) (STOP))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+
+        ; ----------------------------------------------------------------------
+        ; Add a ll attribute.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "addLlAttribute" attributeKey addLlAttributeKey addLlAttributeValue
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "addLlAttribute") {
+            ;TODO Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
+            
+            ;Check if the key exists
+            (unless (= (llGet (attributeKey) (addLlAttributeKey)) 0) (STOP))
+
+            ;Execute the setting
+            (llAddLink (attributeKey) (addLlAttributeKey) (addLlAttributeValue))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Remove a ll attribute.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "rmLlAttribute" attributeKey rmLlAttributeKey
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "rmLlAttribute") {
+            ;TODO Check if the caller has the permission to set
+
+            ;Check if the key is legal
+            (unless (= (llGet "legalAttributeKeys" (attributeKey)) 1) (STOP))
+            
+            ;Check if the key exists
+            (unless (= (llGet (attributeKey) (addLlAttributeKey)) 1) (STOP))
+
+            ;Execute the setting
+            (llRmLink (attributeKey) (rmLlAttributeKey))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Remove the Election.
+        ;-----------------------------------------------------------------------
+        ; Calldata: "removeElection" elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "removeElection") {
+            ;Remove the record in election
+            [0x0]"removeElection"
+            (CALL (gass) (elecaddr) 0 0x0 0x20 0x20 0x20)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Destruct the user.
+        ;-----------------------------------------------------------------------
+        ; Calldata: "destructUser"
+        ; Returns: suicide
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "removeElection") {
+            ; remove the record in AccountManager
+            [0x0]"destructUser"
+            (CALL (gass) (singleGet "accountManagerAddr") 0 0x0 0x20 0x20 0x20)
+            
+            (unless (= @0x20 1) (STOP))
+
+            (suicide (ORIGIN))
+        })
+    } 0))
 })

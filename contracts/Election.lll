@@ -67,20 +67,20 @@
     (singleInit "optionNumber" 0)
     (singleInit "opened" 0)
     (singleInit "closed" 0)
-    (singleInit "electionManagerAddr" 0)
+    (singleInit "electionManagerAddress" 0)
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
     (llInit "voters")
 
     (llInit "legalAttributeKeys")
-    (llAddLink "legalAttributeKeys" "owner" "owner")
-    (llAddLink "legalAttributeKeys" "hash" "hash")
-    (llAddLink "legalAttributeKeys" "opened" "opened")
-    (llAddLink "legalAttributeKeys" "closed" "closed")
-    (llAddLink "legalAttributeKeys" "status" "status")
-    (llAddLink "legalAttributeKeys" "hasPermList" "hasPermList")
-    (llAddLink "legalAttributeKeys" "permList" "permList")
+    (llAddLink "legalAttributeKeys" "owner" 1)
+    (llAddLink "legalAttributeKeys" "hash" 1)
+    (llAddLink "legalAttributeKeys" "opened" 1)
+    (llAddLink "legalAttributeKeys" "closed" 1)
+    (llAddLink "legalAttributeKeys" "status" 1)
+    (llAddLink "legalAttributeKeys" "hasPermList" 1)
+    (llAddLink "legalAttributeKeys" "permList" 1)
 
     (singleInit "status" 0)
     ; status:
@@ -93,18 +93,15 @@
     ;   6 - closed
 
     (return 0 (lll {
-        [[0xcccc]](GASS)
-
         ; ----------------------------------------------------------------------
         ; Init a new election.
         ; ----------------------------------------------------------------------
         ; Calldata: "init" crtraddr
-        ; Returns:
-        ;     0 - fail | 1 - success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
             (singleSet "owner" (crtraddr))
-            (singleSet "electionManagerAddr" (CALLER))
+            (singleSet "electionManagerAddress" (CALLER))
 			(singleSet "status" 1)
 
 			[0x0]1
@@ -236,7 +233,7 @@
         ; Register a voter.
         ; ----------------------------------------------------------------------
         ; Calldata: "registerVoter" vtraddr
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "registerVoter") {
             ;TODO Check if the caller has the permission to set
@@ -256,7 +253,7 @@
         ; Deregister a voter.
         ; ----------------------------------------------------------------------
         ; Calldata: "deregisterVoter" vtraddr
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "deregisterVoter") {
             ;TODO Check if the caller has the permission to set
@@ -276,7 +273,7 @@
         ; Record a ballot.
         ; ----------------------------------------------------------------------
         ; Calldata: "recordBallot" vtraddr option newoptionresult
-        ; Returns: 0 - fail | 1 -success
+        ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "recordBallot")) {
             ;Check if the caller is a registered voter
@@ -295,11 +292,11 @@
         ;-----------------------------------------------------------------------
         ; Calldata: "checkOwner"
         ; Returns:
-        ;     0 - the caller is not its owner
-        ;     1 - the caller is its owner
+        ;       0 - the caller is not its owner
+        ;       1 - the caller is its owner
         ;-----------------------------------------------------------------------
         (when (= (cmd) "checkOwner") {
-            (unless (= (CALLER owner) (STOP))
+            (unless (= (CALLER) owner) (STOP))
             
             [0x0]1
             (return 0x0 0x20)
@@ -309,7 +306,7 @@
         ; Remove the Election. (called by the owner)
         ;-----------------------------------------------------------------------
         ; Calldata: "removeElection"
-        ; Returns:
+        ; Returns: suicide
         ;-----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
             ; check if the caller is the owner

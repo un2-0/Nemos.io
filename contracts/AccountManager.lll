@@ -1,10 +1,11 @@
 ; ------------------------------------------------------------------------------
 ; AccountManager
 ; ------------------------------------------------------------------------------
-; - create users
-; - keep track of all organizers
-; - keep track of all users
-; - entrance to the voter-election registration
+; - createUser
+; - addToBlacklist
+; - deleteFromBlacklist
+; - checkBlacklist
+; - destructUser
 ; ------------------------------------------------------------------------------
 
 {
@@ -21,108 +22,167 @@
     ; Constants
     ; --------------------------------------------------------------------------
     (def 'DAPPDOUG 0xdaffe)
-    (def 'ELECTION_MANAGER 0xabcdef)
 
     ; --------------------------------------------------------------------------
     ; Parameters
     ; --------------------------------------------------------------------------
-    (def 'CMD () (calldataload 0x0))
-    (def 'ORGANIZER_NAME () (calldataload 0x20))
-    (def 'USER_NAME () (calldataload 0x20))
-    (def 'ELECTION_ADDRESS () (calldataload 0x40))
+    (def 'cmd () (calldataload 0x0))
+
+    (def 'usrname () (calldataload 0x20))
+
+    (def 'usraddr () (calldataload 0x20))
 
     ; --------------------------------------------------------------------------
     ; Variables
     ; --------------------------------------------------------------------------
-    (llInit "userNameToUserAddress")
-    (llInit "userAddressToUserName")
     (singleInit "lastUser")
+    (llInit "userAddressToUserName")
+    (llInit "userList")
+    (llInit "reverseUserList")
+    (llInit "blacklist")
 
     (return 0 (lll {
         ; ----------------------------------------------------------------------
         ; Create a contract for a new user.
         ; ----------------------------------------------------------------------
-        ; Calldata: "createUser"
-        ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the newly created contract
+        ; Calldata: "createUser" usrname
+        ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (CMD) "createUser") {
-            ; create the contract
+        (when (= (cmd) "createUser") {
+            [0xC0](usrname) ;Store the username in case of conflict
+
+            ;Create the contract
             [0x0](create 0 0 (lll {
-                      (organizer)
+                      (user)
                   } 0))
             [[@0x0]]1
 
-            (llAddLink "users" (ORIGIN) @0x0)
+
+            ;If there is no user stored
+            (when (= (singleGet "lastUser") 0) {
+                (llAddLink "userList" "HEAD" @0x0)
+                (llAddLink "reverseUserList" @0x0 "HEAD")
+            })
+
+            ;If there is a user stored
+            (unless (= (singleGet "lastUser") 0) {
+                (llAddLink (singleGet "userList" "lastUser") @0x0)
+                (llAddLink "reverseUserList" @0x0 (singleGet "lastUser"))
+            })
+
+            (singleSet "lastUser" @0x0)
+            (llAddLink "userAddressToUserName" @0x0 @0xC0)
+            
+            [0x20]"setPerm"
+            [0x40]"userAccount"
+            [0x60]@0x0
+            [0x80]1
+            (CALL (gass) DAPPDOUG 0 0x20 0x80 0x20 0x20)
+
+            [0x20]"init"
+            (CALL (gass) @0x0 0 0x20 0x20 0x20 0x20)
 
             (return 0x0 0x20)
         })
 
         ; ----------------------------------------------------------------------
-        ; Check if a name is an organizer.
+        ; Add a user to blacklist.
         ; ----------------------------------------------------------------------
-        ; Calldata: "checkOrganizer" ORGANIZER_NAME
-        ; Returns:
-        ;     0 - not so
-        ;     0xADDRESS - the address of the according organizer contract
-        ; ---------------------------------------------------------------------- 
-        (when (= (CMD) "checkOrganizer") {
-            [0x0](llGet "organizers" (ORGANIZER_NAME))
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Check if a name is a user.
-        ; ----------------------------------------------------------------------
-        ; Calldata: "checkUser" USER_NAME
-        ; Returns:
-        ;     0 - not so
-        ;     0xADDRESS - the address of the according user contract
-        ; ---------------------------------------------------------------------- 
-        (when (= (CMD) "checkUser") {
-            [0x0](llGet "users" (USER_NAME))
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Register a voter. (called by an Organizer)
-        ; ----------------------------------------------------------------------
-        ; Calldata: "registerVoter" USER_NAME ELECTION_ADDRESS
+        ; Calldata: "addToBlacklist" usraddr
         ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (CMD) "registerVoter") {
-            ; check if the caller is an Organizer
-            (when (= 0 (llGet "organizers" (CALLER))) (STOP))
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "addToBlacklist") {
+            ;Check if the user is already in blacklist
+            (unless (= (llGet "blacklist" (usraddr)) 0) (STOP))
 
-            ; check if the voter is a valid user
-            (when (= 0 (llGet "users" (USER_NAME))) (STOP))
-            
-            ; check if the election is a valid election
-            [0x0]"checkElection"
-            [0x20](ELECTION_ADDRESS)
-            (CALL (GASS) ELECTION_MANAGER 0 0x0 0x40 0x40 0x20)
-            (when (= 0 @0x40) (STOP))
+            ;Add the user to blacklist
+            (llAddLink "blacklist" (usraddr) 1)
 
-            ; check if the caller is the election's organizer
-            [0x0]"checkOrganizer"
-            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x20 0x20 0x20)
-            (when (= 0 @0x20) (STOP))
-
-            ; register the voter in the election contract
-            [0x0]"registerVoter"
-            [0x20](USER_NAME)
-            (CALL (GASS) (ELECTION_ADDRESS) 0 0x0 0x40 0x40 0x20)
-            (when (= 0 @0x40) (STOP))
-            
-            ; register the election in the voter contract
-            [0x0]"registerElection"
-            [0x20](ELECTION_ADDRESS)
-            (CALL (GASS) (llGet "user" (USER_NAME)) 0 0x0 0x40 0x40 0x20)
-            (when (= 0 @0x40) (STOP))
-            
             [0x0]1
             (return 0x0 0x20)
         })
-    })
+
+        ; ----------------------------------------------------------------------
+        ; Delete a user from blacklist.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deleteFromBlacklist" usraddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "deleteFromBlacklist") {
+            ;Check if the user is in blacklist
+            (when (= (llGet "blacklist" (usraddr)) 0) (STOP))
+
+            ;Delete the user from blacklist
+            (llRmLink "blacklist" (usraddr))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Check if a user is in blacklist.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "checkBlacklist" usraddr
+        ; Returns: 
+        ;       0 - user not in blacklist | 1 - user in blacklist
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "checkBlacklist") {
+            (when (= (llGet "blacklist" (usraddr)) 0) [0x0]0)
+            (unless (= (llGet "blacklist" (usraddr)) 0) [0x0]1)
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Destruct a user.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "destructUser"
+        ; Returns:  0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "destructUser") {
+            [0x0](CALLER) ;Address of the user
+            [0x20](llGet "reverseUserList" @0x0)
+
+            ;If the user to be removed is tail
+            (when (= @0x0 (singleGet "lastUser")) {
+
+                ;If the user to be removed is head
+                (when (= @0x20 "HEAD") {
+                    (llRmLink "userList" "HEAD")
+                    (singleSet "lastUser" 0)
+                })
+
+                ;If the user to be removed is not head
+                (unless (= @0x20 "HEAD") {
+                    (llRmLink "userList" @0x20)
+                    (singleSet "lastUser" @0x20)
+                })
+                (llRmLink "reverseUserList" @0x0)
+            })
+
+            ;If the user to be removed is head
+            (when (= @0x20 "HEAD") {
+                [0x40](llGet "userList" @0x0)
+                (llRmLink "userList" @0x0)
+                (llRmLink "reverseUserList" @0x0)
+                (llAddLink "userList" "HEAD" @0x40)
+                (llAddLink "reverseUserList" @0x40 "HEAD")
+            })
+
+            ;If the user to be removed is not head or tail
+            (unless (|| (= @0x0 (singleGet "lastUser")) (= @0x20 "HEAD")) {
+                [0x40](llGet "userList" @0x0)
+                (llRmLink "userList" @0x0)
+                (llRmLink "userList" @0x20)
+                (llRmLink "reverseUserList" @0x0)
+                (llRmLink "reverseUserList" @0x40)
+                (llAddLink "userList" @0x20 @0x40)
+                (llAddLink "reverseUserList" @0x40 @0x20)
+            })
+
+            (llRmLink "userAddressToUserName" @0x0)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+    } 0))
 }

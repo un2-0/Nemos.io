@@ -25,9 +25,6 @@
     ; Parameters
     ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
-
-    (def 'elecaddr () (calldataload 0x20)) ;Address of the election
-
     (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
     (def 'elecname () (calldataload 0x40)) ;Name of the election
 
@@ -36,7 +33,6 @@
     ; --------------------------------------------------------------------------
     (singleInit "lastElection" 0)
     (kvInit "lastModified")
-    (llInit "electionNameToElectionAddress")
     (llInit "electionAddressToElectionName")
     (llInit "electionList")
     (llInit "reverseElectionList")
@@ -48,15 +44,12 @@
         ; ----------------------------------------------------------------------
         ; Calldata: "createElection" crtrusrname elecname
         ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the newly created contract
+        ;       0 - fail
+        ;       0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createElection") {
-            [0xC0](elecname) ;Restore the name of election in case of conflict
-            [0xA0](crtraddr) ;Restore the address of user in case of conflict
-
-            ; first check if the name has already taken
-            (unless (= (llGet "electionNameToElectionIndex" (elecname)) 0) (STOP))
+            [0xC0](elecname) ;Store the name of election in case of conflict
+            [0xA0](crtraddr) ;Store the address of user in case of conflict
             
             ;Get the address of accountManager
             [0x0]"checkName"
@@ -70,23 +63,26 @@
 
             (unless (= @0x40 0) (STOP))
             
-            ; create the contract and save its address in memory 0x20
+            ;Create the contract and save its address in memory 0x0
             [0x0](create 0 0 (lll {
                 (election)
             } 0))
 
             [[@0x0]]1
 
+            ;If there is no election stored
             (when (= (singleGet "lastElection") 0) {
                 (llAddLink "electionList" "HEAD" @0x0)
                 (llAddLink "reverseElectionList" @0x0 "HEAD")
             })
+
+            ;If there is an election stored
             (unless (= (singleGet "lastElection") 0) {
                 (llAddLink (singleGet "electionList" "lastElection") @0x0)
                 (llAddLink "reverseElectionList" @0x0 (singleGet "lastElection"))
             })
+
             (singleSet "lastElection" @0x0)
-            (llAddLink "electionNameToElectionAddress" @0xC0 @0x0)
             (llAddLink "electionAddressToElectionName" @0x0 @0xC0)
             
             [0x20]"setPerm"
@@ -109,8 +105,8 @@
         ; ----------------------------------------------------------------------
         ; Calldata: "checkElection"
         ; Returns:
-        ;     0 - fail
-        ;     0xADDRESS - the address of the contract
+        ;       0 - fail
+        ;       0xADDRESS - the address of the contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "checkElection") {
             [0x0]@@(calldataload 0x20)
@@ -125,18 +121,19 @@
         ; ----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
             [0x0](CALLER) ;Address of the election
-            [0x20](llGet "electionAddressToElectionName" @0x0) ;Get the election name
-            (llRmLink "electionNameToElectionAddress" @0x20)
-            (llRmLink "electionAddressToElectionName" @0x0)
             [0x20](llGet "reverseElectionList" @0x0)
 
             ;If the election to be removed is tail
             (when (= @0x0 (singleGet "lastElection")) {
-                (when (= @0x20 "HEAD") { ;If the election to be removed is head
+
+                ;If the election to be removed is head
+                (when (= @0x20 "HEAD") {
                     (llRmLink "electionList" "HEAD")
                     (singleSet "lastElection" 0)
                 })
-                (unless (= @0x20 "HEAD") { ;If the election to be removed is not head
+
+                ;If the election to be removed is not head
+                (unless (= @0x20 "HEAD") {
                     (llRmLink "electionList" @0x20)
                     (singleSet "lastElection" @0x20)
                 })
@@ -162,10 +159,12 @@
                 (llAddLink "electionList" @0x20 @0x40)
                 (llAddLink "reverseElectionList" @0x40 @0x20)
             })
+
+            (llRmLink "electionAddressToElectionName" @0x0)
             (kvSet "lastModified" @0x0 0)
 
             [0x0]1
             (return 0x0 0x20)
         })
-    })
+    } 0))
 }
