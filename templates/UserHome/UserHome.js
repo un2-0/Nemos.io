@@ -71,13 +71,14 @@ function createPoll(){
 	
 	
 	//for test
-	loadBasicPollInformation("create");
-	
+	//loadBasicPollInformation("create");
+	loadPollModuleSelection();
 	
 	if (isSessionStorageEmpty() == false) {
+		
 		contentContainer.innerHTML = "";
 	
-		loadBasicPollInformation("create");
+		loadPollModuleSelection();
 		
 	} else {
 		//contentContainer.innerHTML = "";

@@ -10,7 +10,8 @@ window.onload = init;
 function init() {
 	
 	contentContainer = document.getElementById("contentContainer");
-
+	
+	
 }
 
 
@@ -31,181 +32,75 @@ function isSessionStorageEmpty() {
 	
 }
 
-function loadBasicPollInformation(viewOrCreate) {
-	
-	if(viewOrCreate === "create"){
-	
-	var biContainer = document.createElement("div");
-	biContainer.id = "biContainer";
-	
-	var basicInfo = document.createElement("form");
-	basicInfo.id = "basicInfo";
-	
-	var pollName = document.createElement("input");
-	pollName.id = "pollName";
-	pollName.setAttribute("type", "text");
-	pollName.required = true;
-	var labelPN = document.createElement("label");
-	labelPN.innerHTML = "Poll Name:  ";
-	labelPN.setAttribute("for", "pollName");
-	
-	
-	var organizerName = document.createElement("output");
-	organizerName.id = "organizerName";
-	organizerName.value = sessionStorage.userName;
-	var labelON = document.createElement("label");
-	labelON.innerHTML = "Oraniser Name(creator):  ";
-	labelON.setAttribute("for", "organizerName");
-	
-	var openTime = document.createElement("input");
-	openTime.id = "openTime";
-	openTime.setAttribute("type", "datetime-local");
-	openTime.required = true;
-	var labelOT = document.createElement("label");
-	labelOT.innerHTML = "Open Time:  ";
-	labelOT.setAttribute("for", "openTime");
 
-	
-	var closeTime = document.createElement("input");
-	closeTime.id = "closeTime";
-	closeTime.setAttribute("type", "datetime-local");
-	closeTime.required = true;
-	var labelCT = document.createElement("label");
-	labelCT.innerHTML = "Close Time:  ";
-	labelCT.setAttribute("for", "closeTime");
 
-	
-	var pollDes = document.createElement("textarea");
-	pollDes.id = "pollDes";
-	pollDes.setAttribute("rows", "10");
-	pollDes.setAttribute("cols", "70");
-	pollDes.required = true;
-	var labelDes = document.createElement("label");
-	labelDes.innerHTML = "Poll Description:  ";
-	labelDes.setAttribute("for", "pollDes");
-	
-	
-	var checkBtn = document.createElement("input");
-	checkBtn.setAttribute("type","submit");
-	checkBtn.value = "Next";
-	
-	var goBackBtn = document.createElement("button");
-	goBackBtn.innerHTML = "go back to basic information setting";
-	goBackBtn.id = "goBackBtn";
-	goBackBtn.hidden = true;
+
+function loadPollModuleSelection() {
 	
 	var pollDetailContainer = document.createElement("div");
 	pollDetailContainer.id = "pollDetailContainer";
 	
 	
+	var moduleSelectionContainer = document.createElement("form");
+	moduleSelectionContainer.id = "moduleSelectionContainer";
 	
+	var moduleSelectionContainerLabel = document.createElement("label");
+	moduleSelectionContainerLabel.setAttribute("for", "moduleSelectionContainer");
+	moduleSelectionContainerLabel.innerHTML = "Please select a poll module: ";
 	
-	contentContainer.appendChild(biContainer);
-	contentContainer.appendChild(goBackBtn);
+	var selectPollModules = document.createElement("select");
+	selectPollModules.id = "selectPollModules";
+	selectPollModules.name = "selectPollModules";
+	
+	var module1 = document.createElement("option");
+	module1.id = "module 1";
+	module1.value = "module1";
+	module1.innerHTML = "module 1";
+	
+	var module2 = document.createElement("option");
+	module2.id = "module 2";
+	module2.value = "module2";
+	module2.innerHTML = "module 2";
+	
 	contentContainer.appendChild(pollDetailContainer);
 	
-	biContainer.appendChild(basicInfo);
-
+	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(moduleSelectionContainerLabel);
+	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(moduleSelectionContainer);
 	
-	//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
-	
-	
-	basicInfo.appendChild(labelON);
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(organizerName);
-	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
+	moduleSelectionContainer.appendChild(selectPollModules);
 	
 	
-	basicInfo.appendChild(labelPN);
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(pollName);
+	pollDetailContainer.appendChild(document.createElement("br"));
+	var moduleLoader = document.createElement("div");
+	moduleLoader.id = "moduleLoader";
+	pollDetailContainer.appendChild(moduleLoader);
 	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
 	
-
-	basicInfo.appendChild(labelOT);
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(openTime);
+	selectPollModules.appendChild(module1);
+	selectPollModules.appendChild(module2);
 	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
 	
-	basicInfo.appendChild(labelCT);
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(closeTime);
+	module1.selected = true;
+	module1Creation(moduleLoader);
 	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
-	
-	basicInfo.appendChild(labelDes);
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(pollDes);
-	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
-	
-	basicInfo.appendChild(checkBtn);
-	
-	basicInfo.appendChild(document.createElement("br"));
-	basicInfo.appendChild(document.createElement("br"));
-	
-basicInfo.setAttribute("onsubmit","return false;");
-	
-	basicInfo.addEventListener("submit",function(){
-	
-		var currentDate = new Date();
-		
-		var OTDate = new Date(openTime.value);
-		var CTDate = new Date(closeTime.value);
-		
-		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
-		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
-
-		if(currentDate > OTDate){
-			window.alert("illegal open time (open time should be after current time)");
-
-		}else if (currentDate > CTDate){
-			window.alert("illegal close time (close time should be after current time)");
-
-		}else if (OTDate >= CTDate){
-			window.alert("open time should be before close time");
-
-		}else {
-			loadPollModuleSelection(pollDetailContainer);
-			pollName.disabled = true;
-			openTime.disabled = true;
-			closeTime.disabled = true;
-			pollDes.disabled = true;
-			checkBtn.hidden = true;
-			goBackBtn.hidden = false;
+	selectPollModules.addEventListener("change",function(){
+		if(module1.selected){
+			module1Creation(moduleLoader);
+		}else if (module2.selected){
+			module2Creation(moduleLoader);
 		}
-	
-});
-	
-	
-	goBackBtn.addEventListener("click",function(){
-		 
-		pollName.disabled = false;
-		openTime.disabled = false;
-		closeTime.disabled = false;
-		pollDes.disabled = false;
-		checkBtn.hidden = false;	 
-		 goBackBtn.hidden = true;
-		 
-		 pollDetailContainer.innerHTML = "";
-		 
-		 
-	 });
-	
-	
-	
-	} else if (viewOrCreate === "view"){
 		
-		
-		
+	});
+	
+	
+}
+
+
+function loadBasicPollInformation() {
+	
+
 		var biContainer = document.createElement("div");
 		
 		var basicInfo = document.createElement("form");
@@ -302,83 +197,89 @@ ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
 	}
 	
 	
-}
 
 
-function loadPollModuleSelection(pollDetailContainer) {
-	
-	
-	
-	var moduleSelectionContainer = document.createElement("form");
-	moduleSelectionContainer.id = "moduleSelectionContainer";
-	
-	var moduleSelectionContainerLabel = document.createElement("label");
-	moduleSelectionContainerLabel.setAttribute("for", "moduleSelectionContainer");
-	moduleSelectionContainerLabel.innerHTML = "Please select a poll module: ";
-	
-	var selectPollModules = document.createElement("select");
-	selectPollModules.id = "selectPollModules";
-	selectPollModules.name = "selectPollModules";
-	
-	var module1 = document.createElement("option");
-	module1.id = "module 1";
-	module1.value = "module1";
-	module1.innerHTML = "module 1";
-	
-	var module2 = document.createElement("option");
-	module2.id = "module 2";
-	module2.value = "module2";
-	module2.innerHTML = "module 2";
-	
-	
-	
-	pollDetailContainer.appendChild(document.createElement("br"));
-	pollDetailContainer.appendChild(moduleSelectionContainerLabel);
-	pollDetailContainer.appendChild(document.createElement("br"));
-	pollDetailContainer.appendChild(moduleSelectionContainer);
-	
-	moduleSelectionContainer.appendChild(selectPollModules);
-	
-	
-	pollDetailContainer.appendChild(document.createElement("br"));
-	var moduleLoader = document.createElement("div");
-	moduleLoader.id = "moduleLoader";
-	pollDetailContainer.appendChild(moduleLoader);
-	
-	
-	selectPollModules.appendChild(module1);
-	selectPollModules.appendChild(module2);
-	
-	
-	module1.selected = true;
-	module1Creation(moduleLoader);
-	
-	selectPollModules.addEventListener("change",function(){
-		if(module1.selected){
-			module1Creation(moduleLoader);
-		}else if (module2.selected){
-			module2Creation(moduleLoader);
-		}
-		
-	});
-	
-	
-	
-}
+
 
 
 //---------------------------------------poll-creation modules----------------------------------------------
 function module1Creation(moduleLoader) {
+	
 	moduleLoader.innerHTML = "";
+	
 	//window.alert("module 1 selected");
 	//moduleLoader.innerHTML = "module 1 load test";
 	
-	var parasContainer = document.createElement("form");
-	parasContainer.id = "parasContainer";
+	//loadBasicPollInformation(moduleLoader, "create");
+	
+	var module1Form = document.createElement("form");
+	module1Form.id = "module1Form";
+	module1Form.setAttribute("onsubmit","return false;");
+	
+	//-------------------------------------------------------------------------------------
+	
+	var pollName = document.createElement("input");
+	pollName.id = "pollName";
+	pollName.setAttribute("type", "text");
+	pollName.required = true;
+	var labelPN = document.createElement("label");
+	labelPN.innerHTML = "Poll Name:  ";
+	labelPN.setAttribute("for", "pollName");
+	
+	var organizerName = document.createElement("output");
+	organizerName.id = "organizerName";
+	organizerName.value = sessionStorage.userName;
+	var labelON = document.createElement("label");
+	labelON.innerHTML = "Oraniser Name(creator):  ";
+	labelON.setAttribute("for", "organizerName");
+	
+	var openTime = document.createElement("input");
+	openTime.id = "openTime";
+	openTime.setAttribute("type", "datetime-local");
+	openTime.required = true;
+	var labelOT = document.createElement("label");
+	labelOT.innerHTML = "Open Time:  ";
+	labelOT.setAttribute("for", "openTime");
+
+	
+	var closeTime = document.createElement("input");
+	closeTime.id = "closeTime";
+	closeTime.setAttribute("type", "datetime-local");
+	closeTime.required = true;
+	var labelCT = document.createElement("label");
+	labelCT.innerHTML = "Close Time:  ";
+	labelCT.setAttribute("for", "closeTime");
+
+	
+	var pollDes = document.createElement("textarea");
+	pollDes.id = "pollDes";
+	pollDes.setAttribute("rows", "10");
+	pollDes.setAttribute("cols", "70");
+	pollDes.required = true;
+	var labelDes = document.createElement("label");
+	labelDes.innerHTML = "Poll Description:  ";
+	labelDes.setAttribute("for", "pollDes");
+
+	
+	//----------------------------------------------------------------------------------------------
 	
 	var parasContainerLabel = document.createElement("label");
 	parasContainerLabel.innerHTML = "Set parameters for module-1 poll:  ";
-	parasContainerLabel.setAttribute("for", "parasContainer");
+	
+	var voterNum = document.createElement("input");
+	voterNum.setAttribute("type","number");
+	voterNum.id = "voterNum";
+	voterNum.name = "voterNum";
+	voterNum.required = true;
+	voterNum.setAttribute("min",1);
+	voterNum.setAttribute("max",500);
+	
+	var voterNumLabel = document.createElement("label");
+	voterNumLabel.id = "voterNumLabel";
+	voterNumLabel.innerHTML = "Decided how many voters in this poll <strong>(1~500)</strong>:  ";
+	voterNumLabel.setAttribute("for", "voterNum");
+	
+	
 	
 	var canoptNum = document.createElement("input");
 	canoptNum.setAttribute("type","number");
@@ -400,45 +301,135 @@ function module1Creation(moduleLoader) {
 	rulesNum.name = "rulesNum";
 	rulesNum.required = true;
 	rulesNum.setAttribute("min",1);
-	rulesNum.setAttribute("max",50);
-	
-	canoptNum.addEventListener("change",function(){
-		rulesNum.setAttribute("max",canoptNum.value);	
-	});
-	
+	rulesNum.setAttribute("max",1);
+
 	
 	var rulesNumLabel = document.createElement("label");
 	rulesNumLabel.id = "rulesNumLabel";
 	rulesNumLabel.innerHTML = "Decided a voter can vote for how many candidates/options <strong>(must less than or equal with the number of candidates/options)</strong>:  ";
 	rulesNumLabel.setAttribute("for", "rulesNum");
+		
 	
-	var setParaBtn = document.createElement("input");
-	setParaBtn.setAttribute("type","submit");
-	setParaBtn.value = "Next";
-	setParaBtn.id = "setParaBtn";
+	//----------------------------------------------------------------------------------------------
+	
 
-	
-	var canOptContainer = document.createElement("form");
+	var canOptContainer = document.createElement("fieldset");
 	canOptContainer.id = "canOptContainer";
-	canOptContainer.setAttribute("onsubmit","return false;");
 	
-	var canOptContainerLabel = document.createElement("label");
+	var canOptContainerLabel = document.createElement("legend");
 	canOptContainerLabel.id = "canOptContainerLabel";
-	canOptContainerLabel.setAttribute("for", "canOptContainerLabel");
+	
+	var subPollBtn = document.createElement("input");
+	 subPollBtn.setAttribute("type","submit");
+	 subPollBtn.value = "creat poll";
 	
 	
+	//----------------------------------------------------------------------------------------------
 	
-	canoptNum.addEventListener("change",function(){
-		rulesNum.setAttribute("max",canoptNum.value);	
+	 
+	 
+	//---------------------------------------------------------------------------------------------- 
+	moduleLoader.appendChild(module1Form);
+	
+	module1Form.appendChild(labelON);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(organizerName);
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+	
+	module1Form.appendChild(labelPN);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(pollName);
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+
+	module1Form.appendChild(labelOT);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(openTime);
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(labelCT);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(closeTime);
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(labelDes);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(pollDes);
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(parasContainerLabel);
+	module1Form.appendChild(document.createElement("br"));
+	
+	
+	module1Form.appendChild(voterNumLabel);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(voterNum);
+	module1Form.appendChild(document.createElement("br"));
+	
+	
+	module1Form.appendChild(canoptNumLabel);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(canoptNum);
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(rulesNumLabel);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(rulesNum);
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(document.createElement("br"));
+	
+	module1Form.appendChild(canOptContainer);
+	canOptContainer.appendChild(canOptContainerLabel);
+	module1Form.appendChild(document.createElement("br"));
+	module1Form.appendChild(subPollBtn);
+	
+	
+	//-----------------------------------------------------------------------------------------------
+	
+	rulesNum.addEventListener("change",function(){
+		
+		if (rulesNum.value > rulesNum.max) {
+			rulesNum.value = rulesNum.max;
+		}
+		
+		if(canoptNum.value >=1 ){
+		canOptContainerLabel.innerHTML = "Set information for " + canoptNum.value + " candidates/options, and each voter can vote for " + rulesNum.value + " candidates/options: ";
+		}
+		
 	});
 	
 	
-	parasContainer.setAttribute("onsubmit","return false;");
-	
-	parasContainer.addEventListener("submit",function(){
+	canoptNum.addEventListener("change",function(){
+		
+		if (canoptNum.value > canoptNum.max) {
+			canoptNum.value = canoptNum.max;
+			rulesNum.setAttribute("max",canoptNum.value);
+		}
+		
+		if(rulesNum.value > canoptNum.value){
+			rulesNum.value = canoptNum.value;
+		}
+		
+		
 		
 		canOptContainer.innerHTML = "";
+		canOptContainer.appendChild(canOptContainerLabel);
+		
 		canOptContainerLabel.innerHTML = "Set information for " + canoptNum.value + " candidates/options, and each voter can vote for " + rulesNum.value + " candidates/options: ";
+		
 		
 		 for (var i = 0; i < canoptNum.value; i++) {
 			 temp1 = document.createElement("input");
@@ -474,21 +465,39 @@ function module1Creation(moduleLoader) {
 			 canOptContainer.appendChild(document.createElement("br"));
 			 canOptContainer.appendChild(temp2);
 			 canOptContainer.appendChild(document.createElement("br"));
-			 canOptContainer.appendChild(document.createElement("hr"));	
 			 
 			 temp1 = null;
 			 temp2 = null;
 			 temp3 = null;
 			 temp4 = null;
 		}
-		 
-		 var subPollBtn = document.createElement("input");
-		 subPollBtn.setAttribute("type","submit");
-		 subPollBtn.value = "Create Poll";
-		 
-		 canOptContainer.addEventListener("submit",function(){
-			 window.alert("all good ready for sending request to decerver");
-			 
+	});
+
+	module1Form.addEventListener("submit",function(){
+		
+		var currentDate = new Date();
+		
+		var OTDate = new Date(openTime.value);
+		var CTDate = new Date(closeTime.value);
+		
+		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
+		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
+
+		if(currentDate > OTDate){
+			window.alert("illegal open time (open time should be after current time)");
+			openTime.scrollIntoView();
+			
+		}else if (currentDate > CTDate){
+			window.alert("illegal close time (close time should be after current time)");
+			closeTime.scrollIntoView();
+
+		}else if (OTDate >= CTDate){
+			window.alert("open time should be before close time");
+			openTime.scrollIntoView();
+		}else {
+			window.alert("all good");
+			
+			/*	 
 			temp1 = {username: sessionStorage.userName};
 				
 			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp1), function(res){
@@ -496,41 +505,16 @@ function module1Creation(moduleLoader) {
 					
 					
 			});
-			 
-			 
-		 });
-	 
-		 canOptContainer.appendChild(subPollBtn);
-		 
-	});
-
-
-	moduleLoader.appendChild(parasContainerLabel);
-	moduleLoader.appendChild(document.createElement("br"));
-	moduleLoader.appendChild(parasContainer);
+		*/	 
+		
+		}
 	
+});
 	
-	parasContainer.appendChild(document.createElement("br"));
-	parasContainer.appendChild(canoptNumLabel);
-	parasContainer.appendChild(document.createElement("br"));
-	parasContainer.appendChild(canoptNum);
-	parasContainer.appendChild(document.createElement("br"));
-	
-	parasContainer.appendChild(rulesNumLabel);
-	parasContainer.appendChild(document.createElement("br"));
-	parasContainer.appendChild(rulesNum);
-	parasContainer.appendChild(document.createElement("br"));
-	parasContainer.appendChild(setParaBtn);
-	
-	
-	moduleLoader.appendChild(document.createElement("br"));
-	moduleLoader.appendChild(document.createElement("br"));
-	moduleLoader.appendChild(canOptContainerLabel);
-	moduleLoader.appendChild(document.createElement("br"));
-	moduleLoader.appendChild(canOptContainer);
 	
 
 }
+
 
 
 
