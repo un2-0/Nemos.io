@@ -6,6 +6,7 @@ function jumpToLogin() {
 /*
  * this method has not been tested yet, probably need to delete "form" tag in
  * the html file and to use other reliable tags.
+ * could be deleted once the checkFrom method finished
  */
 
 function matchPassword() {
@@ -13,15 +14,17 @@ function matchPassword() {
 		alert("Your passwords do not match. Please try again."); 
 		document.getElementById("password2").focus(); 
 		return false; 
-		} 
+		}
 	else
 		return true; 
 		}
+}
 
-//not been tested yet.
-function checkForm(form)
+/*not been tested yet. 4.30.2015
+ * 
+*/function checkForm(form)
 {
-	var re;
+	//var re;
   if(form.username.value == "") {
     alert("Error: Username cannot be blank!");
     form.username.focus();
@@ -35,41 +38,41 @@ function checkForm(form)
     return false;
   }
 
-  if(form.pwd1.value != "" && form.pwd1.value == form.pwd2.value) {
-    if(form.pwd1.value.length < 6) {
+  if(form.passwordone.value != "" && form.passwordone.value == form.passwordtwo.value) {
+    if(form.passwordone.value.length < 6) {
       alert("Error: Password must contain at least six characters!");
-      form.pwd1.focus();
+      form.passwordone.focus();
       return false;
     }
-    if(form.pwd1.value == form.username.value) {
+    if(form.passwordone.value == form.username.value) {
       alert("Error: Password must be different from Username!");
-      form.pwd1.focus();
+      form.password1.focus();
       return false;
     }
     re = /[0-9]/;
-    if(!re.test(form.pwd1.value)) {
+    if(!re.test(form.password1.value)) {
       alert("Error: password must contain at least one number (0-9)!");
-      form.pwd1.focus();
+      form.password1.focus();
       return false;
     }
     re = /[a-z]/;
-    if(!re.test(form.pwd1.value)) {
+    if(!re.test(form.passwordone.value)) {
       alert("Error: password must contain at least one lowercase letter (a-z)!");
-      form.pwd1.focus();
+      form.passwordone.focus();
       return false;
     }
     re = /[A-Z]/;
-    if(!re.test(form.pwd1.value)) {
+    if(!re.test(form.passwordone.value)) {
       alert("Error: password must contain at least one uppercase letter (A-Z)!");
-      form.pwd1.focus();
+      form.passwordone.focus();
       return false;
     }
   } else {
     alert("Error: Please check that you've entered and confirmed your password!");
-    form.pwd1.focus();
+    form.passwordone.focus();
     return false;
   }
 
-  alert("You entered a valid password: " + form.pwd1.value);
+  alert("You entered a valid password: " + form.passwordone.value);
   return true;
 }
