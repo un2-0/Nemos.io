@@ -474,6 +474,9 @@ function module1Creation(moduleLoader) {
 	
 	module1Form.addEventListener("submit",function(){
 		
+		
+			 
+			 
 		var currentDate = new Date();
 		
 		var OTDate = new Date(openTime.value);
@@ -494,17 +497,97 @@ function module1Creation(moduleLoader) {
 			window.alert("open time should be before close time");
 			openTime.scrollIntoView();
 		}else {
-			window.alert("all good");
-			
-			/*	 
-			temp1 = {username: sessionStorage.userName};
+			window.alert("Sumbmit to creat poll");
+				 
+			temp1 = {"pollName": pollName.value.toString(),
+					"organizerName": organizerName.value.toString(),
+					"openTime": openTime.value.toString(), 
+					"closeTime": closeTime.value.toString(),
+					"pollDes": pollDes.value.toString(),
+					"voterNum": voterNum.value.toString(),
+					"canoptNum": canoptNum.value.toString(),
+					"rulesNum": rulesNum.value.toString(),
+					"canOpts": []
+					};
 				
+			for (var i = 0; i < canoptNum.value; i++) {
+				
+				temp2 = {"name":document.getElementById("canOpt"+i).value.toString(), "description": document.getElementById("canDes"+i).value.toString()};
+				temp1.canOpts.push(temp2);
+	
+			}
+			
+			console.log(temp1);
+			
+			/*window.alert("name1: "+temp1.canOpts[0].name
+					+"\ndescription1: "+temp1.canOpts[0].description
+					+"\nname2: "+temp1.canOpts[1].name
+					+"\ndescription2: "+temp1.canOpts[1].description);
+			*/
+			
+			
+			
+			
+			
 			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp1), function(res){
+				if (res.status == 200) {
+					console.log(res);
+					var body = res.response;
 					
+					body = JSON.parse(body);
+					
+					if (body.result == "success") {
+						
+					 /* local test
+						var body = {"publicKeys":[
+							                         {"id":"John", "password":"Doe"},
+							                         {"id":"Anna", "password":"Smith"},
+							                         {"id":"Peter", "password":"Jones"}
+							                     ]};
+						*/	
+						
+						
+							contentContainer.innerHTML = "";
+							 
+							 for (var i = 0; i < body.publicKeys.length; i++) {
+								temp1 = document.createTextNode("voter"+i+"**** id: "+body.publicKeys[i].id+ " ******* password: "+body.publicKeys[i].password);
+								contentContainer.appendChild(temp1);
+								contentContainer.appendChild(document.createElement("br"));
+								contentContainer.appendChild(document.createElement("br"));
+							}
+								
+							 contentContainer.appendChild(document.createElement("br"));
+							 
+							 var exit = document.createElement("button");
+							 exit.innerHTML = "exit";
+							 exit.addEventListener("click", function(){
+								 window.location.reload();
+							 })
+							 
+							 contentContainer.appendChild(exit);
+					 
+					 
+					 
+					 
+						
+					} else if (body.result == "pollNameExist") {
+						
+						window.alert("Sorry, the poll name exists");
+						pollName.innerHTML = "try another name";
+						pollName.scrollIntoView();
+						
+					} else {
+						
+						window.alert("bad response");
+					}
+			        
+			    } else {
+					window.alert("failed to create poll");
+				}
 					
 					
 			});
-		*/	 
+			 
 		
 		}
 	
@@ -513,6 +596,7 @@ function module1Creation(moduleLoader) {
 	
 
 }
+
 
 
 

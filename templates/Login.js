@@ -16,7 +16,7 @@ function login(){
 		form.reset();
 	} 
 	
-	var userinfo = { username : userName.value , password : passWord.value };
+	var userinfo = { "username" : userName.value.toString() , "password" : passWord.value.toString() };
 	//userinfo.test = "1222333";
 	console.log(userinfo);
 	
