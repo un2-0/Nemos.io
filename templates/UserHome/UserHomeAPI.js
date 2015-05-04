@@ -3,9 +3,9 @@ var temp1;
 var temp2;
 var temp3;
 var temp4;
-var temp5;
+/*var temp5;
 var temp6;
-
+*/
 window.onload = init;
 
 
@@ -430,12 +430,12 @@ function module1Creation(moduleLoader) {
 		
 		
 		 for (var i = 0; i < canoptNum.value; i++) {
-			 
+			/* 
 			 temp5 = document.createElement("input");
 			 temp5.setAttribute("type","text");
 			 temp5.id = "canID"+i;
 			 temp5.required = true;
-			 
+			 */
 			 temp1 = document.createElement("input");
 			 temp1.setAttribute("type","text");
 			 temp1.id = "canOpt"+i;
@@ -447,13 +447,12 @@ function module1Creation(moduleLoader) {
 			 temp2.setAttribute("cols", "50");
 			 temp2.required = true;
 			 
-			 
+			 /*
 			 temp6 = document.createElement("label");
 			 temp6.id = "canIDLabel"+i;
 			 temp6.setAttribute("for", temp5.id);
 			 temp6.innerHTML = "Candidate/Option " +(i+1)+" ID: ";
-	//		 temp3.innerHTML = temp1.id;
-			 
+			 */
 			 
 			 temp3 = document.createElement("label");
 			 temp3.id = "canOptLabel"+i;
@@ -468,10 +467,10 @@ function module1Creation(moduleLoader) {
 	//		 temp4.innerHTML = temp2.id;
 			 
 			 
-			 canOptContainer.appendChild(temp6);
+			/* canOptContainer.appendChild(temp6);
 			 canOptContainer.appendChild(document.createElement("br"));
 			 canOptContainer.appendChild(temp5);
-			 canOptContainer.appendChild(document.createElement("br"));
+			 canOptContainer.appendChild(document.createElement("br"));*/
 			 canOptContainer.appendChild(temp3);
 			 canOptContainer.appendChild(document.createElement("br"));
 			 canOptContainer.appendChild(temp1);
@@ -531,20 +530,18 @@ function module1Creation(moduleLoader) {
 				
 			for (var i = 0; i < canoptNum.value; i++) {
 				
-				temp2 = {"id":document.getElementById("canID"+i).value.toString(),"name":document.getElementById("canOpt"+i).value.toString(), "description": document.getElementById("canDes"+i).value.toString()};
+				temp2 = {/*"id":document.getElementById("canID"+i).value.toString(),*/"name":document.getElementById("canOpt"+i).value.toString(), "description": document.getElementById("canDes"+i).value.toString()};
 				temp1.canOpts.push(temp2);
 	
 			}
 			
 			console.log(temp1);
-			/*
-			window.alert("ID1: "+temp1.canOpts[0].id
-			 		+"\nname1: "+temp1.canOpts[0].name
+			
+			window.alert("\nname1: "+temp1.canOpts[0].name
 					+"\ndescription1: "+temp1.canOpts[0].description
-					+"\nID2: "+temp1.canOpts[1].id
 					+"\nname2: "+temp1.canOpts[1].name
 					+"\ndescription2: "+temp1.canOpts[1].description);
-			*/
+			
 		
 			
 			
