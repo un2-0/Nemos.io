@@ -105,6 +105,7 @@ a:hover {
 	position: relative;
 	text-align: center;
 	text-shadow: 0 1px 0 #fff;
+	/* height: 500px; */
 	width: 400px;
 }
 
@@ -281,6 +282,50 @@ a:hover {
 	width: 120px;
 }
 
+#loginBtn1  {
+	float: left;
+	margin-top: 10px;
+    margin-bottom: 5px;
+    margin-right: 110px;
+    margin-left: 30px;
+    position: relative;
+	
+} 
+#loginBtn2  {
+	float: left;
+	margin-top: 5px;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    margin-left: 30px;
+    position: relative;
+	
+} 
+#regBtn  {
+	color: #004a80;
+/* 	float: right; */
+	font-size: 14px;
+	/* margin: 5px 5px 0 0; */
+    text-decoration: underline;
+	
+} 
+
+#fpBtn {
+	color: #004a80;
+	/* float: right; */
+	font-size: 14px;
+	/* margin: 5px 5px 0 0; */
+	text-decoration: underline;
+}
+
+
+
+p.ex {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-right: 150px;
+    margin-left: 50px;
+}
+
 #content form input[type="submit"]:hover {
 	background: rgb(254, 193, 81);
 	background: -moz-linear-gradient(top, rgba(254, 193, 81, 1) 0%,
@@ -295,6 +340,7 @@ a:hover {
 		rgba(254, 231, 154, 1) 100%);
 	/* 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fec151', endColorstr='#fee79a',GradientType=0 ); */
 }
+
 
 #content form div a {
 	color: #004a80;
