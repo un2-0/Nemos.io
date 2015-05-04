@@ -153,11 +153,9 @@
 				data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i>
 					Dashboard<i class="fa fa-collapse"></i></a></li>
 			<li><ul class="dashboard-menu nav nav-list collapse in">
-					<li><a onclick="showDefaultContent()">Main</a></li>
-					<li><a onclick="showPolls()">Related Polls list</a></li>
-					<li><a onclick="createPoll()"> Create a Poll</a></li>
-					<li><a href="media.html"><span class="fa fa-caret-right"></span>
-							Under-Construction</a></li>
+					<li id="main"><a onclick="showDefaultContent()"><span class="fa fa-caret-right"></span>Main</a></li>
+					<li id="showPolls"><a onclick="showPolls()"><span class="fa fa-caret-right"></span>Polls list</a></li>
+					<li id="createPoll"><a onclick="createPoll()"><span class="fa fa-caret-right"></span>Create a Poll</a></li>
 					<li><a href="calendar.html"><span
 							class="fa fa-caret-right"></span> Under-Construction</a></li>
 				</ul></li>

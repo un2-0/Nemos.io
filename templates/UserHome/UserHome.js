@@ -22,47 +22,42 @@ function loadInformation(){
 
 	//window.alert(sessionStorage.userName);
 	
-	if(isSessionStorageEmpty() == false){
-		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+ sessionStorage.userName +"<i class='fa fa-caret-down'></i>";
-	}else {
-		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"not login " +" <i class='fa fa-caret-down'></i>";
+	if(LoginAs() == "organiser"){
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organiser: "+ sessionStorage.userName +"<i class='fa fa-caret-down'></i>";
+		
+	
+	}else if(LoginAs() == "voter"){
+		
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Voter: "+ sessionStorage.userName+" <i class='fa fa-caret-down'></i>";
+		document.getElementById("createPoll").style.display="none";
+	
+	}else{
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Not login" +" <i class='fa fa-caret-down'></i>";
+		document.getElementById("showPolls").style.display="none";
+		document.getElementById("createPoll").style.display="none";
 	}
-
+	
+	
+	
 }
+
+
 
 function showPolls(){
 	 
 	contentContainer.innerHTML = "";
 	
 	
-	
 	//for test
 	loadBasicPollInformation("view");
 	
-	if(isSessionStorageEmpty() == false){
-		
-		temp = {username: sessionStorage.userName};
-		
-		notification.innerHTML = "loading elections of current user...";
-		
-		loadBasicPollInformation("view");
-		
-		sender.sendAsync("POST", baseUrl+ "/getUserPolls", JSON.stringify(temp), function(res){
-			
-			
-			
-		});
-		
-	}else {
-		//window.alert("User account undifined");
-		//contentContainer.innerHTML = "";
-		//contentContainer.appendChild(notification);
-		notification.innerHTML = "no user account logged in, failed to load elections";
-		return;
-	}	
+
+	
 	
 	
 }
+
+
 
 function createPoll(){
 	
@@ -90,6 +85,10 @@ function createPoll(){
 	
 }
 
+
+function vote() {
+	
+}
 
 function jumpToLogin() {
 	window.location.href = "../../index.html";

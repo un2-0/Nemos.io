@@ -24,12 +24,21 @@ function showDefaultContent() {
 }
 
 
-function isSessionStorageEmpty() {
+function LoginAs() {
 	
-	if(sessionStorage.userName !== "" && sessionStorage.userName != null){
-	 return false;
+	if(sessionStorage.userName != "" && sessionStorage.userName != null && sessionStorage.identity !="" && sessionStorage.identity != null){
+		if(sessionStorage.identity == "organiser"){
+			return "organiser";
+			
+		} else if(sessionStorage.identity == "voter"){
+			return "voter";
+		} else{
+			return false;
+		}
+		
+		
 	}else{
-		return true;
+		return false;
 	}
 	
 }
@@ -144,7 +153,7 @@ function loadBasicPollInformation() {
 		labelDes.innerHTML = "Poll Description:  ";
 		labelDes.setAttribute("for", "pollDes");
 		
-		
+		//for test
 		pollName.value = "aaaa";
 		openTime.value = new Date().toString();
 		closeTime.value = new Date().toString();
@@ -152,6 +161,9 @@ function loadBasicPollInformation() {
 ddddddddddddddddddddddddddddddddddddddddddddd\
 ddddddddddddddddddddddddddddddddddddddddddddd\
 ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
+		
+		
+		
 		
 		contentContainer.appendChild(biContainer);
 		biContainer.appendChild(basicInfo);

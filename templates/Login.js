@@ -1,7 +1,7 @@
 var	sender = new HttpAPI();
 baseUrl = "/apis/SmartVote";
 
-function login(){
+function login(identity){
 	
 	var form = document.getElementById("loginForm");
 	var userName = document.getElementById("username");
@@ -23,8 +23,12 @@ function login(){
 	
 	//for test
 	//Note that: browser in Eclipse doesnt support session storage,plz test in chrome
+	
 	sessionStorage.userName = userName.value;
-	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName);
+	sessionStorage.identity = identity;
+	
+	//for local test
+	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
 	
 	
