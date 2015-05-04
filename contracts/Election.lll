@@ -10,6 +10,10 @@
 ; - setOptions
 ; - registerVoter
 ; - deregisterVoter
+; - registerAnonymousVoter
+; - deregisterAnonymousVoter
+; - addLinkBetweenAccount
+; - rmLinkBetweenAccount
 ; - recordBallot
 ; - suicideElection
 ; ------------------------------------------------------------------------------
@@ -38,6 +42,8 @@
     (def 'log () (calldataload 0x20))
 
     (def 'vtraddr () (calldataload 0x20)) ;User address of the voter
+
+    (def 'ansvtraddr () (calldataload 0x20)) ;User address of the anonymous voter
 
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
@@ -72,10 +78,15 @@
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
+
+    (singleInit "lastVoter")
     (llInit "voterList")
     (llInit "reverseVoterList")
+
+    (singleInit "lastAnonymousVoter")
     (llInit "anonymousVoterList")
     (llInit "reverseAnonymousVoterList")
+
     (llInit "voterToAnonymousVoter")
 
     (llInit "legalAttributeKeys")
@@ -246,9 +257,21 @@
             ;TODO Check if the provided address is a valid user
 
             ;Check if the voter exists in the list
-            (when (= (llGet "voters" (vtraddr)) 0) (STOP))
+            (unless (= (llGet "reverseVoterList" (vtraddr)) 0) (STOP))
 
-            (llAddLink "voters" (vtraddr) 1)
+            ;If there is no user stored
+            (when (= (singleGet "lastVoter") 0) {
+                (llAddLink "voterList" "HEAD" (vtraddr))
+                (llAddLink "reverseVoterList" (vtraddr) "HEAD")
+            })
+
+            ;If there is a user stored
+            (unless (= (singleGet "lastVoter") 0) {
+                (llAddLink (singleGet "voterList" "lastVoter") (vtraddr))
+                (llAddLink "reverseVoterList" (vtraddr) (singleGet "lastVoter"))
+            })
+
+            (singleSet "lastVoter" (vtraddr))
 
             [0x0]1
             (return 0x0 0x20)
@@ -266,9 +289,169 @@
             ;TODO Check if the provided address is a valid user
 
             ;Check if the voter exists in the list
-            (unless (= (llGet "voters" (vtraddr)) 1) (STOP))
+            (when (= (llGet "reverseVoterList" (vtraddr)) 0) (STOP))
 
-            (llRmLink "voters" (vtraddr))
+            [0x0](CALLER) ;Address of the user
+            [0x20](llGet "reverseVoterList" @0x0)
+
+            ;If the user to be removed is tail
+            (when (= @0x0 (singleGet "lastVoter")) {
+
+                ;If the user to be removed is head
+                (when (= @0x20 "HEAD") {
+                    (llRmLink "voterList" "HEAD")
+                    (singleSet "lastVoter" 0)
+                })
+
+                ;If the user to be removed is not head
+                (unless (= @0x20 "HEAD") {
+                    (llRmLink "voterList" @0x20)
+                    (singleSet "lastVoter" @0x20)
+                })
+                (llRmLink "reverseVoterList" @0x0)
+            })
+
+            ;If the user to be removed is head
+            (when (= @0x20 "HEAD") {
+                [0x40](llGet "voterList" @0x0)
+                (llRmLink "voterList" @0x0)
+                (llRmLink "reverseVoterList" @0x0)
+                (llAddLink "voterList" "HEAD" @0x40)
+                (llAddLink "reverseVoterList" @0x40 "HEAD")
+            })
+
+            ;If the user to be removed is not head or tail
+            (unless (|| (= @0x0 (singleGet "lastVoter")) (= @0x20 "HEAD")) {
+                [0x40](llGet "voterList" @0x0)
+                (llRmLink "voterList" @0x0)
+                (llRmLink "voterList" @0x20)
+                (llRmLink "reverseVoterList" @0x0)
+                (llRmLink "reverseVoterList" @0x40)
+                (llAddLink "voterList" @0x20 @0x40)
+                (llAddLink "reverseVoterList" @0x40 @0x20)
+            })
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Register an anonymous voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerAnonymousVoter" vtraddr
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "registerAnonymousVoter") {
+            ;TODO Check if the caller has the permission to set
+
+            ;TODO Check if the provided address is a valid user
+
+            ;Check if the voter exists in the list
+            (unless (= (llGet "reverseAnonymousVoterList" (vtraddr)) 0) (STOP))
+
+            ;If there is no user stored
+            (when (= (singleGet "lastAnonymousVoter") 0) {
+                (llAddLink "anonymousVoterList" "HEAD" (vtraddr))
+                (llAddLink "reverseAnonymousVoterList" (vtraddr) "HEAD")
+            })
+
+            ;If there is a user stored
+            (unless (= (singleGet "lastAnonymousVoter") 0) {
+                (llAddLink (singleGet "anonymousVoterList" "lastAnonymousVoter") (vtraddr))
+                (llAddLink "reverseAnonymousVoterList" (vtraddr) (singleGet "lastAnonymousVoter"))
+            })
+
+            (singleSet "lastAnonymousVoter" (vtraddr))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Deregister an anonymous voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deregisterAnonymousVoter" vtraddr
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "deregisterAnonymousVoter") {
+            ;TODO Check if the caller has the permission to set
+
+            ;TODO Check if the provided address is a valid user
+
+            ;Check if the voter exists in the list
+            (when (= (llGet "reverseAnonymousVoterList" (vtraddr)) 0) (STOP))
+
+            [0x0](CALLER) ;Address of the user
+            [0x20](llGet "reverseAnonymousVoterList" @0x0)
+
+            ;If the user to be removed is tail
+            (when (= @0x0 (singleGet "lastAnonymousVoter")) {
+
+                ;If the user to be removed is head
+                (when (= @0x20 "HEAD") {
+                    (llRmLink "anonymousVoterList" "HEAD")
+                    (singleSet "lastAnonymousVoter" 0)
+                })
+
+                ;If the user to be removed is not head
+                (unless (= @0x20 "HEAD") {
+                    (llRmLink "anonymousVoterList" @0x20)
+                    (singleSet "lastAnonymousVoter" @0x20)
+                })
+                (llRmLink "reverseAnonymousVoterList" @0x0)
+            })
+
+            ;If the user to be removed is head
+            (when (= @0x20 "HEAD") {
+                [0x40](llGet "anonymousVoterList" @0x0)
+                (llRmLink "anonymousVoterList" @0x0)
+                (llRmLink "reverseAnonymousVoterList" @0x0)
+                (llAddLink "anonymousVoterList" "HEAD" @0x40)
+                (llAddLink "reverseAnonymousVoterList" @0x40 "HEAD")
+            })
+
+            ;If the user to be removed is not head or tail
+            (unless (|| (= @0x0 (singleGet "lastAnonymousVoter")) (= @0x20 "HEAD")) {
+                [0x40](llGet "anonymousVoterList" @0x0)
+                (llRmLink "anonymousVoterList" @0x0)
+                (llRmLink "anonymousVoterList" @0x20)
+                (llRmLink "reverseAnonymousVoterList" @0x0)
+                (llRmLink "reverseAnonymousVoterList" @0x40)
+                (llAddLink "anonymousVoterList" @0x20 @0x40)
+                (llAddLink "reverseAnonymousVoterList" @0x40 @0x20)
+            })
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Add link between voter and anonymous voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "addLinkBetweenAccount" vtraddr ansvtraddr
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "addLinkBetweenAccount") {
+            ;Check if the voter is already linked to an anonymous voter
+            (unless (= (llGet "voterToAnonymousVoter" (vrtaddr)) 0) (STOP))
+
+            (llAddLink "voterAnonymousVoter" (vtraddr) (ansvtraddr))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Remove link between voter and anonymous voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "rmLinkBetweenAccount" vtraddr
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "addLinkBetweenAccount") {
+            ;Check if the voter is already linked to an anonymous voter
+            (when (= (llGet "voterToAnonymousVoter" (vrtaddr)) 0) (STOP))
+
+            (llRmLink "voterAnonymousVoter" (vtraddr))
 
             [0x0]1
             (return 0x0 0x20)
@@ -282,7 +465,7 @@
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "recordBallot")) {
             ;Check if the caller is a registered voter
-            (when (= (llGet "voters" (vtraddr)) 0) (STOP))
+            (when (= (llGet "reverseAnonymousVoterList" (vtraddr)) 0) (STOP))
             
             (kvSet "ballots" (option) (newoptionresult))
 
