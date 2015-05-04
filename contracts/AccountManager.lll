@@ -16,7 +16,8 @@
     ; --------------------------------------------------------------------------
     ; References
     ; --------------------------------------------------------------------------
-    (include "./User.lll")
+    (include "./Administrator.lll")
+	(include "./Voter.lll")
     (include "./defs/single.def")
     (include "./defs/stdll.def")
     (include "./defs/stdkv.def")
