@@ -1,0 +1,186 @@
+; ------------------------------------------------------------------------------
+; Voter
+; ------------------------------------------------------------------------------
+; - init
+; - setPassword
+; - registerElection
+; - deregisterElection
+; - suicideAccount
+; - suicideAnonymousAccount
+; ------------------------------------------------------------------------------
+(def 'voter () {
+
+    ; --------------------------------------------------------------------------
+    ; References
+    ; --------------------------------------------------------------------------
+    (include "./env.def")
+    (include "./defs/single.def")
+    (include "./defs/stdll.def")
+    
+    ; --------------------------------------------------------------------------
+    ; Constants
+    ; --------------------------------------------------------------------------
+    (def 'CREATED (TIMESTAMP))
+    
+    ; --------------------------------------------------------------------------
+    ; Parameters
+    ; --------------------------------------------------------------------------
+    (def 'cmd () (calldataload 0x0))
+
+    (def 'vtraddr () (calldataload 0x20))
+
+    (def 'elecaddr () (calldataload 0x20))
+
+    (def 'pswrd () (calldataload 0x20))
+ 
+    ; --------------------------------------------------------------------------
+    ; Variables
+    ; --------------------------------------------------------------------------
+    (singleInit "password" 0)
+    (singleInit "hash" 0) ;Hash of description of voter
+    (singleInit "accountManagerAddress" 0)
+
+    (singleInit "lastElection" 0)
+    (llInit "electionList")
+    (llInit "reverseElectionList")
+
+    (return 0 (lll {
+        ; ----------------------------------------------------------------------
+        ; Init the voter.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "init"
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "init") {
+            (singleSet "accountManagerAddress" (CALLER))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Set the password.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "setPassword" pswrd
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "setPassword") {
+            (singleSet "password" pswrd)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Register the election in voter's contracts.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "registerElection" elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "registerElection") {
+
+            ;If there is no election stored
+            (when (= (singleGet "lastElection") 0) {
+                (llAddLink "electionList" "HEAD" (elecaddr))
+                (llAddLink "reverseElectionList" (elecaddr) "HEAD")
+            })
+
+            ;If there is an election stored
+            (unless (= (singleGet "lastElection") 0) {
+                (llAddLink (singleGet "electionList" "lastElection") (elecaddr))
+                (llAddLink "reverseElectionList" (elecaddr) (singleGet "lastElection"))
+            })
+
+            (singleSet "lastElection" (elecaddr))
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Deregister the election in voter's contracts.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "deregisterElection" elecaddr
+        ; Returns: 0 - fail | 1 - success
+        ; ---------------------------------------------------------------------- 
+        (when (= (cmd) "deregisterElection") {
+
+            [0x0](elecaddr) ;Address of the election
+            [0x20](llGet "reverseElectionList" @0x0)
+
+            ;If the election to be removed is tail
+            (when (= @0x0 (singleGet "lastElection")) {
+
+                ;If the election to be removed is head
+                (when (= @0x20 "HEAD") {
+                    (llRmLink "electionList" "HEAD")
+                    (singleSet "lastElection" 0)
+                })
+
+                ;If the election to be removed is not head
+                (unless (= @0x20 "HEAD") {
+                    (llRmLink "electionList" @0x20)
+                    (singleSet "lastElection" @0x20)
+                })
+                (llRmLink "reverseElectionList" @0x0)
+            })
+
+            ;If the election to be removed is head
+            (when (= @0x20 "HEAD") {
+                [0x40](llGet "electionList" @0x0)
+                (llRmLink "electionList" @0x0)
+                (llRmLink "reverseElectionList" @0x0)
+                (llAddLink "electionList" "HEAD" @0x40)
+                (llAddLink "reverseElectionList" @0x40 "HEAD")
+            })
+
+            ;If the election to be removed is not head or tail
+            (unless (|| (= @0x0 (singleGet "lastElection")) (= @0x20 "HEAD")) {
+                [0x40](llGet "electionList" @0x0)
+                (llRmLink "electionList" @0x0)
+                (llRmLink "electionList" @0x20)
+                (llRmLink "reverseElectionList" @0x0)
+                (llRmLink "reverseElectionList" @0x40)
+                (llAddLink "electionList" @0x20 @0x40)
+                (llAddLink "reverseElectionList" @0x40 @0x20)
+            })
+
+            (kvSet "lastModified" @0x0 0)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Destruct the voter.
+        ;-----------------------------------------------------------------------
+        ; Calldata: "suicideAccount"
+        ; Returns: suicide
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "suicideAccount") {
+            ; remove the record in AccountManager
+            [0x0]"destructVoter"
+            (CALL (gass) (singleGet "accountManagerAddr") 0 0x0 0x20 0x20 0x20)
+            
+            (unless (= @0x20 1) (STOP))
+
+            (suicide (ORIGIN))
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Destruct the voter.
+        ;-----------------------------------------------------------------------
+        ; Calldata: "suicideAnonymousAccount"
+        ; Returns: suicide
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "suicideAnonymousAccount") {
+            ; remove the record in AccountManager
+            [0x0]"destructVoter"
+            (CALL (gass) (singleGet "accountManagerAddr") 0 0x0 0x20 0x20 0x20)
+            
+            (unless (= @0x20 1) (STOP))
+
+            (suicide (ORIGIN))
+        })
+    } 0))
+})
