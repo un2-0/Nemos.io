@@ -63,23 +63,10 @@ function createPoll(){
 	
 	contentContainer.innerHTML = "";
 	
-	
-	
 	//for test
 	//loadBasicPollInformation("create");
 	loadPollModuleSelection();
 	
-	if (isSessionStorageEmpty() == false) {
-		
-		contentContainer.innerHTML = "";
-	
-		loadPollModuleSelection();
-		
-	} else {
-		//contentContainer.innerHTML = "";
-		//contentContainer.appendChild(notification);
-		notification.innerHTML = "no user account logged in, failed to create poll";
-	}
 	
 	
 	
