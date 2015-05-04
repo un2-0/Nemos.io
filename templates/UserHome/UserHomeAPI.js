@@ -551,12 +551,12 @@ function module1Creation(moduleLoader) {
 			}
 			
 			console.log(temp1);
-			
+		/*
 			window.alert("\nname1: "+temp1.canOpts[0].name
 					+"\ndescription1: "+temp1.canOpts[0].description
 					+"\nname2: "+temp1.canOpts[1].name
 					+"\ndescription2: "+temp1.canOpts[1].description);
-			
+			*/
 		
 			
 			
@@ -725,20 +725,129 @@ function module2Creation(moduleLoader) {
 			for (var i = 0; i < pollNum.value; i++) {
 				if(!checkTime(i)){
 					break;
+				} else if(!checkVoterNum(i)){
+					break;
 				}
 			}
 			
+			temp4 = [];
 			
-			
-			/*	 
-			temp1 = {username: sessionStorage.userName};
+			for (var i = 0; i < pollNum.value; i++) {
+				temp1 = pollsObjs[i];
+				temp2 = pollsObjs[i].candadites;
 				
-			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp1), function(res){
+				var temp = {pollName: temp1.pollName.value,
+						openTime: temp1.openTime.value,
+						closeTime: temp1.closeTime.value,
+						pollDes: temp1.pollDes.value,
+						voterNum: temp1.voterNum.value,
+						canoptNum: temp1.canoptNum.value,
+						rulesNum: temp1.rulesNum.value,
+						candadites:[]}; 
+				
+				
+				for (var j = 0; j < temp2.length; j++) {
+					temp3 = {};
 					
+					temp3.name = temp2[j].name.value;	
+					temp3.canDes = temp2[j].canDes.value;
 					
+					temp.candadites[j] = temp3;
+				}
+				
+				temp4[i] = temp;
+			}
+			
+			var pollsInfo = {pollsInfo: temp4};
+			
+			console.log(pollsInfo);
+			
+			
+				
+			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(pollsInfo), function(res){
+					
+				if (res.status == 200) {
+					console.log(res);
+					var body = res.response;	
+					
+					body = JSON.parse(body);
+				
+					 // local test
+					/*var	body = {"result":"success"
+							
+							,"publicKeys":[[{"id":"01", "password":"Doe"},
+						                         {"id":"02","password":"Smith"},
+						                         {"id":"03", "password":"Jones"}],
+						                         
+											[{"id":"01", "password":"Doe"},
+						                         {"id":"02","password":"Smith"},
+						                         {"id":"03", "password":"Jones"}]
+						                     ]};
+					*/
+					
+					if (body.result == "success") {
+						
+							contentContainer.innerHTML = "";
+							 
+							for(var j =0 ; j<body.publicKeys.length;j++){
+								
+								if(j == 0){ 
+									contentContainer.appendChild(document.createTextNode("Poll 1 voters publickIDs and passwords:"));
+									contentContainer.appendChild(document.createElement("br"));
+								}else {
+									contentContainer.appendChild(document.createTextNode("Poll "+j+" candidates publickIDs and passwords for poll "+(j+1)+": "));
+									contentContainer.appendChild(document.createElement("br"));
+								}
+								
+							 for (var i = 0; i < body.publicKeys[j].length; i++) {
+								
+								if(j == 0){
+								temp1 = document.createTextNode("voter"+i+"**** id: "+body.publicKeys[j][i].id+ " ******* password: "+body.publicKeys[j][i].password);
+								contentContainer.appendChild(temp1);
+								contentContainer.appendChild(document.createElement("br"));
+								} else{
+									temp1 = document.createTextNode("candidate"+i+"**** id: "+body.publicKeys[j][i].id+ " ******* password: "+body.publicKeys[j][i].password);
+									contentContainer.appendChild(temp1);
+									contentContainer.appendChild(document.createElement("br"));	
+								}
+								
+							}
+							 
+							 contentContainer.appendChild(document.createElement("br"));
+							 contentContainer.appendChild(document.createElement("br"));
+							 contentContainer.appendChild(document.createElement("br"));
+							}
+							
+							 
+							 var exit = document.createElement("button");
+							 exit.innerHTML = "exit";
+							 exit.addEventListener("click", function(){
+								 window.location.reload();
+							 })
+							 
+							 contentContainer.appendChild(exit);
+					 
+					 
+					 
+					 
+						
+					} else if (body.result == "pollNameExist") {
+						
+						window.alert("Sorry, the poll name exists");
+						pollName.innerHTML = "try another name";
+						pollName.scrollIntoView();
+						
+					} else {
+						
+						window.alert("bad response");
+					}
+			       
+			    } else {
+					window.alert("failed to create poll");
+				}
 					
 			});
-		*/	 
+		 
 		
 		
 });
@@ -1000,7 +1109,7 @@ function module2AddPolls(j,pollsContainer) {
 		 canOptContainer.appendChild(temp2);
 		 canOptContainer.appendChild(document.createElement("br"));
 		 
-		 var b = {name: temp1,desc: temp2};
+		 var b = {name: temp1,canDes: temp2};
 		 a.candadites[i] = b;
 		 
 		 temp1 = null;
@@ -1011,6 +1120,7 @@ function module2AddPolls(j,pollsContainer) {
 });
 	
 	pollsObjs[j] = a;
+	
 	
 }
 
@@ -1066,10 +1176,25 @@ function checkTime(i) {
 	
 	
 }
-/*
-function getObjById(i,name) {
-	return document.getElementById("name" + i);
+
+function checkVoterNum(i) {
+	if(i == 0){
+		return true;
+	}else {
+		var preCanNum = pollsObjs[i-1].canoptNum;
+		
+		var voterNum = pollsObjs[i].voterNum;
+		
+		if(voterNum.value >= preCanNum.value){
+		window.alert("Error in Poll: "+(i+1)+"\nThe voter number should be less than the candidate/opion num of previous poll");
+		voterNum.scrollIntoView();
+		return false;
+		} else {
+			return true;
+		}
+	}
+	
+	
 }
-*/
 
 
