@@ -5,6 +5,9 @@
 <title>SmartVote Login</title>
 <link rel="stylesheet" type="text/css" href="./css/style.css" />
 <link rel="stylesheet" type="text/css" href="./css/body.css" />
+
+<script type="text/javascript" src="templates/Login.js"></script>
+<script type="text/javascript" src="templates/API/utils.js"></script>
 </head>
 
 <body>
@@ -22,7 +25,10 @@
 			</form>
 
 			<p>
-				<button onclick="login('organiser')" id="loginBtn" class = "btn btn-primary">Login as organiser</button> <button onclick="login('voter')" id="loginBtn" class = "btn btn-primary">Login as voter</button>
+				<button onclick="login('organiser')" id="loginBtn"
+					class="btn btn-primary">Login as organiser</button>
+				<button onclick="login('voter')" id="loginBtn"
+					class="btn btn-primary">Login as voter</button>
 			</p>
 			<p>
 				<button onclick="jumpToRegistration()" id="regBtn">Register</button>
@@ -37,14 +43,20 @@
 		</div>
 
 	</div>
-	
-	<footer style="text-align:center;">
-	<br><br><br><br><br><br>
-	<p>Powered by: <a href="http://e-mov.org/" target="_blank">E-Movement</a></p>
+
+	<footer style="text-align: center;">
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<p>
+			Powered by: <a href="http://e-mov.org/" target="_blank">E-Movement</a>
+		</p>
 	</footer>
 
-	<script type="text/javascript" src="templates/Login.js"></script>
-	<script type="text/javascript" src="templates/API/utils.js"></script>
+
 
 </body>
 
