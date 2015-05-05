@@ -50,19 +50,19 @@ function login(identity){
 			
 			body = JSON.parse(body);
 			
-			if (body.result === "success") {
+			if (body.result == "success") {
 				
 				sessionStorage.userName = userName.value;
 				
 
 				window.location.href = "templates/UserHome/UserHome.html";
 				
-			} else if (body.result === "userDoesntExist") {
+			} else if (body.result == "userDoesntExist") {
 				
 				window.alert("Sorry, the user name does not exist");
 				form.reset();
 				
-			} else if (body.result === "wrongPassWord"){
+			} else if (body.result == "wrongPassWord"){
 				
 				window.alert("Sorry, your password is wrong");
 				form.reset();

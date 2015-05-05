@@ -108,9 +108,97 @@ function loadPollModuleSelection() {
 	
 }
 
-
-function loadBasicPollInformation() {
+function showPollList() {
 	
+	contentContainer.innerHTML = "";
+	
+	if (LoginAs() != false) {
+		/*
+		var userName = {"userName":sessionStorage.userName};
+		
+		sender.sendAsync("POST", baseUrl+ "/showPollsList", JSON.stringify(userName), function(res){
+			
+			if (res.status == 200) {
+				console.log(res);
+				var body = res.response;	
+				
+				body = JSON.parse(body);*/
+			
+				 // local test
+				var	body = {"result":"success"
+						
+						,"pollslist":["aaaaa","bbbbbb","ccccc","dddddd","eeeeeee"]
+					                     };
+				
+				
+				if (body.result == "success") {
+					
+					var pollsList = document.createElement("ul");
+					pollsList.id = "pollsList";
+					
+					contentContainer.appendChild(pollsList);
+					
+					for (var i = 0; i < body.pollslist.length; i++) {
+						
+						var singlePoll = document.createElement("li");
+						singlePoll.id = "singlePoll" + i;
+						
+						var singlePollLink = document.createElement("a");
+						singlePollLink.id = "singlePollLink" + i;
+						
+						singlePollLink.innerHTML = body.pollslist[i];
+						
+						pollsList.appendChild(singlePoll);
+						
+						singlePoll.appendChild(singlePollLink);
+						
+						pollsList.appendChild(document.createElement("br"));
+					}
+					
+					
+					pollsList.addEventListener("click",function(event){
+						
+						if (event.target !== event.currentTarget) {
+							
+							if(event.target.tagName == "A"){
+					        loadBasicPollInformation(event.target.innerHTML);
+							}
+					    }
+						
+						event.stopPropagation();
+						
+					});
+					
+					
+					
+					
+				} else {
+					
+					window.alert("bad response");
+				}
+				
+		   /*     
+		    } else {
+				window.alert("failed to get polls list");
+			}
+			*/
+	/*		
+		});
+		*/
+		
+	} else {
+		contentContainer.appendChild(document.createTextNode("Not account logged in, fail to display polls list"));
+	}
+	
+}
+
+
+
+
+function loadBasicPollInformation(selectedPollName) {
+	
+		contentContainer.innerHTML = "";
+		
 
 		var biContainer = document.createElement("div");
 		
@@ -119,6 +207,8 @@ function loadBasicPollInformation() {
 		
 		var pollName = document.createElement("output");
 		pollName.id = "pollName";
+		pollName.value = selectedPollName;
+		
 		var labelPN = document.createElement("label");
 		labelPN.innerHTML = "Poll Name:  ";
 		labelPN.setAttribute("for", "pollName");
@@ -154,7 +244,7 @@ function loadBasicPollInformation() {
 		labelDes.setAttribute("for", "pollDes");
 		
 		//for test
-		pollName.value = "aaaa";
+		//pollName.value = "aaaa";
 		openTime.value = new Date().toString();
 		closeTime.value = new Date().toString();
 		pollDes.innerHTML = "My Headingsadddddddddddddddddddddddddddddddddd\

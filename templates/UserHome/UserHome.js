@@ -47,9 +47,9 @@ function showPolls(){
 	 
 	contentContainer.innerHTML = "";
 	
-	
+	showPollList();
 	//for test
-	loadBasicPollInformation("view");
+	
 	
 
 	
