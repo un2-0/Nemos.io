@@ -558,11 +558,38 @@ function module1Creation(moduleLoader) {
 					+"\ndescription2: "+temp1.canOpts[1].description);
 			*/
 		
-			
-			
-			
-			
-			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(temp1), function(res){
+	/* Data structure in request "module1CreatePoll":
+	 * a stringtified JSON object that contains:
+	 *				"pollName" : 
+					"organizerName" : 
+					"openTime" : 
+					"closeTime" :
+					"pollDes" : the description of the poll
+					"voterNum" : how many voters in the poll
+					"canoptNum" : how many candidates/opions in the poll
+					"rulesNum" : a voter can vote for how many candidates/opions in one voting
+					"canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that cantains 
+					all the detail information of all candidates/options in the poll. Each slot in the array includes
+					an object {name:?,description:?}
+	 * 
+	 *  Data structure of the response of the "module1CreatPoll":
+	 *  	an standard httpJSON response with body including:
+	 *			"result": "success"(if all good)
+	 *  				  "pollNameExist" (the poll name is existed)
+	 *  	
+	 *  		"publicKeys": An array that cantains all the public id and random password
+	 *  					  for each voters in the poll. Each slot in the poll should contain
+	 *  					  a JSON object with "id" and "password"
+	 *  
+	 *  					  [{"id":"01", "password":"Doe"},
+						      {"id":"02","password":"Smith"},
+						      {"id":"03", "password":"Jones"}]
+						                     
+	 *  				  
+	 *  	
+	 * 		
+	*/		
+			sender.sendAsync("POST", baseUrl+ "/module1CreatePoll", JSON.stringify(temp1), function(res){
 				if (res.status == 200) {
 					console.log(res);
 					var body = res.response;	
@@ -730,50 +757,102 @@ function module2Creation(moduleLoader) {
 				}
 			}
 			
-			temp4 = [];
+			var tempFianlArray = [];
 			
 			for (var i = 0; i < pollNum.value; i++) {
 				temp1 = pollsObjs[i];
 				temp2 = pollsObjs[i].candadites;
 				
-				var temp = {pollName: temp1.pollName.value,
-						openTime: temp1.openTime.value,
-						closeTime: temp1.closeTime.value,
-						pollDes: temp1.pollDes.value,
-						voterNum: temp1.voterNum.value,
-						canoptNum: temp1.canoptNum.value,
-						rulesNum: temp1.rulesNum.value,
-						candadites:[]}; 
+				var tempPollDetail = {"pollName": temp1.pollName.value,
+						"openTime": temp1.openTime.value,
+						"closeTime": temp1.closeTime.value,
+						"pollDes": temp1.pollDes.value,
+						"voterNum": temp1.voterNum.value,
+						"canoptNum": temp1.canoptNum.value,
+						"rulesNum": temp1.rulesNum.value,
+						"candadites":[]}; 
 				
 				
 				for (var j = 0; j < temp2.length; j++) {
-					temp3 = {};
+					tempCanDetail = {"name":"","canDes":""};
 					
-					temp3.name = temp2[j].name.value;	
-					temp3.canDes = temp2[j].canDes.value;
+					tempCanDetail.name = temp2[j].name.value;	
+					tempCanDetail.canDes = temp2[j].canDes.value;
 					
-					temp.candadites[j] = temp3;
+					tempPollDetail.candadites[j] = tempCanDetail;
 				}
 				
-				temp4[i] = temp;
+				tempFianlArray[i] = tempPollDetail;
 			}
 			
-			var pollsInfo = {pollsInfo: temp4};
+			var pollsInfo = {"pollsInfo": tempFianlArray};
 			
 			console.log(pollsInfo);
 			
 			
+			/* Data structure in request "module2CreatePoll":
+			 * a stringtified JSON object that contains an array with tag "pollInfo".
+			 *  Each slot in "pollInfo" array contains (each slot includes all the information of each created poll
+			 *  ) (continuous poll):
+			 *  
+			 *				"pollName" : 
+							"organizerName" : 
+							"openTime" : 
+							"closeTime" :
+							"pollDes" : the description of the poll
+							"voterNum" : how many voters in the poll
+							"canoptNum" : how many candidates/opions in the poll
+							"rulesNum" : a voter can vote for how many candidates/opions in one voting
+							"canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that cantains 
+							all the detail information of all candidates/options in the poll. Each slot in the array includes
+							an object {name:?,description:?}
+			 * 
+			 *  Data structure of the response of the "module1CreatPoll":
+			 *  	an standard httpJSON response with body including:
+			 *				"result":"success" (if all good)
+			 *						"pollNameExist" (if any poll name in the continuous poll is existed)
+			 * 				
+			 * 				"publicKeys": An array that contains all the publicId and random password for each voter
+			 * 				in poll 1 (the initial poll) or each candidate in all polls.
+			 * 				
+			 * 				each slot in the array should contains an array with each slot containing
+			 * 				an object {"id": (publickId),"password": (random password)}
+			 *
+			 *	Example (response for the request of 2 polls):
+			 *  		{"result":"success"
+							
+							,"publicKeys":[
+											[
+												{"id":"01", "password":"Doe"},
+						                         {"id":"02","password":"Smith"},
+						                         {"id":"03", "password":"Jones"}
+						                         									],
+						                         
+											[
+												{"id":"01", "password":"Doe"},
+						                         {"id":"02","password":"Smith"},
+						                         {"id":"03", "password":"Jones"}
+						                         									]
+						                         									
+						                     
+						                     ]};
+								                     
+			 *  				  
+			 *  	
+			 * 		
+			*/
+			
 				
-			sender.sendAsync("POST", baseUrl+ "/createPoll", JSON.stringify(pollsInfo), function(res){
-					
+			sender.sendAsync("POST", baseUrl+ "/module2CreatePoll", JSON.stringify(pollsInfo), function(res){
+				/*	
 				if (res.status == 200) {
 					console.log(res);
 					var body = res.response;	
 					
 					body = JSON.parse(body);
-				
+				*/
 					 // local test
-					/*var	body = {"result":"success"
+					var	body = {"result":"success"
 							
 							,"publicKeys":[[{"id":"01", "password":"Doe"},
 						                         {"id":"02","password":"Smith"},
@@ -783,7 +862,7 @@ function module2Creation(moduleLoader) {
 						                         {"id":"02","password":"Smith"},
 						                         {"id":"03", "password":"Jones"}]
 						                     ]};
-					*/
+					
 					
 					if (body.result == "success") {
 						
@@ -841,11 +920,11 @@ function module2Creation(moduleLoader) {
 						
 						window.alert("bad response");
 					}
-			       
+			   /*    
 			    } else {
 					window.alert("failed to create poll");
 				}
-					
+				*/	
 			});
 		 
 		
