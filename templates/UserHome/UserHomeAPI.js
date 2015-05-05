@@ -200,7 +200,7 @@ function loadBasicPollInformation(selectedPollName) {
 		contentContainer.innerHTML = "";
 		
 		var selectedPollNameJSON = {"selectedPollName":selectedPollName};
-		
+		/*
 		sender.sendAsync("POST", baseUrl+ "/showPollBasicInfo", JSON.stringify(selectedPollNameJSON), function(res){
 			
 			if (res.status == 200) {
@@ -208,12 +208,16 @@ function loadBasicPollInformation(selectedPollName) {
 				var body = res.response;	
 				
 				body = JSON.parse(body);
-			
+			*/
 				 // local test
-			/*	var	body = {"result":"success"
+				var	body = {"result":"success"
 						
-						,"pollslist":["aaaaa","bbbbbb","ccccc","dddddd","eeeeeee"]
-					                     };*/
+						,"pollBasicInfo":{"pollName": "aaa", 
+							"organizerName": "bbb",
+							"openTime": new Date().getTime().toString(),
+							"closeTime": new Date().getTime().toString(),
+							"pollDes": "cccc"}
+				};
 				
 				
 			if (body.result == "success") {
@@ -227,6 +231,7 @@ function loadBasicPollInformation(selectedPollName) {
 				var pollName = document.createElement("output");
 				pollName.id = "pollName";
 				
+				pollName.value = body.pollBasicInfo.pollName;
 				
 				var labelPN = document.createElement("label");
 				labelPN.innerHTML = "Poll Name:  ";
@@ -235,7 +240,9 @@ function loadBasicPollInformation(selectedPollName) {
 				
 				var organizerName = document.createElement("output");
 				organizerName.id = "organizerName";
-				organizerName.value = sessionStorage.userName;
+				
+				organizerName.value = body.pollBasicInfo.organizerName;
+				
 				var labelON = document.createElement("label");
 				labelON.innerHTML = "Oraniser Name(creator):  ";
 				labelON.setAttribute("for", "organizerName");
@@ -243,6 +250,10 @@ function loadBasicPollInformation(selectedPollName) {
 				
 				var openTime = document.createElement("output");
 				openTime.id = "openTime";
+				
+				openTime.value = new Date(Number(body.pollBasicInfo.openTime)).toString();
+				
+				
 				var labelOT = document.createElement("label");
 				labelOT.innerHTML = "Open Time:  ";
 				labelOT.setAttribute("for", "openTime");
@@ -250,6 +261,9 @@ function loadBasicPollInformation(selectedPollName) {
 				
 				var closeTime = document.createElement("output");
 				closeTime.id = "closeTime";
+				
+				closeTime.value = new Date(Number(body.pollBasicInfo.closeTime)).toString();
+				
 				var labelCT = document.createElement("label");
 				labelCT.innerHTML = "Close Time:  ";
 				labelCT.setAttribute("for", "closeTime");
@@ -258,20 +272,15 @@ function loadBasicPollInformation(selectedPollName) {
 				var pollDes = document.createElement("output");
 				pollDes.id = "pollDes";
 				pollDes.style.wordWrap = "break-word";
+				
+				pollDes.value = body.pollBasicInfo.pollDes;
+				
 				var labelDes = document.createElement("label");
 				labelDes.innerHTML = "Poll Description:  ";
 				labelDes.setAttribute("for", "pollDes");
 				
-				/*
-				//for test
-				pollName.value = "aaaa";
-				openTime.value = new Date().toString();
-				closeTime.value = new Date().toString();
-				pollDes.innerHTML = "My Headingsadddddddddddddddddddddddddddddddddd\
-		ddddddddddddddddddddddddddddddddddddddddddddd\
-		ddddddddddddddddddddddddddddddddddddddddddddd\
-		ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
-				*/
+				
+				
 				
 				
 				
@@ -322,10 +331,9 @@ function loadBasicPollInformation(selectedPollName) {
 			}else{
 				
 				window.alert("failed to get poll basic information");
+				}
 			
-		}
-			
-		
+	/*	
 		
 	}else{
 	
@@ -333,7 +341,7 @@ function loadBasicPollInformation(selectedPollName) {
 		
 	}
 	
-		});	
+		});	*/
 }
 
 
