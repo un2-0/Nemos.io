@@ -48,43 +48,43 @@ function LoginAs() {
 
 function loadPollModuleSelection() {
 	
-	var pollDetailContainer = document.createElement("div");
+	var pollDetailContainer = document.createElement("DIV");
 	pollDetailContainer.id = "pollDetailContainer";
 	
 	
-	var moduleSelectionContainer = document.createElement("form");
+	var moduleSelectionContainer = document.createElement("FORM");
 	moduleSelectionContainer.id = "moduleSelectionContainer";
 	
-	var moduleSelectionContainerLabel = document.createElement("label");
+	var moduleSelectionContainerLabel = document.createElement("LABEL");
 	moduleSelectionContainerLabel.setAttribute("for", "moduleSelectionContainer");
 	moduleSelectionContainerLabel.innerHTML = "Please select a poll module: ";
 	
-	var selectPollModules = document.createElement("select");
+	var selectPollModules = document.createElement("SELECT");
 	selectPollModules.id = "selectPollModules";
 	selectPollModules.name = "selectPollModules";
 	
-	var module1 = document.createElement("option");
+	var module1 = document.createElement("OPTION");
 	module1.id = "module 1";
 	module1.value = "module1";
 	module1.innerHTML = "module 1";
 	
-	var module2 = document.createElement("option");
+	var module2 = document.createElement("OPTION");
 	module2.id = "module 2";
 	module2.value = "module2";
 	module2.innerHTML = "module 2";
 	
 	contentContainer.appendChild(pollDetailContainer);
 	
-	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(document.createElement("BR"));
 	pollDetailContainer.appendChild(moduleSelectionContainerLabel);
-	pollDetailContainer.appendChild(document.createElement("br"));
+	pollDetailContainer.appendChild(document.createElement("BR"));
 	pollDetailContainer.appendChild(moduleSelectionContainer);
 	
 	moduleSelectionContainer.appendChild(selectPollModules);
 	
 	
-	pollDetailContainer.appendChild(document.createElement("br"));
-	var moduleLoader = document.createElement("div");
+	pollDetailContainer.appendChild(document.createElement("BR"));
+	var moduleLoader = document.createElement("DIV");
 	moduleLoader.id = "moduleLoader";
 	pollDetailContainer.appendChild(moduleLoader);
 	
@@ -199,109 +199,142 @@ function loadBasicPollInformation(selectedPollName) {
 	
 		contentContainer.innerHTML = "";
 		
+		var selectedPollNameJSON = {"selectedPollName":selectedPollName};
+		
+		sender.sendAsync("POST", baseUrl+ "/showPollBasicInfo", JSON.stringify(selectedPollNameJSON), function(res){
+			
+			if (res.status == 200) {
+				console.log(res);
+				var body = res.response;	
+				
+				body = JSON.parse(body);
+			
+				 // local test
+			/*	var	body = {"result":"success"
+						
+						,"pollslist":["aaaaa","bbbbbb","ccccc","dddddd","eeeeeee"]
+					                     };*/
+				
+				
+			if (body.result == "success") {
+					
+				
+				var biContainer = document.createElement("div");
+				
+				var basicInfo = document.createElement("form");
+				
+				
+				var pollName = document.createElement("output");
+				pollName.id = "pollName";
+				
+				
+				var labelPN = document.createElement("label");
+				labelPN.innerHTML = "Poll Name:  ";
+				labelPN.setAttribute("for", "pollName");
+				
+				
+				var organizerName = document.createElement("output");
+				organizerName.id = "organizerName";
+				organizerName.value = sessionStorage.userName;
+				var labelON = document.createElement("label");
+				labelON.innerHTML = "Oraniser Name(creator):  ";
+				labelON.setAttribute("for", "organizerName");
+				
+				
+				var openTime = document.createElement("output");
+				openTime.id = "openTime";
+				var labelOT = document.createElement("label");
+				labelOT.innerHTML = "Open Time:  ";
+				labelOT.setAttribute("for", "openTime");
 
-		var biContainer = document.createElement("div");
-		
-		var basicInfo = document.createElement("form");
-		
-		
-		var pollName = document.createElement("output");
-		pollName.id = "pollName";
-		pollName.value = selectedPollName;
-		
-		var labelPN = document.createElement("label");
-		labelPN.innerHTML = "Poll Name:  ";
-		labelPN.setAttribute("for", "pollName");
-		
-		
-		var organizerName = document.createElement("output");
-		organizerName.id = "organizerName";
-		organizerName.value = sessionStorage.userName;
-		var labelON = document.createElement("label");
-		labelON.innerHTML = "Oraniser Name(creator):  ";
-		labelON.setAttribute("for", "organizerName");
-		
-		
-		var openTime = document.createElement("output");
-		openTime.id = "openTime";
-		var labelOT = document.createElement("label");
-		labelOT.innerHTML = "Open Time:  ";
-		labelOT.setAttribute("for", "openTime");
+				
+				var closeTime = document.createElement("output");
+				closeTime.id = "closeTime";
+				var labelCT = document.createElement("label");
+				labelCT.innerHTML = "Close Time:  ";
+				labelCT.setAttribute("for", "closeTime");
 
+				
+				var pollDes = document.createElement("output");
+				pollDes.id = "pollDes";
+				pollDes.style.wordWrap = "break-word";
+				var labelDes = document.createElement("label");
+				labelDes.innerHTML = "Poll Description:  ";
+				labelDes.setAttribute("for", "pollDes");
+				
+				/*
+				//for test
+				pollName.value = "aaaa";
+				openTime.value = new Date().toString();
+				closeTime.value = new Date().toString();
+				pollDes.innerHTML = "My Headingsadddddddddddddddddddddddddddddddddd\
+		ddddddddddddddddddddddddddddddddddddddddddddd\
+		ddddddddddddddddddddddddddddddddddddddddddddd\
+		ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
+				*/
+				
+				
+				
+				contentContainer.appendChild(biContainer);
+				biContainer.appendChild(basicInfo);
+				
+				
+				//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
+				
+				basicInfo.appendChild(labelON);
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(organizerName);
+				
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(document.createElement("br"));
+				
+				basicInfo.appendChild(labelPN);
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(pollName);
+				
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(document.createElement("br"));
+				
+				
+				
+				basicInfo.appendChild(labelOT);
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(openTime);
+				
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(document.createElement("br"));
+				
+				basicInfo.appendChild(labelCT);
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(closeTime);
+				
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(document.createElement("br"));
+				
+				basicInfo.appendChild(labelDes);
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(pollDes);
+				
+				basicInfo.appendChild(document.createElement("br"));
+				basicInfo.appendChild(document.createElement("br"));	
+					
 		
-		var closeTime = document.createElement("output");
-		closeTime.id = "closeTime";
-		var labelCT = document.createElement("label");
-		labelCT.innerHTML = "Close Time:  ";
-		labelCT.setAttribute("for", "closeTime");
-
-		
-		var pollDes = document.createElement("output");
-		pollDes.id = "pollDes";
-		pollDes.style.wordWrap = "break-word";
-		var labelDes = document.createElement("label");
-		labelDes.innerHTML = "Poll Description:  ";
-		labelDes.setAttribute("for", "pollDes");
-		
-		//for test
-		//pollName.value = "aaaa";
-		openTime.value = new Date().toString();
-		closeTime.value = new Date().toString();
-		pollDes.innerHTML = "My Headingsadddddddddddddddddddddddddddddddddd\
-ddddddddddddddddddddddddddddddddddddddddddddd\
-ddddddddddddddddddddddddddddddddddddddddddddd\
-ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd 1";
+			}else{
+				
+				window.alert("failed to get poll basic information");
+			
+		}
+			
 		
 		
-		
-		
-		contentContainer.appendChild(biContainer);
-		biContainer.appendChild(basicInfo);
-		
-		
-		//labelPN.insertBefore(document.createTextNode("Poll Name: "), pollName);
-		
-		basicInfo.appendChild(labelON);
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(organizerName);
-		
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(document.createElement("br"));
-		
-		basicInfo.appendChild(labelPN);
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(pollName);
-		
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(document.createElement("br"));
-		
-		
-		
-		basicInfo.appendChild(labelOT);
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(openTime);
-		
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(document.createElement("br"));
-		
-		basicInfo.appendChild(labelCT);
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(closeTime);
-		
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(document.createElement("br"));
-		
-		basicInfo.appendChild(labelDes);
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(pollDes);
-		
-		basicInfo.appendChild(document.createElement("br"));
-		basicInfo.appendChild(document.createElement("br"));
+	}else{
+	
+			window.alert("failed to get poll basic information");
 		
 	}
 	
-	
-
+		});	
+}
 
 
 
@@ -596,17 +629,23 @@ function module1Creation(moduleLoader) {
 	
 	
 	module1Form.addEventListener("submit",function(){
-		
-		
-			 
+				 
 			 
 		var currentDate = new Date();
+		
 		
 		var OTDate = new Date(openTime.value);
 		var CTDate = new Date(closeTime.value);
 		
+		var OTDate13String = OTDate.getTime();
+		var CTDate13String = CTDate.getTime();
+		
+		OTDate13String = OTDate13String.toString();
+		CTDate13String = CTDate13String.toString();
+		
+	
 		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
-		//window.alert("OT: " + openTime + "\nCT: " + closeTime + "\nCuT: "+ currentDate);
+		window.alert("OT: " + new Date(Number(OTDate13String)) + "\nCT: " + new Date(Number(CTDate13String)) + "\nCuT: "+ currentDate);
 
 		if(currentDate > OTDate){
 			window.alert("illegal open time (open time should be after current time)");
@@ -624,8 +663,8 @@ function module1Creation(moduleLoader) {
 				 
 			temp1 = {"pollName": pollName.value.toString(),
 					"organizerName": organizerName.value.toString(),
-					"openTime": openTime.value.toString(), 
-					"closeTime": closeTime.value.toString(),
+					"openTime": OTDate13String, 
+					"closeTime": CTDate13String,
 					"pollDes": pollDes.value.toString(),
 					"voterNum": voterNum.value.toString(),
 					"canoptNum": canoptNum.value.toString(),
@@ -850,12 +889,25 @@ function module2Creation(moduleLoader) {
 			var tempFianlArray = [];
 			
 			for (var i = 0; i < pollNum.value; i++) {
+				
 				temp1 = pollsObjs[i];
 				temp2 = pollsObjs[i].candadites;
 				
+				var OTDate = new Date(temp1.openTime.value);
+				var CTDate = new Date(temp1.closeTime.value);
+				
+				var OTDate13String = OTDate.getTime();
+				var CTDate13String = CTDate.getTime();
+				
+				OTDate13String = OTDate13String.toString();
+				CTDate13String = CTDate13String.toString();
+				
+				window.alert("OT: " + new Date(Number(OTDate13String)) + "\nCT: " + new Date(Number(CTDate13String)));
+
+				
 				var tempPollDetail = {"pollName": temp1.pollName.value,
-						"openTime": temp1.openTime.value,
-						"closeTime": temp1.closeTime.value,
+						"openTime": OTDate13String,
+						"closeTime": CTDate13String,
 						"pollDes": temp1.pollDes.value,
 						"voterNum": temp1.voterNum.value,
 						"canoptNum": temp1.canoptNum.value,
