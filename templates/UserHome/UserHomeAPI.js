@@ -199,6 +199,8 @@ function loadBasicPollInformation(selectedPollName) {
 	
 		contentContainer.innerHTML = "";
 		
+		var currentDate = new Date();
+		
 		var selectedPollNameJSON = {"selectedPollName":selectedPollName};
 		/*
 		sender.sendAsync("POST", baseUrl+ "/showPollBasicInfo", JSON.stringify(selectedPollNameJSON), function(res){
@@ -215,7 +217,7 @@ function loadBasicPollInformation(selectedPollName) {
 						,"pollBasicInfo":{"pollName": "aaa", 
 							"organizerName": "bbb",
 							"openTime": new Date().getTime().toString(),
-							"closeTime": new Date().getTime().toString(),
+							"closeTime": "2930841353650",//new Date().getTime().toString(),
 							"pollDes": "cccc"}
 				};
 				
@@ -279,9 +281,28 @@ function loadBasicPollInformation(selectedPollName) {
 				labelDes.innerHTML = "Poll Description:  ";
 				labelDes.setAttribute("for", "pollDes");
 				
+				var nextBtn = document.createElement("BUTTON");
+				nextBtn.id = "nextBtn";
+				
+				var OTDate = new Date(openTime.value);
+				var CTDate = new Date(closeTime.value);
 				
 				
+				if (CTDate > currentDate) {
+					
+					if(sessionStorage.identity == "voter"){
+						nextBtn.innerHTML = "participate in the poll";	
+						
+					}else if(sessionStorage.identity == "organiser"){
+						
+						nextBtn.innerHTML = "please wait for the poll ends to see the result";
+						nextBtn.disabled = true;
+					}
 				
+				} else {
+					nextBtn.innerHTML = "see the result";
+					
+				}
 				
 				
 				contentContainer.appendChild(biContainer);
@@ -326,7 +347,33 @@ function loadBasicPollInformation(selectedPollName) {
 				
 				basicInfo.appendChild(document.createElement("br"));
 				basicInfo.appendChild(document.createElement("br"));	
+				
+				contentContainer.appendChild(nextBtn);
+				
+				
+				
+				nextBtn.addEventListener("click",function(){
 					
+				
+					if (CTDate > currentDate) {
+						if(sessionStorage.identity == "voter"){
+						
+							
+							
+						}else if(sessionStorage.identity == "organiser"){
+							
+						}
+						
+					} else {
+					
+						
+					}
+					
+					
+					
+				});
+				
+				
 		
 			}else{
 				
