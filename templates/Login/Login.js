@@ -16,7 +16,7 @@ function login(identity){
 		form.reset();
 	} 
 	
-	var userinfo = { "username" : userName.value.toString() , "password" : passWord.value.toString() };
+	var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
 	//userinfo.test = "1222333";
 	console.log(userinfo);
 	
@@ -34,6 +34,7 @@ function login(identity){
 	
 	
 	/*Data in "Login" request:
+	 * 	"identity": the identity of logging in user
 	 *  "username": username
 	 * 	"password": password
 	 * 
