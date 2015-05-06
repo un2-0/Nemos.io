@@ -52,8 +52,7 @@ function SmartVote() {
 		var hFunc = handlers[res];
 		// Return an error.
 		if (typeof (hFunc) !== "function") {
-            // return ??????????????????????????????????????????????????????????
-			network.getHttpResponse(400, {},
+			return network.getHttpResponse(400, {},
 			        "Bad request: no resource named: " + res + ".");
 		}
 
@@ -118,7 +117,6 @@ function SmartVote() {
 		return vote(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2]);
 	}
 
-	// for testing
 	handlers.getContractAddress = function (query) {
 	    // create the response JSON object
 	    var response;
@@ -137,8 +135,107 @@ function SmartVote() {
         response.result = "success";
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
+    
+    /**
+     * Creating polls in module1
+     */
+    handlers.module1CreatePoll = function (query) {
+        /*
+         * Data structure in request "module1CreatePoll":
+         * a stringtified JSON object that contains:
+         *     "pollName" : 
+         *     "organizerName" : 
+         *     "openTime" : 13 digits
+         *     "closeTime" : 13 digits
+         *     "pollDes" : the description of the poll
+         *     "voterNum" : how many voters in the poll
+         *     "canoptNum" : how many candidates/options in the poll
+         *     "rulesNum" : a voter can vote for how many candidates/options in one voting
+         *     "canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that contains 
+         *                all the detail information of all candidates/options in the poll. Each slot in the array includes
+         *                an object {name:?,description:?}
+         * 
+         *  Data structure of the response of the "module1CreatPoll":
+         *     "result": "success"(if all good)
+         *               "pollNameExist" (the poll name is existed)
+         *     "publicKeys": An array that contains all the public id and random password
+         *                   for each voters in the poll. Each slot in the poll should contain
+         *                   a JSON object with "id" and "password"
+         *                   [{"id":"01", "password":"Doe"},
+         *                    {"id":"02", "password":"Smith"},
+         *                    {"id":"03", "password":"Jones"}]
+         */
+        printQuery(query); // TODO can be removed
 
-	// functions to talk with contracts
+        var pollName = query.pollName;
+        var organizerName = query.organizerName;
+        var openTime = Number(query.openTime);
+        var closeTime = Number(query.closeTime);
+        var pollDes = query.pollDes;
+        var voterNum = Number(query.voterNum);
+        var canoptNum = Number(query.canoptNum);
+        var rulesNum = Number(query.rulesNum);
+        var canOpts = query.canOpts;
+        
+        var response = {};
+        if (pollNameExists(pollName)) {
+            response.result = "pollNameExist";
+            response.publicKeys = null;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        reponse.result = "success";
+        reponse.publicKeys = generatePublicKeys(voterNum);
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    handlers.showPollBasicInfo = function (query) {
+        printQuery(query);
+        var pollName = query.selectedPollName;
+        /*
+         * response = {"result":"success" | "fail"
+         *             "pollBasicInfo":{
+         *                 "pollName": "aaa", 
+         *                 "organizerName": "bbb",
+         *                 "openTime": new Date().getTime().toString(),
+         *                 "closeTime": "2930841353650",//new Date().getTime().toString(),
+         *                 "pollDes": "cccc"
+         *                 }
+         *            }
+         */
+        var response = {};
+        if (!pollNameExists(pollName)) {
+            response.result = "fail";
+            response.pollBasicInfo = null;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        response.result = "success";
+        response.pollBasicInfo = {};
+        response.pollBasicInfo.pollName = pollName;
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+
+	// functions for testing
+    /**
+     * Print out all the properties (name : val) in the query.
+     */
+    function printQuery(query) {
+        Object.getOwnPropertyNames(query).forEach(function (element, index, array) {
+            var info = element + " : " + query[element];
+            Println(info);
+        });
+    }
+    
+    // functions in the middle
+    function generatePublicKeys(voterNum) {
+        // TODO
+    }
+
+	// functions to talk with the blockchain
+    function pollNameExists(pollName) {
+        // TODO
+        return true;
+    }
+
 	function getPolls() {
 		return network.getHttpResponseJSON(svApi.showPolls());
 	}
