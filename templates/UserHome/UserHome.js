@@ -44,17 +44,11 @@ function loadInformation(){
 
 
 
-function showPolls(){
-	 
-	contentContainer.innerHTML = "";
+function showPolls(){	
+	
+	contentContainer.innerHTML = "";	
 	
 	showPollList();
-	//for test
-	
-	
-
-	
-	
 	
 }
 
@@ -64,19 +58,16 @@ function createPoll(){
 	
 	contentContainer.innerHTML = "";
 	
-	//for test
-	//loadBasicPollInformation("create");
 	loadPollModuleSelection();
-	
-	
-	
+
 	
 }
 
 
-function vote() {
-	
-}
+
+
+
+
 
 function jumpToLogin() {
 	window.location.href = "../../index.html";

@@ -214,7 +214,7 @@ function loadBasicPollInformation(selectedPollName) {
 				 // local test
 				var	body = {"result":"success"
 						
-						,"pollBasicInfo":{"pollName": "aaa", 
+						,"pollBasicInfo":{"pollName": selectedPollName, 
 							"organizerName": "bbb",
 							"openTime": new Date().getTime().toString(),
 							"closeTime": "2930841353650",//new Date().getTime().toString(),
@@ -517,7 +517,7 @@ function checkSecondIDPassword(selectedPollName) {
 
 		/*
 		  var secondIDPassword =
-		  {"userName":sessionStorage.userName,"secondId":secondId,"secondPassword":secondPassword,"selectedPollName":selectedPollName};
+		  {"userName":sessionStorage.userName,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
 		  
 		  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",
 		  JSON.stringify(secondIDPassword), function(res){
@@ -526,7 +526,7 @@ function checkSecondIDPassword(selectedPollName) {
 		  
 		  body = JSON.parse(body);
 		 */
-
+		//for local test
 		var body = {
 			"result" : "success"
 		};
@@ -572,7 +572,7 @@ function checkSecondIDPassword(selectedPollName) {
 				
 			/*	
 				var secondIDPassword =
-				  {"userName":sessionStorage.userName,"secondId":secondId,"secondPassword":secondPassword,"selectedPollName":selectedPollName};
+				  {"userName":sessionStorage.userName,"secondId":secondId,value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
 				  
 				  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",JSON.stringify(secondIDPassword), function(res){
 				  
@@ -591,7 +591,7 @@ function checkSecondIDPassword(selectedPollName) {
 				
 						if (body.result == "success") {
 
-							changeSecondPassword(selectedPollName);
+							changeSecondPassword(secondId.value,selectedPollName);
 
 						} else if (body.result == "userDoesntExist") {
 
@@ -721,9 +721,114 @@ function changeFirstPassword() {
 	
 }
 
-function changeSecondPassword(selectedPollName) {
+function changeSecondPassword(secondId,selectedPollName) {
+	contentContainer.innerHTML = "";
 	
-	alert("going to change second password");
+	var newSecondPasswordReceiver = document.createElement("FORM");
+	newSecondPasswordReceiver.id = "newSecondPasswordReceiver";
+	
+	var newSecondPasswordContainer = document.createElement("FIELDSET");
+	newSecondPasswordContainer.id = "newSecondPasswordContainer";
+	
+	var newSecondPasswordReceiverLabel = document.createElement("LEGEND");
+	newSecondPasswordReceiverLabel.id = "newSecondPasswordReceiverLabel";
+	
+	var newSecondPassword1 = document.createElement("INPUT");
+	newSecondPassword1.id = "newSecondPassword1";
+	newSecondPassword1.setAttribute("type", "password");
+	newSecondPassword1.required = true;
+	
+	var newSecondPassword1Label = document.createElement("LABEL");
+	newSecondPassword1Label.innerHTML = "Enter your new password: ";
+	newSecondPassword1Label.setAttribute("for", "newSecondPassword1");
+	
+	var newSecondPassword2 = document.createElement("INPUT");
+	newSecondPassword2.id = "newSecondPassword2";
+	newSecondPassword2.setAttribute("type", "password");
+	newSecondPassword2.required = true;
+	
+	var newSecondPassword2Label = document.createElement("LABEL");
+	newSecondPassword2Label.innerHTML = "Plese enter again: ";
+	newSecondPassword2Label.setAttribute("for", "newSecondPassword2");
+	
+	var submitBtn = document.createElement("INPUT");
+	submitBtn.id = "submitBtn";
+	submitBtn.value = "Submit";
+	submitBtn.setAttribute("type", "submit");
+	
+	
+	contentContainer.appendChild(newSecondPasswordReceiver);
+	
+	newSecondPasswordReceiver.appendChild(newSecondPasswordContainer);
+	
+	newSecondPasswordContainer.appendChild(newSecondPasswordReceiverLabel);
+	
+	newSecondPasswordContainer.appendChild(newSecondPassword1Label);
+	newSecondPasswordContainer.appendChild(newSecondPassword1);
+	
+	newSecondPasswordContainer.appendChild(document.createElement("BR"));
+	
+	newSecondPasswordContainer.appendChild(newSecondPassword2Label);
+	newSecondPasswordContainer.appendChild(newSecondPassword2);
+	
+	newSecondPasswordContainer.appendChild(document.createElement("BR"));
+	newSecondPasswordContainer.appendChild(document.createElement("BR"));
+	
+	newSecondPasswordContainer.appendChild(submitBtn);
+	
+	newSecondPasswordReceiver.addEventListener("submit",function(){
+		
+		if (newSecondPassword1.value === newSecondPassword2.value) {
+			
+			/*
+			var newSecondPassword = {"userName":sessionStorage.userName,"secondId":secondId,"newSecondPassword":newSecondPassword1.value,"selectedPollName":selectedPollName};
+			
+			sender.sendAsync("POST", baseUrl+ "/changeSecondPassword", JSON.stringify(newSecondPassword), function(res){ 
+
+				if (res.status == 200) {
+							console.log(res);
+							var body = res.response;
+							
+							body = JSON.parse(body);
+				*/			
+							//test
+							var body = {"result":"success"};
+							
+							
+							if (body.result == "success") {
+								
+								window.alert("successfully changed your second password");
+								
+								loadBasicPollInformation(selectedPollName);
+
+								
+							} else {
+								
+								window.alert("bad response");
+							}			
+			/*				
+							
+				} else {
+					window.alert("failed to change second password");
+				}
+
+			});			
+							
+			*/				
+							
+							
+			
+		} else {
+			window.alert("Two passwords do not match, please try again.");
+			
+			newSecondPasswordReceiver.reset();
+			
+			newSecondPassword1.scrollIntoView();
+		
+		}
+		
+		
+	});
 	
 }
 
