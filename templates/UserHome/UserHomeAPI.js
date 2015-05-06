@@ -533,16 +533,16 @@ function checkSecondIDPassword(selectedPollName) {
 
 		if (body.result == "success") {
 
-			voting(selectedPollName);
+			voting(secondId.value,selectedPollName);
 
 		} else if (body.result == "userDoesntExist") {
 
-			window.alert("Sorry, the user name does not exist");
+			window.alert("Sorry, the second account id does not exist");
 			secondIDPasswordReceiver.reset();
 
 		} else if (body.result == "wrongPassWord") {
 
-			window.alert("Sorry, your password is wrong");
+			window.alert("Sorry, the second account password is wrong");
 			secondIDPasswordReceiver.reset();
 
 		} else {
@@ -705,15 +705,219 @@ function getSecondIDPassword(selectedPollName) {
 }
 
 
-function voting(selectedPollName) {
+function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
+	/*
+	var voterVotingInfo = {"secondId": secondIdValue,"selectedPollName":selectedPollName};
+	
+	sender.sendAsync("POST", baseUrl+ "/getVotingInfo", JSON.stringify(voterVotingInfo), function(res){ 
+
+		
+		if (res.status == 200) {
+			
+					console.log(res);
+					var body = res.response;
+					
+					body = JSON.parse(body);
+			*/	
+					
+					//test
+					var body = {
+							"rulesNum": "1",
+							"candidates": [{"name":"1","canDes":"1"}
+							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}]
+							
+					};
+					
+					
+						
+					var votingContainer = document.createElement("FORM");
+					votingContainer.id ="votingContainer";
+					votingContainer.setAttribute("onsubmit","return false;");
+					
+					var votingTable = document.createElement("TABLE");
+					votingTable.id = "votingTable";
+					
+					var rulesDescription = document.createElement("H3");
+					rulesDescription.id ="rulesDescription";
+					rulesDescription.innerHTML = "In one ballot, You can only vote for "+body.rulesNum+ " candidate(s)/option(s).";
+					
+					
+					var submitBtn = document.createElement("INPUT");
+					submitBtn.setAttribute("type","submit");
+					submitBtn.value = "submit your ballot";
+					
+					contentContainer.appendChild(votingContainer);
+					
+					votingContainer.appendChild(rulesDescription);
+					votingContainer.appendChild(document.createElement("BR"));
+					
+					votingContainer.appendChild(votingTable);
+					votingContainer.appendChild(document.createElement("BR"));
+					votingContainer.appendChild(submitBtn);
+					
+					var rowZero = document.createElement("TR");
+					rowZero.id = "rowZero";
+					
+					var tableHead1 = document.createElement("TH");
+					tableHead1.innerHTML = "Candidate/Opion Name";
+					
+					var tableHead2 = document.createElement("TH");
+					tableHead2.innerHTML = "Candidate/Opion Description";
+					
+					var tableHead3 = document.createElement("TH");
+					tableHead3.innerHTML = "Vote for Candidate/Opion";
+					
+					votingTable.appendChild(rowZero);
+					
+					rowZero.appendChild(tableHead1);
+					rowZero.appendChild(tableHead2);
+					rowZero.appendChild(tableHead3);
+					
+					var checkBoxes = [];
+					
+					for (var i = 0; i < body.candidates.length; i++) {
+						
+							
+							var tempTR = document.createElement("TR");
+							
+							var canName = document.createElement("TD");
+							canName.innerHTML = body.candidates[i].name;
+							
+							var canDesc = document.createElement("TD");
+							canDesc.innerHTML = body.candidates[i].canDes;
+							
+							var canCB = document.createElement("TD");
+							
+							var tempCB = document.createElement("INPUT");
+							tempCB.setAttribute("type","checkbox");
+							tempCB.id = "can"+i+"CB";
+							tempCB.value = body.candidates[i].name;
+							
+							
+							votingTable.appendChild(tempTR);
+							tempTR.appendChild(canName);
+							tempTR.appendChild(canDesc);
+							tempTR.appendChild(canCB);
+							
+							canCB.appendChild(tempCB);
+							
+							checkBoxes[i] = tempCB;
+												
+					}
+					
+					
+					
+					
+					if (body.result == "voterVoted") {
+						
+						for (var i = 0; i < checkBoxes.length; i++) {
+							
+							if(body.votes[i] == "1"){
+								checkBoxes[i].checked = true;
+							}
+							
+						}
+						
+					}	
+					
+
+					votingContainer.addEventListener("submit",function(){
+						
+						var count = 0;
+						
+						for (var i = 0; i < checkBoxes.length; i++) {
+							
+							if(checkBoxes[i].checked == true){
+								count += 1;
+							}
+							
+						}
+						
+						
+						
+						if(count > Number(body.rulesNum) ){
+							
+							window.alert("You can only vote for "+body.rulesNum+" candidates/options." +
+									"\nPlese recheck your votes.");
+							
+							rulesDescription.scrollIntoView();
+						
+						}else{
+							
+							var ballot = {"secondId":secondIdValue,"selecedPollName":selectedPollName,"votes":[]};
+							
+							for (var i = 0; i < checkBoxes.length; i++) {
+								
+								if(checkBoxes[i].checked == true){
+									ballot.votes[i] = "1";
+								}else {
+									ballot.votes[i] = "0";
+								}
+								
+							}
+						/*
+							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
+
+								if (res.status == 200) {
+											console.log(res);
+											var body = res.response;
+											
+											body1 = JSON.parse(body);
+										
+											//test
+								*/			
+											var body1 = {"result":"success"};
+											
+											if (body1.result == "success") {
+												
+												window.alert("Your vote has been successfully submited." +
+														"\nYou can also login again to change your vote when poll is open");
+												
+
+												window.location.reload();
+												
+											} else {
+												
+												window.alert("bad response");
+											}
+									
+									/*	
+									    } else {
+											window.alert("failed to submit vote");
+										}
+
+								});
+							*/
+							
+							
+						}
+						
+					});
+					
+					
+			        
+		/*	
+					
+					
+			    } else {
+			    	
+					window.alert("failed to retrieve voting content");
+					loadBasicPollInformation(selectedPollName);
+				}
+			
+		});
+	
+		*/
 	
 	
 }
 
+
 function showResult(selectedPollName) {
 	alert("going to show result");
 }
+
 
 function changeFirstPassword() {
 	
@@ -1266,7 +1470,8 @@ function module1Creation(moduleLoader) {
 		}else {
 			window.alert("Sumbmit to creat poll");
 				 
-			temp1 = {"pollName": pollName.value.toString(),
+			temp1 = {"moduleName": "module1",
+					"pollName": pollName.value.toString(),
 					"organizerName": organizerName.value.toString(),
 					"openTime": OTDate13String, 
 					"closeTime": CTDate13String,
@@ -1294,6 +1499,7 @@ function module1Creation(moduleLoader) {
 		
 	/* Data structure in request "module1CreatePoll":
 	 * a stringtified JSON object that contains:
+	 *				"moduleName":
 	 *				"pollName" : 
 					"organizerName" : 
 					"openTime" : 
@@ -1510,7 +1716,8 @@ function module2Creation(moduleLoader) {
 				window.alert("OT: " + new Date(Number(OTDate13String)) + "\nCT: " + new Date(Number(CTDate13String)));
 
 				
-				var tempPollDetail = {"pollName": temp1.pollName.value,
+				var tempPollDetail = {"moduleName":"module2",
+						"pollName": temp1.pollName.value,
 						"openTime": OTDate13String,
 						"closeTime": CTDate13String,
 						"pollDes": temp1.pollDes.value,
@@ -1541,7 +1748,7 @@ function module2Creation(moduleLoader) {
 			 * a stringtified JSON object that contains an array with tag "pollInfo".
 			 *  Each slot in "pollInfo" array contains (each slot includes all the information of each created poll
 			 *  ) (continuous poll):
-			 *  
+			 *  			"moduleName":
 			 *				"pollName" : 
 							"organizerName" : 
 							"openTime" : 
