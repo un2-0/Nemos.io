@@ -358,6 +358,7 @@ function loadBasicPollInformation(selectedPollName) {
 					if (CTDate > currentDate) {
 						if(sessionStorage.identity == "voter"){
 						
+						checkVoterSecondAccount(selectedPollName);
 							
 							
 						}else if(sessionStorage.identity == "organiser"){
@@ -391,6 +392,134 @@ function loadBasicPollInformation(selectedPollName) {
 		});	*/
 }
 
+function checkVoterSecondAccount(selectedPollName) {
+	/*
+	var userName = sessionStorage.userName;
+	
+	var checkInfo = {"userName": userName,"pollName": selectedPollName};
+	
+	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
+	
+		if (res.status == 200) {
+			console.log(res);
+			var body = res.response;
+			
+			body = JSON.parse(body);
+		*/
+	
+			var	body = {"result":"secondtPasswordNotSet"};
+	
+	
+	
+			if (body.result == "secondPasswordSet") {
+				
+				loginToPoll(selectedPollName);
+				
+				
+			} else if (body.result == "secondtPasswordNotSet") {
+				
+				window.alert("You have not got your randomly assigned second account ID and Password, generating one for you.");
+				
+				getSecondIDPassword(selectedPollName);
+				
+			} else if (body.result == "voterNotInList"){
+				
+				window.alert("Sorry, you are not eligible to participate in this poll");
+				
+				window.location.reload();
+				
+			} else {
+				
+				window.alert("bad response");
+			}
+	  /*      
+	    } else {
+			window.alert("failed to login to the poll");
+		}
+		
+		
+	});
+	*/
+}
+
+
+function loginToPoll(selectedPollName) {
+	
+	alert("going to enter second id and password");
+	
+}
+
+function getSecondIDPassword(selectedPollName) {
+	
+	/*
+	var voterGetSecondIdPassword = {"userName":sessionStorage.userName,"selectedPollName":selectedPollName};
+	
+	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
+
+		if (res.status == 200) {
+					console.log(res);
+					var body = res.response;
+					
+					body = JSON.parse(body);
+		*/	
+	
+		//for local test
+		var	body = {"result":"success"
+		
+		,"secondIDPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
+				};
+					
+					if (body.result == "success") {
+						
+						contentContainer.innerHTML = "";
+						
+						var secondIdPassword = document.createElement("H3");
+						secondIdPassword.id = "secondIdPassword";
+						
+						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIDPassword.id+ "*******Password: "+body.secondIDPassword.password;
+						
+						
+						var backToPollBasicInfo = document.createElement("BUTTON");
+						backToPollBasicInfo.id = "backToPollBasicInfo";
+						backToPollBasicInfo.innerHTML = "go back";
+						
+						
+						contentContainer.appendChild(secondIdPassword);
+						contentContainer.appendChild(document.createElement("BR"));
+						contentContainer.appendChild(backToPollBasicInfo);
+						
+						window.alert("Please keep your assigned ID and Password safely!" +
+								"\nWithout it, you can not participate in the poll!");
+						
+						
+						backToPollBasicInfo.addEventListener("click",function(){
+							
+							loadBasicPollInformation(selectedPollName);
+							
+						});
+						
+						
+					} else {
+						
+						window.alert("bad response");
+					}
+		/*	        
+			    } else {
+					window.alert("failed to get voter second account Id & Password");
+				}
+
+		});
+	*/
+	
+	
+	
+}
+
+
+
+function changePassword() {
+	alert("going to change password");
+}
 
 
 
