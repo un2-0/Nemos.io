@@ -235,7 +235,7 @@
         ; ----------------------------------------------------------------------
         ; Destruct an administrator.
         ; ----------------------------------------------------------------------
-        ; Calldata: "destructAdmin"
+        ; Calldata: "destructAdmin" (CALLER)
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "destructAdmin") {
@@ -288,7 +288,7 @@
         ; ----------------------------------------------------------------------
         ; Destruct a voter.
         ; ----------------------------------------------------------------------
-        ; Calldata: "destructVoter"
+        ; Calldata: "destructVoter" (CALLER)
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "destructVoter") {
@@ -341,7 +341,7 @@
         ; ----------------------------------------------------------------------
         ; Destruct an anonymous voter.
         ; ----------------------------------------------------------------------
-        ; Calldata: "destructAnonymousVoter"
+        ; Calldata: "destructAnonymousVoter" (CALLER)
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "destructAnonymousVoter") {

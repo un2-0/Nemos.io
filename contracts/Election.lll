@@ -43,7 +43,7 @@
 
     (def 'vtraddr () (calldataload 0x20)) ;User address of the voter
 
-    (def 'ansvtraddr () (calldataload 0x20)) ;User address of the anonymous voter
+    (def 'ansvtraddr () (calldataload 0x40)) ;User address of the anonymous voter
 
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
@@ -112,7 +112,7 @@
         ; ----------------------------------------------------------------------
         ; Init a new election.
         ; ----------------------------------------------------------------------
-        ; Calldata: "init" crtraddr
+        ; Calldata: "init" (CALLER) crtraddr
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "init") (= (singleGet "status") 0)) {
@@ -478,7 +478,7 @@
         ;-----------------------------------------------------------------------
         ; Remove the Election. (called by the owner)
         ;-----------------------------------------------------------------------
-        ; Calldata: "suicideElection"
+        ; Calldata: "suicideElection" (CALLER) (ORIGIN)
         ; Returns: suicide
         ;-----------------------------------------------------------------------
         (when (= (cmd) "suicideElection") {
