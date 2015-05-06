@@ -2,7 +2,6 @@
 ; ElectionManager
 ; ------------------------------------------------------------------------------
 ; - createElection
-; - checkElection
 ; - removeElection
 ; ------------------------------------------------------------------------------
 
@@ -25,7 +24,9 @@
     ; Parameters
     ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
+	
     (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
+	
     (def 'elecname () (calldataload 0x40)) ;Name of the election
 
     ; --------------------------------------------------------------------------
@@ -42,7 +43,7 @@
         ; ----------------------------------------------------------------------
         ; Create a contract for a new election.
         ; ----------------------------------------------------------------------
-        ; Calldata: "createElection" crtrusrname elecname
+        ; Calldata: "createElection" crtraddr elecname
         ; Returns:
         ;       0 - fail
         ;       0xADDRESS - the address of the newly created contract
@@ -101,22 +102,9 @@
         })
 
         ; ----------------------------------------------------------------------
-        ; Check an election
-        ; ----------------------------------------------------------------------
-        ; Calldata: "checkElection"
-        ; Returns:
-        ;       0 - fail
-        ;       0xADDRESS - the address of the contract
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "checkElection") {
-            [0x0]@@(calldataload 0x20)
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
         ; Delete an election
         ; ----------------------------------------------------------------------
-        ; Calldata: "removeElection"
+        ; Calldata: "removeElection" (CALLER)
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "removeElection") {
