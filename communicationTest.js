@@ -16,6 +16,20 @@ operations["login"] = {
     params : {"username" : "User Name: ", "password" : "Password: "}
 }
 
+operations["module1CreatePoll"] = {
+    params : {
+        "pollName" : "Poll Name",
+        "organizerName" : "Organizer Name",
+        "openTime" : "Openning Time",
+        "closeTime" : "Closing Time",
+        "pollDes" : "Description",
+        "voterNum" : "Voter Number",
+        "canoptNum" : "Candidate Number",
+        "rulesNum" : "Vote Number",
+        "canOpts": "Candidates"
+    }
+}
+
 var contracts = {};
 
 window.onload = init;
