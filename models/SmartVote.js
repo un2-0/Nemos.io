@@ -208,17 +208,19 @@ function SmartVote() {
             response.pollBasicInfo = null;
             return network.getHttpResponseJSON(JSON.stringify(response));
         }
-        response.pollName = pollName;
+        response.result = "success";
+        response.pollBasicInfo = {};
+        response.pollBasicInfo.pollName = pollName;
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
 
 	// functions for testing
     /**
-     * Print out all the propeties in the query.
+     * Print out all the properties (name : val) in the query.
      */
     function printQuery(query) {
         Object.getOwnPropertyNames(query).forEach(function (element, index, array) {
-            var info = element + ": " + query[element];
+            var info = element + " : " + query[element];
             Println(info);
         });
     }
