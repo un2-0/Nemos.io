@@ -217,7 +217,7 @@ function loadBasicPollInformation(selectedPollName) {
 						,"pollBasicInfo":{"pollName": selectedPollName, 
 							"organizerName": "bbb",
 							"openTime": new Date().getTime().toString(),
-							"closeTime": "2930841353650",//new Date().getTime().toString(),
+							"closeTime": "1130841353650",//new Date().getTime().toString(),
 							"pollDes": "cccc"}
 				};
 				
@@ -915,7 +915,194 @@ function voting(secondIdValue,selectedPollName) {
 
 
 function showResult(selectedPollName) {
-	alert("going to show result");
+	contentContainer.innerHTML = "";
+	/*
+	var pollName = {"selectedPollName":selectedPollName};
+	
+	sender.sendAsync("POST", baseUrl+ "/getResult", JSON.stringify(pollName), function(res){ 
+
+		if (res.status == 200) {
+			
+					console.log(res);
+					
+					var body = res.response;
+					
+					body = JSON.parse(body);
+		*/			
+					
+					//test
+					var body = {"result": "success",
+							"candidates": [{"name":"a","canDes":"a","votes":"4"},
+							               {"name":"b","canDes":"b","votes":"2"},
+							               {"name":"c","canDes":"c","votes":"4"}],
+							"log": [{"id":"aaa","votes":["1","0","1"]},
+							        {"id":"bbb","votes":["0","1","1"]},
+							        {"id":"ccc","votes":["1","0","1"]},
+							        {"id":"ddd","votes":["1","1","0"]},
+							        {"id":"fff","votes":["1","0","1"]},
+							]
+							
+							
+					};
+	
+	
+	
+					if (body.result == "success") {
+						
+						var resultTable = document.createElement("TABLE");
+						resultTable.id = "resultTable";
+						
+						var resultsDescription = document.createElement("H3");
+						resultsDescription.id ="resultsDescription";
+						resultsDescription.innerHTML = "Final result of "+selectedPollName;
+						
+						var logTable = document.createElement("TABLE");
+						logTable.id = "logTable";
+						
+						var logDescription = document.createElement("H3");
+						logDescription.id ="logDescription";
+						logDescription.innerHTML = "Details of votings from all voters";
+						
+						var goBackBtn = document.createElement("BUTTON");
+						goBackBtn.innerHTML = "Go back";
+						
+						
+						
+						contentContainer.appendChild(resultsDescription);
+						contentContainer.appendChild(document.createElement("BR"));
+						contentContainer.appendChild(resultTable);
+						
+						contentContainer.appendChild(document.createElement("BR"));
+						contentContainer.appendChild(document.createElement("BR"));
+						
+						contentContainer.appendChild(logDescription);
+						contentContainer.appendChild(document.createElement("BR"));
+						contentContainer.appendChild(logTable);
+						
+						
+						contentContainer.appendChild(goBackBtn);
+						
+						var rowZero = document.createElement("TR");
+						rowZero.id = "rowZero";
+						
+						var tableHead1 = document.createElement("TH");
+						tableHead1.innerHTML = "Candidate/Opion Name";
+						
+						var tableHead2 = document.createElement("TH");
+						tableHead2.innerHTML = "Candidate/Opion Description";
+						
+						var tableHead3 = document.createElement("TH");
+						tableHead3.innerHTML = "Final votes";
+						
+						resultTable.appendChild(rowZero);
+						
+						rowZero.appendChild(tableHead1);
+						rowZero.appendChild(tableHead2);
+						rowZero.appendChild(tableHead3);
+						
+						for (var i = 0; i < body.candidates.length; i++) {
+							
+								
+								var tempTR = document.createElement("TR");
+								
+								var canName = document.createElement("TD");
+								canName.innerHTML = body.candidates[i].name;
+								
+								var canDesc = document.createElement("TD");
+								canDesc.innerHTML = body.candidates[i].canDes;
+								
+								var canVotes = document.createElement("TD");
+								canVotes.innerHTML = body.candidates[i].votes;
+								
+								
+								resultTable.appendChild(tempTR);
+								tempTR.appendChild(canName);
+								tempTR.appendChild(canDesc);
+								tempTR.appendChild(canVotes);													
+						}
+						
+			//********************************************************************			
+						var logRowZero = document.createElement("TR");
+						logRowZero.id = "rowZero";
+						
+						var voterSecondId = document.createElement("TH");
+						voterSecondId.innerHTML = "Second Account Id";
+						
+						logTable.appendChild(logRowZero);
+						logRowZero.appendChild(voterSecondId);
+						
+						var total = [];
+						
+						for (var i = 0; i < body.candidates.length; i++) {
+	
+							var canName = document.createElement("TH");
+							canName.innerHTML = body.candidates[i].name;	
+							
+							logRowZero.appendChild(canName);
+							
+							total[i] = 0;
+						}
+						
+						
+						
+						for (var i = 0; i < body.log.length; i++) {
+							
+							var tempTR = document.createElement("TR");
+							
+							var secondAccountId = document.createElement("TD");
+							secondAccountId.innerHTML = body.log[i].id;
+							
+							logTable.appendChild(tempTR);
+							tempTR.appendChild(secondAccountId);
+							
+							
+							for (var j = 0; j < body.log[i].votes.length; j++) {
+								
+								var voteForCan = document.createElement("TD");
+								
+								voteForCan.innerHTML = body.log[i].votes[j];
+								
+								tempTR.appendChild(voteForCan);
+								
+								if(body.log[i].votes[j] == "1"){
+									total[j] += 1;
+								}
+							}				
+						}
+						
+						var logRowLast = document.createElement("TR");
+						logRowLast.id = "logRowLast";
+						
+						var totalTag = document.createElement("TD");
+						totalTag.innerHTML = "Total";
+						
+						logTable.appendChild(logRowLast);
+						logRowLast.appendChild(totalTag);
+						
+						for (var i = 0; i < total.length; i++) {	
+							
+							var totalData = document.createElement("TD");
+							totalData.innerHTML = total[i];	
+							
+							logRowLast.appendChild(totalData);
+							
+							total[i] = 0;
+						}
+						
+						goBackBtn.onclick = function(){window.location.reload()};
+						
+						
+					} else {
+						
+						window.alert("bad response");
+					}
+		/*	        
+			    } else {
+					window.alert("failed to login");
+				}
+
+		});
+*/
 }
 
 
