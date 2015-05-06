@@ -104,19 +104,21 @@ the "create a poll" function should be disabled. -->
 			<li><ul class="dashboard-menu nav nav-list collapse in">
 
 					<!-- might be useless for now, 4.29.2015 -->
-					<li><a href="index.html"><span class="fa fa-caret-right"></span>
+					<!-- might need to using JS to loat right href for each of them listed below  -->
+					<li><a href="#"><span class="fa fa-caret-right"></span>
 							Main</a></li>
-					<li><a href="users.html"><span class="fa fa-caret-right"></span>
+					<li><a href="#"><span class="fa fa-caret-right"></span>
 							On-Going Polls List</a></li>
-					<li><a href="user.html"><span class="fa fa-caret-right"></span>
+					<li><a href="#"><span class="fa fa-caret-right"></span>
 							Create a Poll</a></li>
-					<li><a href="media.html"><span class="fa fa-caret-right"></span>
+					<li><a href="#"><span class="fa fa-caret-right"></span>
 							Under-Construction</a></li>
 					<li><a href="calendar.html"><span
 							class="fa fa-caret-right"></span> Under-Construction</a></li>
-				</ul></li>
-
-			<li><a href="#" data-target=".accounts-menu"
+				</ul></li>		
+				
+           <!-- decided to not include account in home page -->
+		<!-- 	<li><a href="#" data-target=".accounts-menu"
 				class="nav-header collapsed" data-toggle="collapse"><i
 					class="fa fa-fw fa-briefcase"></i> Account <i
 					class="fa fa-collapse"></i></a></li>
@@ -127,21 +129,21 @@ the "create a poll" function should be disabled. -->
 							Sign Up</a></li>
 					<li><a href="reset-password.html"><span
 							class="fa fa-caret-right"></span> Reset Password</a></li>
-				</ul></li>
+				</ul></li> -->
 
 			<li><a href="#" data-target=".legal-menu"
 				class="nav-header collapsed" data-toggle="collapse"><i
 					class="fa fa-fw fa-legal"></i> Legal<i class="fa fa-collapse"></i></a></li>
 			<li><ul class="legal-menu nav nav-list collapse">
-					<li><a href="privacy-policy.html"><span
+					<li><a href="#"><span
 							class="fa fa-caret-right"></span> Privacy Policy</a></li>
-					<li><a href="terms-and-conditions.html"><span
+					<li><a href="#"><span
 							class="fa fa-caret-right"></span> Terms and Conditions</a></li>
 				</ul></li>
 
 			<li><a href="help.html" class="nav-header"><i
 					class="fa fa-fw fa-question-circle"></i> Help</a></li>
-			<li><a href="faq.html" class="nav-header"><i
+			<li><a href="#" class="nav-header"><i
 					class="fa fa-fw fa-comment"></i> Faq</a></li>
 			<li><a href="https://github.com/E-Movement/SmartVote"
 				class="nav-header" target="blank"><i class="fa fa-fw fa-heart"></i>Under-Construction</a></li>
@@ -366,43 +368,43 @@ the "create a poll" function should be disabled. -->
 		</div>
 	</div>
 
-<script src="../../lib/jquery-1.11.1.min.js" type="text/javascript"></script>
-<script type="text/javascript">
-	$(function() {
-		var match = document.cookie.match(new RegExp('color=([^;]+)'));
-		if (match)
-			var color = match[1];
-		if (color) {
-			$('body').removeClass(function(index, css) {
-				return (css.match(/\btheme-\S+/g) || []).join(' ')
-			})
-			$('body').addClass('theme-' + color);
-		}
+	<script src="../../lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function() {
+			var match = document.cookie.match(new RegExp('color=([^;]+)'));
+			if (match)
+				var color = match[1];
+			if (color) {
+				$('body').removeClass(function(index, css) {
+					return (css.match(/\btheme-\S+/g) || []).join(' ')
+				})
+				$('body').addClass('theme-' + color);
+			}
 
-		$('[data-popover="true"]').popover({
-			html : true
+			$('[data-popover="true"]').popover({
+				html : true
+			});
+
 		});
-
-	});
-</script>
+	</script>
 
 
-<script type="text/javascript">
-	$(function() {
-		var uls = $('.sidebar-nav > ul > *').clone();
-		uls.addClass('visible-xs');
-		$('#main-menu').append(uls.clone());
-	});
-</script>
-<script src="../../lib/bootstrap/js/bootstrap.js"></script>
-<script type="text/javascript">
-	$("[rel=tooltip]").tooltip();
-	$(function() {
-		$('.demo-cancel-click').click(function() {
-			return false;
+	<script type="text/javascript">
+		$(function() {
+			var uls = $('.sidebar-nav > ul > *').clone();
+			uls.addClass('visible-xs');
+			$('#main-menu').append(uls.clone());
 		});
-	});
-</script>
+	</script>
+	<script src="../../lib/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript">
+		$("[rel=tooltip]").tooltip();
+		$(function() {
+			$('.demo-cancel-click').click(function() {
+				return false;
+			});
+		});
+	</script>
 
 </body>
 </html>
