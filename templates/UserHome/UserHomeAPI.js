@@ -717,7 +717,115 @@ function showResult(selectedPollName) {
 
 function changeFirstPassword() {
 	
-	alert("going to change first password");
+	contentContainer.innerHTML = "";
+	
+	var newFirstPasswordReceiver = document.createElement("FORM");
+	newFirstPasswordReceiver.id = "newFirstPasswordReceiver";
+	newFirstPasswordReceiver.setAttribute("onsubmit","return false;");
+	
+	var newFirstPasswordContainer = document.createElement("FIELDSET");
+	newFirstPasswordContainer.id = "newFirstPasswordContainer";
+	
+	var newFirstPasswordContainerLabel = document.createElement("LEGEND");
+	newFirstPasswordContainerLabel.id = "newFirstPasswordContainerLabel";
+	newFirstPasswordContainerLabel.innerHTML = "Please enter new first password:";
+	
+	var newFirstPassword1 = document.createElement("INPUT");
+	newFirstPassword1.id = "newFirstPassword1";
+	newFirstPassword1.setAttribute("type", "password");
+	newFirstPassword1.required = true;
+	
+	var newFirstPassword1Label = document.createElement("LABEL");
+	newFirstPassword1Label.innerHTML = "Enter your new password: ";
+	newFirstPassword1Label.setAttribute("for", "newFirstPassword1Label");
+	
+	var newFirstPassword2 = document.createElement("INPUT");
+	newFirstPassword2.id = "newFirstPassword2";
+	newFirstPassword2.setAttribute("type", "password");
+	newFirstPassword2.required = true;
+	
+	var newFirstPassword2Label = document.createElement("LABEL");
+	newFirstPassword2Label.innerHTML = "Plese enter again: ";
+	newFirstPassword2Label.setAttribute("for", "newFirstPassword2Label");
+	
+	var submitBtn = document.createElement("INPUT");
+	submitBtn.id = "submitBtn";
+	submitBtn.value = "Submit";
+	submitBtn.setAttribute("type", "submit");
+	
+	
+	contentContainer.appendChild(newFirstPasswordReceiver);
+	
+	newFirstPasswordReceiver.appendChild(newFirstPasswordContainer);
+	
+	newFirstPasswordContainer.appendChild(newFirstPasswordContainerLabel);
+	
+	newFirstPasswordContainer.appendChild(newFirstPassword1Label);
+	newFirstPasswordContainer.appendChild(newFirstPassword1);
+	
+	newFirstPasswordContainer.appendChild(document.createElement("BR"));
+	
+	newFirstPasswordContainer.appendChild(newFirstPassword2Label);
+	newFirstPasswordContainer.appendChild(newFirstPassword2);
+	
+	newFirstPasswordContainer.appendChild(document.createElement("BR"));
+	newFirstPasswordContainer.appendChild(document.createElement("BR"));
+	
+	newFirstPasswordContainer.appendChild(submitBtn);
+	
+	newFirstPasswordReceiver.addEventListener("submit",function(){
+		
+		if (newFirstPassword1.value === newFirstPassword2.value) {
+			
+			/*
+			var newFirstPassword = {"userName":sessionStorage.userName,"newFirstPassword":newFirstPassword1.value};
+			
+			sender.sendAsync("POST", baseUrl+ "/changeFirstPassword", JSON.stringify(newFirstPassword), function(res){ 
+
+				if (res.status == 200) {
+							console.log(res);
+							var body = res.response;
+							
+							body = JSON.parse(body);
+				*/			
+							//test
+							var body = {"result":"success"};
+							
+							
+							if (body.result == "success") {
+								
+								window.alert("successfully changed your first password");
+								
+								jumpToLogin();
+
+								
+							} else {
+								
+								window.alert("bad response");
+							}			
+			/*				
+							
+				} else {
+					window.alert("failed to change second password");
+				}
+
+			});			
+							
+			*/				
+							
+							
+			
+		} else {
+			window.alert("Two passwords do not match, please try again.");
+			
+			newFirstPasswordReceiver.reset();
+			
+			newFirstPassword1.scrollIntoView();
+		
+		}
+		
+		
+	});
 	
 }
 
@@ -726,12 +834,14 @@ function changeSecondPassword(secondId,selectedPollName) {
 	
 	var newSecondPasswordReceiver = document.createElement("FORM");
 	newSecondPasswordReceiver.id = "newSecondPasswordReceiver";
+	newSecondPasswordReceiver.setAttribute("onsubmit","return false;");
 	
 	var newSecondPasswordContainer = document.createElement("FIELDSET");
 	newSecondPasswordContainer.id = "newSecondPasswordContainer";
 	
-	var newSecondPasswordReceiverLabel = document.createElement("LEGEND");
-	newSecondPasswordReceiverLabel.id = "newSecondPasswordReceiverLabel";
+	var newSecondPasswordContainerLabel = document.createElement("LEGEND");
+	newSecondPasswordContainerLabel.id = "newSecondPasswordContainerLabel";
+	newSecondPasswordContainerLabel.innerHTML = "Please enter new second password:";
 	
 	var newSecondPassword1 = document.createElement("INPUT");
 	newSecondPassword1.id = "newSecondPassword1";
@@ -761,7 +871,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 	
 	newSecondPasswordReceiver.appendChild(newSecondPasswordContainer);
 	
-	newSecondPasswordContainer.appendChild(newSecondPasswordReceiverLabel);
+	newSecondPasswordContainer.appendChild(newSecondPasswordContainerLabel);
 	
 	newSecondPasswordContainer.appendChild(newSecondPassword1Label);
 	newSecondPasswordContainer.appendChild(newSecondPassword1);

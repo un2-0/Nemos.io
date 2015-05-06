@@ -70,7 +70,13 @@ function createPoll(){
 
 
 function jumpToLogin() {
+	
 	window.location.href = "../../index.html";
+	
+	sessionStorage.userName = "";
+	sessionStorage.identity = "";
+	
+	
 }
 
 
