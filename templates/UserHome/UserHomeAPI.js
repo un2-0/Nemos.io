@@ -114,7 +114,7 @@ function showPollList() {
 	
 	if (LoginAs() != false) {
 		/*
-		var userName = {"userName":sessionStorage.userName};
+		var userName = {"identity":sessionStorage.identity,"userName":sessionStorage.userName};
 		
 		sender.sendAsync("POST", baseUrl+ "/showPollsList", JSON.stringify(userName), function(res){
 			
@@ -367,7 +367,7 @@ function loadBasicPollInformation(selectedPollName) {
 						
 					} else {
 					
-						
+						showResult(selectedPollName);
 					}
 					
 					
@@ -394,9 +394,8 @@ function loadBasicPollInformation(selectedPollName) {
 
 function checkVoterSecondAccount(selectedPollName) {
 	/*
-	var userName = sessionStorage.userName;
 	
-	var checkInfo = {"userName": userName,"pollName": selectedPollName};
+	var checkInfo = {"userName": sessionStorage.userName,"pollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
 	
@@ -407,13 +406,13 @@ function checkVoterSecondAccount(selectedPollName) {
 			body = JSON.parse(body);
 		*/
 	
-			var	body = {"result":"secondtPasswordNotSet"};
+			var	body = {"result":"secondPasswordSet"};
 	
 	
 	
 			if (body.result == "secondPasswordSet") {
 				
-				loginToPoll(selectedPollName);
+				checkSecondIDPassword(selectedPollName);
 				
 				
 			} else if (body.result == "secondtPasswordNotSet") {
@@ -443,11 +442,201 @@ function checkVoterSecondAccount(selectedPollName) {
 }
 
 
-function loginToPoll(selectedPollName) {
+function checkSecondIDPassword(selectedPollName) {
 	
-	alert("going to enter second id and password");
+	contentContainer.innerHTML = "";
 	
+	var secondIDPasswordReceiver = document.createElement("FORM");
+	secondIDPasswordReceiver.id = "secondIDPasswordReceiver";
+	secondIDPasswordReceiver.setAttribute("onsubmit","return false;");
+	
+	var secondIDPasswordContainer = document.createElement("FIELDSET");
+	secondIDPasswordContainer.id = "secondIDPasswordContainer";
+	
+	var secondIDPasswordContainerLabel = document.createElement("LEGEND");
+	secondIDPasswordContainerLabel.id = "secondIDPasswordContainerLabel";
+	secondIDPasswordContainerLabel.innerHTML = "Please enter your second account and password to vote";
+
+	
+	var secondId = document.createElement("input");
+	secondId.id = "secondId";
+	secondId.setAttribute("type", "text");
+	secondId.required = true;
+	
+	var secondIdLabel = document.createElement("label");
+	secondIdLabel.innerHTML = "Second account Id:      ";
+	secondIdLabel.setAttribute("for", "secondId");
+	
+	var secondPassword = document.createElement("input");
+	secondPassword.id = "secondPassword";
+	secondPassword.setAttribute("type", "password");
+	secondPassword.required = true;
+	
+	var secondPasswordLabel = document.createElement("label");
+	secondPasswordLabel.innerHTML = "Second account password: ";
+	secondPasswordLabel.setAttribute("for", "secondPasswordLabel");
+	
+	var submitBtn = document.createElement("input");
+	submitBtn.id = "submitBtn";
+	submitBtn.value = "login to vote";
+	submitBtn.setAttribute("type", "submit");
+
+	
+	
+	var changeSecondIdPaBtn = document.createElement("BUTTON");
+	changeSecondIdPaBtn.id = "changeSecondIdPaBtn";
+	changeSecondIdPaBtn.innerHTML = "change second account password";
+
+		
+	
+	contentContainer.appendChild(secondIDPasswordReceiver);
+	
+	secondIDPasswordReceiver.appendChild(secondIDPasswordContainer);
+	
+	secondIDPasswordContainer.appendChild(secondIDPasswordContainerLabel);
+	
+	secondIDPasswordContainer.appendChild(secondIdLabel);
+	secondIDPasswordContainer.appendChild(secondId);
+	
+	secondIDPasswordContainer.appendChild(document.createElement("BR"));
+	
+	secondIDPasswordContainer.appendChild(secondPasswordLabel);
+	secondIDPasswordContainer.appendChild(secondPassword);
+	
+	secondIDPasswordContainer.appendChild(document.createElement("BR"));
+	secondIDPasswordContainer.appendChild(document.createElement("BR"));
+	
+	secondIDPasswordContainer.appendChild(submitBtn);
+	
+	
+	contentContainer.appendChild(document.createElement("BR"));
+	contentContainer.appendChild(changeSecondIdPaBtn);
+
+	
+	secondIDPasswordReceiver.addEventListener("submit", function() {
+
+		/*
+		  var secondIDPassword =
+		  {"userName":sessionStorage.userName,"secondId":secondId,"secondPassword":secondPassword,"selectedPollName":selectedPollName};
+		  
+		  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",
+		  JSON.stringify(secondIDPassword), function(res){
+		  
+		  if (res.status == 200) { console.log(res); var body = res.response;
+		  
+		  body = JSON.parse(body);
+		 */
+
+		var body = {
+			"result" : "success"
+		};
+
+		if (body.result == "success") {
+
+			voting(selectedPollName);
+
+		} else if (body.result == "userDoesntExist") {
+
+			window.alert("Sorry, the user name does not exist");
+			secondIDPasswordReceiver.reset();
+
+		} else if (body.result == "wrongPassWord") {
+
+			window.alert("Sorry, your password is wrong");
+			secondIDPasswordReceiver.reset();
+
+		} else {
+
+			window.alert("bad response");
+		}
+
+		/*
+		  } else { window.alert("failed to login"); }
+		  
+		  });
+		  */
+		 
+
+	});
+	
+	
+	
+	changeSecondIdPaBtn.addEventListener("click",function(){
+		
+		
+		
+		if(secondId.value != "" && secondId.value != null){
+			
+			if(secondPassword.value != "" && secondPassword.value != null)
+			{
+				
+			/*	
+				var secondIDPassword =
+				  {"userName":sessionStorage.userName,"secondId":secondId,"secondPassword":secondPassword,"selectedPollName":selectedPollName};
+				  
+				  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",JSON.stringify(secondIDPassword), function(res){
+				  
+				  if (res.status == 200) {
+					  
+					  console.log(res); 
+					  
+					  var body = res.response;
+				  
+					  body = JSON.parse(body);
+				 */ 
+					  
+						var body = {
+							"result" : "success"
+						};
+				
+						if (body.result == "success") {
+
+							changeSecondPassword(selectedPollName);
+
+						} else if (body.result == "userDoesntExist") {
+
+							window.alert("Sorry, the user name does not exist");
+							secondIDPasswordReceiver.reset();
+
+						} else if (body.result == "wrongPassWord") {
+
+							window.alert("Sorry, your password is wrong");
+							secondIDPasswordReceiver.reset();
+
+						} else {
+
+							window.alert("bad response");
+						}
+					  
+				/*	  
+				  
+				  } else { window.alert("failed to login"); }
+			});
+				  
+				*/  
+				
+			}else {
+				window.alert("Please enter password");
+				secondPassword.scrollIntoView();
+			}
+			
+			
+		} else{
+			window.alert("Please enter id");
+			secondId.scrollIntoView();
+			
+		}
+		
+		
+		
+	});
+	
+
 }
+
+
+
+
 
 function getSecondIDPassword(selectedPollName) {
 	
@@ -516,9 +705,26 @@ function getSecondIDPassword(selectedPollName) {
 }
 
 
+function voting(selectedPollName) {
+	contentContainer.innerHTML = "";
+	
+	
+}
 
-function changePassword() {
-	alert("going to change password");
+function showResult(selectedPollName) {
+	alert("going to show result");
+}
+
+function changeFirstPassword() {
+	
+	alert("going to change first password");
+	
+}
+
+function changeSecondPassword(selectedPollName) {
+	
+	alert("going to change second password");
+	
 }
 
 
