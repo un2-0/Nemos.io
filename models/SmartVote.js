@@ -137,7 +137,7 @@ function SmartVote() {
     }
     
     handlers.module1CreatePoll = function (query) {
-        /**
+        /*
          * Data structure in request "module1CreatePoll":
          * a stringtified JSON object that contains:
          *     "pollName" : 
@@ -162,7 +162,7 @@ function SmartVote() {
          *                    {"id":"02", "password":"Smith"},
          *                    {"id":"03", "password":"Jones"}]
          */
-        printQuery(query);
+        printQuery(query); // TODO can be removed
 
         var pollName = query.pollName;
         var organizerName = query.organizerName;
@@ -184,15 +184,18 @@ function SmartVote() {
         reponse.publicKeys = generatePublicKeys(voterNum);
     }
 
-	// for testing
+	// functions for testing
+    /**
+     * Print out all the propeties in the query.
+     */
     function printQuery(query) {
         Object.getOwnPropertyNames(query).forEach(function (element, index, array) {
-            var info = element + ": " + typeof (query[element]) + ", " + query[element];
+            var info = element + ": " + query[element];
             Println(info);
         });
     }
 
-	// functions to talk with contracts
+	// functions to talk with the blockchain
     function pollNameExists(pollName) {
         // TODO
         return true;

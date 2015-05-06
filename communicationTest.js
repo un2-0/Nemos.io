@@ -30,6 +30,12 @@ operations["module1CreatePoll"] = {
     }
 }
 
+operations["showPollBasicInfo"] = {
+    params : {
+        "selectedPollName" : "Poll Name"
+    }
+}
+
 var contracts = {};
 
 window.onload = init;
