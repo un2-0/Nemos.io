@@ -136,6 +136,9 @@ function SmartVote() {
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
     
+    /**
+     * Creating polls in module1
+     */
     handlers.module1CreatePoll = function (query) {
         /*
          * Data structure in request "module1CreatePoll":
@@ -182,6 +185,31 @@ function SmartVote() {
         }
         reponse.result = "success";
         reponse.publicKeys = generatePublicKeys(voterNum);
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    handlers.showPollBasicInfo = function (query) {
+        printQuery(query);
+        var pollName = query.selectedPollName;
+        /*
+         * response = {"result":"success" | "fail"
+         *             "pollBasicInfo":{
+         *                 "pollName": "aaa", 
+         *                 "organizerName": "bbb",
+         *                 "openTime": new Date().getTime().toString(),
+         *                 "closeTime": "2930841353650",//new Date().getTime().toString(),
+         *                 "pollDes": "cccc"
+         *                 }
+         *            }
+         */
+        var response = {};
+        if (!pollNameExists(pollName)) {
+            response.result = "fail";
+            response.pollBasicInfo = null;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        response.pollName = pollName;
+        return network.getHttpResponseJSON(JSON.stringify(response));
     }
 
 	// functions for testing
@@ -194,17 +222,18 @@ function SmartVote() {
             Println(info);
         });
     }
+    
+    // functions in the middle
+    function generatePublicKeys(voterNum) {
+        // TODO
+    }
 
 	// functions to talk with the blockchain
     function pollNameExists(pollName) {
         // TODO
         return true;
     }
-    
-    function generatePublicKeys(voterNum) {
-        // TODO
-    }
-    
+
 	function getPolls() {
 		return network.getHttpResponseJSON(svApi.showPolls());
 	}
