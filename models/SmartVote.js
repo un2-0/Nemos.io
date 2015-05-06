@@ -136,8 +136,63 @@ function SmartVote() {
         response.result = "success";
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
+    
+    handlers.module1CreatePoll = function (query) {
+        /**
+         * Data structure in request "module1CreatePoll":
+         * a stringtified JSON object that contains:
+         *     "pollName" : 
+         *     "organizerName" : 
+         *     "openTime" : 13 digits
+         *     "closeTime" : 13 digits
+         *     "pollDes" : the description of the poll
+         *     "voterNum" : how many voters in the poll
+         *     "canoptNum" : how many candidates/options in the poll
+         *     "rulesNum" : a voter can vote for how many candidates/options in one voting
+         *     "canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that contains 
+         *                all the detail information of all candidates/options in the poll. Each slot in the array includes
+         *                an object {name:?,description:?}
+         * 
+         *  Data structure of the response of the "module1CreatPoll":
+         *     "result": "success"(if all good)
+         *               "pollNameExist" (the poll name is existed)
+         *     "publicKeys": An array that contains all the public id and random password
+         *                   for each voters in the poll. Each slot in the poll should contain
+         *                   a JSON object with "id" and "password"
+         *                   [{"id":"01", "password":"Doe"},
+         *                    {"id":"02", "password":"Smith"},
+         *                    {"id":"03", "password":"Jones"}]
+         */
+        var pollName = query.pollName;
+        var organizerName = query.organizerName;
+        var openTime = parseInt(query.openTime);
+        var closeTime = parseInt(query.closeTime);
+        var pollDes = query.pollDes;
+        var voterNum = parseInt(query.voterNum);
+        var canoptNum = parseInt(query.canoptNum);
+        var rulesNum = parseInt(query.rulesNum);
+        var canOpts = query.canOpts;
+        
+        var response = {};
+        if (pollNameExists(pollName)) {
+            response.result = "pollNameExist";
+            response.publicKeys = null;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        reponse.result = "success";
+        reponse.publicKeys = generatePublicKeys(voterNum);
+    }
 
 	// functions to talk with contracts
+    function pollNameExists(pollName) {
+        // TODO
+        return true;
+    }
+    
+    function generatePublicKeys(voterNum) {
+        // TODO
+    }
+    
 	function getPolls() {
 		return network.getHttpResponseJSON(svApi.showPolls());
 	}
