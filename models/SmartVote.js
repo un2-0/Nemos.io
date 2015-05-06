@@ -117,7 +117,6 @@ function SmartVote() {
 		return vote(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2]);
 	}
 
-	// for testing
 	handlers.getContractAddress = function (query) {
 	    // create the response JSON object
 	    var response;
@@ -163,14 +162,16 @@ function SmartVote() {
          *                    {"id":"02", "password":"Smith"},
          *                    {"id":"03", "password":"Jones"}]
          */
+        printQuery(query);
+
         var pollName = query.pollName;
         var organizerName = query.organizerName;
-        var openTime = parseInt(query.openTime);
-        var closeTime = parseInt(query.closeTime);
+        var openTime = Number(query.openTime);
+        var closeTime = Number(query.closeTime);
         var pollDes = query.pollDes;
-        var voterNum = parseInt(query.voterNum);
-        var canoptNum = parseInt(query.canoptNum);
-        var rulesNum = parseInt(query.rulesNum);
+        var voterNum = Number(query.voterNum);
+        var canoptNum = Number(query.canoptNum);
+        var rulesNum = Number(query.rulesNum);
         var canOpts = query.canOpts;
         
         var response = {};
@@ -181,6 +182,14 @@ function SmartVote() {
         }
         reponse.result = "success";
         reponse.publicKeys = generatePublicKeys(voterNum);
+    }
+
+	// for testing
+    function printQuery(query) {
+        Object.getOwnPropertyNames(query).forEach(function (element, index, array) {
+            var info = element + ": " + typeof (query[element]) + ", " + query[element];
+            Println(info);
+        });
     }
 
 	// functions to talk with contracts
