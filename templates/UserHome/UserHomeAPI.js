@@ -1025,7 +1025,6 @@ function voting(secondIdValue,selectedPollName) {
 }
 
 
-// TODO backend by qiao
 function showResult(selectedPollName) {
 	contentContainer.innerHTML = "";
 	

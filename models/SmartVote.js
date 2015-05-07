@@ -339,6 +339,24 @@ function SmartVote() {
         var electionName = query.selectedElectionName;
         // TODO
     }
+    
+    /**
+     * Show the result of a poll.
+     * @param query = {"selectedPollName" : str"}
+     * @response response = {
+     *     "result": "success" or else
+     *     "candidates": [{"name": str, "canDes": str, "votes":num}, ...]
+     *     "log": [{"id": <second account id>,
+     *              "votes": <array, its length equals with length of candidates
+     *                        array. each slot should be "1" or "0">
+     *             }, ...]
+     * }
+     */
+    handlers.showResult = function (query) {
+        printQuery(query);
+        var pollName = query.selectedPollName;
+        // TODO
+    }
 
     /**
      * Demo for using ipfs - push a JSON string into ipfs and return the hash.

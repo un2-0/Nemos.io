@@ -84,6 +84,12 @@ operations["getVotingInfo"] = {
     }
 }
 
+operations["showResult"] = {
+    params : {
+        "selectedPollName" : "Poll Name: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "
