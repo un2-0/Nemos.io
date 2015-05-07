@@ -233,8 +233,9 @@ function SmartVote() {
 
     /**
      * Get all the basic information about a particular poll/election.
-     * @param query = {}
-     * 
+     * @param query = {
+     *     "selectedPollName" : str
+     * }
      * @response response = {
      *     "result":"success" | "fail"
      *     "pollBasicInfo":{
@@ -334,10 +335,29 @@ function SmartVote() {
     }
     
     /**
-     * Generate a account
+     * Generate a username-password pair as the second account of a voter.
+     * @param query = {
+     *     "username" : str,
+     *     "selectedPollName": str
+     * }
+     * @response response = {
+     *     "result" : "success",
+           "secondIDPassword": {"id": str,"password": str}
+     * }
      */
     handlers.getSecondIDPassword = function (query) {
         printQuery(query);
+        var firstID = query.username;
+        var pollName = query.selectedPollName;
+        
+        var response = {};
+        response.result = "success";
+        var pair = {};
+        pair.id = generateSecondID(pollName);
+        pair.password = generateSecondPassword(firstID, pollName);
+        response.secondIDPassword = pair;
+
+        return network.getHttpResponseJSON(JSON.stringify(response));
     }
 
     /**
@@ -412,8 +432,16 @@ function SmartVote() {
     function generatePublicKeys(voterNum) {
         // TODO
     }
+    
+    function generateSecondID(pollName) {
+        // TODO
+    }
+    
+    function generateSecondPassword(firstID, pollName) {
+        // TODO
+    }
 
-	// functions to talk with the blockchain
+	// functions talking with the blockchain
     function pollNameExists(pollName) {
         // TODO
         return true;

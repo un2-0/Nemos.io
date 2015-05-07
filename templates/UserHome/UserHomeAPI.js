@@ -621,22 +621,14 @@ function checkSecondIDPassword(selectedPollName) {
 			
 		}
 		
-		
-		
 	});
-	
 
 }
 
-
-
-
-
-// TODO backend by qiao
 function getSecondIDPassword(selectedPollName) {
 	
 	/*
-	var voterGetSecondIdPassword = {"userName":sessionStorage.userName,"selectedPollName":selectedPollName};
+	var voterGetSecondIdPassword = {"username":sessionStorage.userName,"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
 

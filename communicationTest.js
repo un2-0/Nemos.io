@@ -55,9 +55,9 @@ operations["checkVoterSecondAccount"] = {
 }
 
 operations["organiserRegister"] = {
-    param : {
+    params : {
         "username" : "Organizer Name: ",
-        "password" : "Password"
+        "password" : "Password: "
     }
 }
 
