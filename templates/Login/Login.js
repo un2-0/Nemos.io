@@ -4,11 +4,11 @@ baseUrl = "/apis/SmartVote";
 function login(identity){
 	
 	var form = document.getElementById("loginForm");
-	var userName = document.getElementById("username");
+	var username = document.getElementById("username");
 	var passWord = document.getElementById("password");
 	
 
-	if (userName.value == "" || userName.value == null) {
+	if (username.value == "" || username.value == null) {
 		window.alert("please enter the username");
 		form.reset();
 	} else if (passWord.value == "" || passWord.value == null) {
@@ -16,7 +16,7 @@ function login(identity){
 		form.reset();
 	}
     else {
-	    var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
+	    var userinfo = { "identity":identity,"username" : username.value.toString() , "password" : passWord.value.toString() };
 	    //userinfo.test = "1222333";
 	    console.log(userinfo);
 	
@@ -24,11 +24,11 @@ function login(identity){
 	    //for test
 	    //Note that: browser in Eclipse doesnt support session storage,plz test in chrome
 	
-	    sessionStorage.userName = userName.value;
+	    sessionStorage.username = username.value;
 	    sessionStorage.identity = identity;
 /*	
 	//for local test
-	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
+	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.username+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
 */
 	    /*Data in "Login" request:
@@ -50,7 +50,7 @@ function login(identity){
 			
 		    	if (body.result == "success") {
 				
-		    		sessionStorage.userName = userName.value;
+		    		sessionStorage.username = username.value;
 				
 
 		    		window.location.href = "templates/UserHome/UserHome.html";
