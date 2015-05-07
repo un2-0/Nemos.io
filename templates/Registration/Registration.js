@@ -1,7 +1,45 @@
+//window.onload;
 
-function jumpToLogin() {
-	window.location.href = "../../index.html";
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
  * this method has not been tested yet, probably need to delete "form" tag in
@@ -9,6 +47,7 @@ function jumpToLogin() {
  * could be deleted once the checkFrom method finished
  */
 
+/*
 function matchPassword() {
 	if (document.getElementById("password1")!= document.getElementByID("password2")) { 
 		alert("Your passwords do not match. Please try again."); 
@@ -19,10 +58,7 @@ function matchPassword() {
 		return true; 
 		}
 
-
-/*not been tested yet. 4.30.2015
- * 
-*/function checkForm(form)
+function checkForm(form)
 {
 	//var re;
   if(form.username.value == "") {
@@ -76,34 +112,11 @@ function matchPassword() {
   alert("You entered a valid password: " + form.passwordone.value);
   return true;
 }
+*/
 
-//the scripts below were moved from Registration.html
-$(function() {
-	var match = document.cookie.match(new RegExp('color=([^;]+)'));
-	if (match)
-		var color = match[1];
-	if (color) {
-		$('body').removeClass(function(index, css) {
-			return (css.match(/\btheme-\S+/g) || []).join(' ')
-		})
-		$('body').addClass('theme-' + color);
-	}
+function jumpToLogin() {
 
-	$('[data-popover="true"]').popover({
-		html : true
-	});
-
-});
-
-$(function() {
-	var uls = $('.sidebar-nav > ul > *').clone();
-	uls.addClass('visible-xs');
-	$('#main-menu').append(uls.clone());
-});
-
-$("[rel=tooltip]").tooltip();
-$(function() {
-	$('.demo-cancel-click').click(function() {
-		return false;
-	});
-});
+		
+		window.location.href = "../../index.html";	
+		
+}
