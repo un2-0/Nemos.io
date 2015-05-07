@@ -6,7 +6,7 @@ var temp4;
 
 var pollsObjs = [];
 
-window.onload(init());
+window.onload = init;
 
 
 function init() {
