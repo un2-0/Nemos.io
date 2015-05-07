@@ -207,6 +207,31 @@ function SmartVote() {
     }
 
     /**
+     * Organizer registration.
+     * @param query = {
+     *     "username" : str,
+     *     "password" : str
+     * }
+     * @response response = {
+     *               result = "success" or "userNameExist"
+     * }
+     */
+    handlers.organiserRegister = function (query) {
+        printQuery(query);
+        var organizerName = query.username;
+        var password = query.password;
+        var response = {};
+        if (organizerExists(organizerName)) {
+            response.result = "userNameExist";
+        } else {
+            // TODO
+            response.result = "success";
+        }
+        
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+
+    /**
      * Get all the basic information about a particular poll/election.
      * @param query = {}
      * 
@@ -224,10 +249,6 @@ function SmartVote() {
     handlers.showPollBasicInfo = function (query) {
         printQuery(query);
         var pollName = query.selectedPollName;
-        /*
-         * response = {
-         *            }
-         */
         var response = {};
         if (!pollNameExists(pollName)) {
             response.result = "fail";
@@ -289,7 +310,7 @@ function SmartVote() {
     }
     
     /**
-     * 
+     * Check if the username and password of the second account are right.
      * @param query = {
      *            "username" : str
      *            "secondId" : str
@@ -312,6 +333,13 @@ function SmartVote() {
         // TODO
     }
     
+    /**
+     * Generate a account
+     */
+    handlers.getSecondIDPassword = function (query) {
+        printQuery(query);
+    }
+
     /**
      * Demo for using ipfs - push a JSON string into ipfs and return the hash.
      * @param query = {"filedata": a JSON str}
@@ -343,7 +371,7 @@ function SmartVote() {
             return network.getHttpResponseJSON(JSON.stringify(response));
         }
     }
-    
+
     /**
      * Demo for using ipfs - get a JSON string from ipfs by a filename.
      * @param query = {"hash" : str}
