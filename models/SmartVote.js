@@ -281,8 +281,61 @@ function SmartVote() {
     }
     
     /**
-     * 
+     * Demo for using ipfs - push a JSON string into ipfs and return the hash.
+     * @param query = {"filedata": a JSON str}
+     * @response response = {
+     *               result = "success" or "failure",
+     *               result_text = str,
+     *               hash = str
+     *           }
      */
+    handlers.pushToIpfs = function (query) {
+        printQuery(query);
+        var response = {};
+        var filedata = query.filedata;
+
+        if (filedata == "") {
+            response.result = "failure";
+            response.result_text = "Empty filedata";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        
+        var hashObj = ipfs.PushFileData(filedata);
+        if(hashObj.Error !== "") {
+            response.result = "failure";
+            response.result_text = "Someting wrong with ipfs";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        } else {
+            response.result = "success";
+            response.hash = hashObj.Data;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+    }
+    
+    /**
+     * Demo for using ipfs - get a JSON string from ipfs by a filename.
+     * @param query = {"hash" : str}
+     * @response response = {
+     *               result : "success" or "failure",
+     *               result_text : str
+     *               filedata : a JSON str
+     *           }
+     */
+    handlers.getFromIpfs = function (query) {
+        printQuery(query);
+        var response = {};
+        var fileObj = ipfs.GetFile(query.hash, false);
+        
+        if(fileObj.Error !== "") {
+            response.result = "failure";
+            response.result_text = "Cannot get a file.";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        } else {
+            response.result = "success";
+            response.filedata = fileObj.Data;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+    }
 
 	// functions for testing
     /**
@@ -347,6 +400,25 @@ function SmartVote() {
 		}
 		return network.getHttpResponseJSON(hash);
 	}
+	
+	// functions talking with ipfs
+	/**
+	 * Writes a file to the ipfs file system and returns the hash
+     * as a hex string.
+     * NOTE: The hash is stripped of its first two bytes, in order to 
+     * get a 32 byte value. The first byte is the hashing algorithm
+     * used (it's always 0x12), and the second is the length of the
+     * hash (it is always 0x20). See DappCore.ipfsHeader.
+     */
+    function writeFileToIpfs(data) {
+        var hashObj = ipfs.PushFileData(data);
+        if(hashObj.Error !== "") {
+            return "";
+        } else {
+            // This would be the 32 byte hash (omitting the initial "1220").
+            return "0x" + hashObj.Data.slice(6);
+        }
+    };
 
 	this.testshowVotings = function() {
 		return svApi.showPolls();

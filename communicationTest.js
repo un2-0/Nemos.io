@@ -54,6 +54,18 @@ operations["checkVoterSecondAccount"] = {
     }
 }
 
+operations["pushToIpfs"] = {
+    params : {
+        "filedata" : "File Data: "
+    }
+}
+
+operations["getFromIpfs"] = {
+    params : {
+        "hash" : "Hash: "
+    }
+}
+
 var contracts = {};
 
 window.onload = init;
