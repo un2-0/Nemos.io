@@ -443,7 +443,7 @@ function checkVoterSecondAccount(selectedPollName) {
 	*/
 }
 
-
+// TODO backend by qiao
 function checkSecondIDPassword(selectedPollName) {
 	
 	contentContainer.innerHTML = "";
@@ -640,6 +640,7 @@ function checkSecondIDPassword(selectedPollName) {
 
 
 
+// TODO backend by qiao
 function getSecondIDPassword(selectedPollName) {
 	
 	/*
@@ -707,6 +708,7 @@ function getSecondIDPassword(selectedPollName) {
 }
 
 
+// TODO backend by qiao
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	/*
@@ -916,6 +918,7 @@ function voting(secondIdValue,selectedPollName) {
 }
 
 
+// TODO backend by qiao
 function showResult(selectedPollName) {
 	contentContainer.innerHTML = "";
 	/*
@@ -1108,6 +1111,7 @@ function showResult(selectedPollName) {
 }
 
 
+// TODO backend by qiao
 function changeFirstPassword() {
 	
 	contentContainer.innerHTML = "";
@@ -1222,6 +1226,7 @@ function changeFirstPassword() {
 	
 }
 
+// TODO backend by qiao
 function changeSecondPassword(secondId,selectedPollName) {
 	contentContainer.innerHTML = "";
 	
@@ -1791,6 +1796,7 @@ function module1Creation(moduleLoader) {
 
 
 
+// TODO backend by qiao
 function module2Creation(moduleLoader) {
 	moduleLoader.innerHTML = "";
 	
