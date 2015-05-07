@@ -1253,8 +1253,6 @@ function showResult(selectedPollName) {
 */
 }
 
-
-// TODO backend by qiao
 function changeFirstPassword() {
 	
 	contentContainer.innerHTML = "";

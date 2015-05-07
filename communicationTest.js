@@ -90,6 +90,13 @@ operations["showResult"] = {
     }
 }
 
+operations["changeFirstPassword"] = {
+    params : {
+        "username": "Fist Account Username: ",
+        "newFirstPassword": "New First Account Password: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "

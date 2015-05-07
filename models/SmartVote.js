@@ -357,6 +357,23 @@ function SmartVote() {
         var pollName = query.selectedPollName;
         // TODO
     }
+    
+    /**
+     * Change the password of the first account of a voter.
+     * @param query = {
+     *     "username": <Fist Account Username>,
+     *     "newFirstPassword": <New First Account Password>
+     * }
+     * @response response = {
+     *     "result": "success" or not
+     * }
+     */
+    handlers.changeFirstPassword = function (query) {
+        printQuery(query);
+        var fisrtUsername = query.username;
+        var newFirstPassword = query.newFirstPassword;
+        // TODO
+    }
 
     /**
      * Demo for using ipfs - push a JSON string into ipfs and return the hash.
