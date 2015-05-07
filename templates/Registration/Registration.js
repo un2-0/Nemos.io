@@ -1,42 +1,94 @@
-//window.onload;
+window.onload = receiveRegistrationData;
 
 
+function receiveRegistrationData(){
+	
+	var inforContainer = document.getElementById("reInfoContainer");
+	inforContainer.setAttribute("onsubmit","return false;");
+	
+	
+	var userName = document.getElementById("userName");
+	userName.required = true;
+	
+	var password1 = document.getElementById("password1");
+	password1.required = true;
+	
+	var password2 = document.getElementById("password2");
+	password2.required = true;
+	
+	var checkBox = document.getElementById("termCanditionAgreeCB");
+	checkBox.required = true;
+	
+	
+	inforContainer.addEventListener("submit",function(){
+		
+
+		
+		if (password1.value === password2.value) {
+			
+			/*
+			var newOrganiser = {"userName":userName.value,"password":password1.value};
+			
+			sender.sendAsync("POST", baseUrl+ "/organiserRegister", JSON.stringify(newOrganiser), function(res){ 
+
+				if (res.status == 200) {
+							console.log(res);
+							var body = res.response;
+							
+							body = JSON.parse(body);
+				*/			
+							//test
+			
+							var body = {"result":"success"};
+							
+							
+							if (body.result == "success") {
+								
+								window.alert("successfully created the account for you");
+								
+								jumpToLogin();
+
+								
+							} else if (body.result == "userNameExist") {
+								
+								window.alert("Sorry, the user name is existed" +
+										"\nTry another one");
+								
+								userName.scrollIntoView();
+								
+								inforContainer.reset();
+								
+							}else {
+								
+								window.alert("bad response");
+							}			
+			/*				
+							
+				} else {
+					window.alert("failed to change second password");
+				}
+
+			});			
+							
+			*/				
+							
+							
+			
+		} else {
+			window.alert("Two passwords do not match, please try again.");
+	
+			password1.scrollIntoView();
+			
+			inforContainer.reset();
+		
+		}
+		
+		
+	});
+		
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 
@@ -115,8 +167,11 @@ function checkForm(form)
 */
 
 function jumpToLogin() {
-
-		
-		window.location.href = "../../index.html";	
-		
+	
+	window.location.href = "../../index.html";
+	
+	sessionStorage.userName = "";
+	sessionStorage.identity = "";
+	
+	
 }
