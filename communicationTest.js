@@ -40,6 +40,13 @@ operations["showPollBasicInfo"] = {
     }
 }
 
+operations["showPollList"] = {
+    params: {
+        "identity" : "Organizer or voter",
+        "username" : "User Name"
+    }
+}
+
 var contracts = {};
 
 window.onload = init;
