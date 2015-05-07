@@ -281,6 +281,30 @@ function SmartVote() {
     }
     
     /**
+     * 
+     * @param query = {
+     *            "username" : str
+     *            "secondId" : str
+     *            "secondPassword" : str
+     *            "selectedPollName" : str
+     *        }
+     * @response response = {
+     *               "result" : "success" or "userDoesntExist" or
+     *                          "wrongPassWord"
+     *           }
+     */
+    handlers.checkVoterSecondIdPassword = function (query) {
+        printQuery(query);
+        var username = query.username;
+        var secondId = query.secondId;
+        var secondPassword = query.secondPassword;
+        var pollName = query.selectedPollName;
+        
+        var response = {};
+        // TODO
+    }
+    
+    /**
      * Demo for using ipfs - push a JSON string into ipfs and return the hash.
      * @param query = {"filedata": a JSON str}
      * @response response = {

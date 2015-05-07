@@ -66,6 +66,15 @@ operations["getFromIpfs"] = {
     }
 }
 
+operations["checkVoterSecondIdPassword"] = {
+    params : {
+        "username" : "User Name: ",
+        "secondId" : "Second ID: ",
+        "secondPassword" : "Second Password: ",
+        "selectedPollName" : "Poll Name"
+    }
+}
+
 var contracts = {};
 
 window.onload = init;

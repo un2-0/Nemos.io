@@ -443,7 +443,6 @@ function checkVoterSecondAccount(selectedPollName) {
 	*/
 }
 
-// TODO backend by qiao
 function checkSecondIDPassword(selectedPollName) {
 	
 	contentContainer.innerHTML = "";
@@ -519,7 +518,7 @@ function checkSecondIDPassword(selectedPollName) {
 
 		/*
 		  var secondIDPassword =
-		  {"userName":sessionStorage.userName,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
+		  {"username":sessionStorage.userName,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
 		  
 		  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",
 		  JSON.stringify(secondIDPassword), function(res){
