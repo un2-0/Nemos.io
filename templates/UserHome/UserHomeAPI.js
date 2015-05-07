@@ -2101,7 +2101,7 @@ function module2Creation(moduleLoader) {
 			
 			
 			/* Data structure in request "module2CreatePoll":
-			 * a stringtified JSON object that contains an array with tag "pollInfo".
+			 * a stringified JSON object that contains an array with tag "pollInfo".
 			 *  Each slot in "pollInfo" array contains (each slot includes all the information of each created poll
 			 *  ) (continuous poll):
 			 *  			"moduleName":

@@ -165,6 +165,19 @@ function SmartVote() {
         reponse.publicKeys = generatePublicKeys(voterNum);
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
+    
+    /**
+     * Create polls in module2.
+     * @param query = {
+
+     * }
+     * @response response = {
+     * }
+     */
+    // TODO
+    handlers.module2CreatePoll = function (query) {
+         
+    }
 
     /**
      * Organizer registration.
