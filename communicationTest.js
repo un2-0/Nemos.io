@@ -13,7 +13,11 @@ operations["getContractAddress"] = {
 };
 
 operations["login"] = {
-    params : {"username" : "User Name: ", "password" : "Password: "}
+    params : {
+        "identity" : "Organizer or voter",
+        "username" : "User Name: ",
+        "password" : "Password: "
+    }
 }
 
 operations["module1CreatePoll"] = {

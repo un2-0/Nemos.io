@@ -129,13 +129,20 @@ function SmartVote() {
 	}
 	
     handlers.login = function (query) {
-        Println(query.username);
-        Println(query.password);
         var response = {};
+        printQuery(query);
+        var identity = query.identity;
+        if (identity === "organizer") {
+            // login in as an organizer
+        } else if (identity === "voter") {
+            // login in as a voter
+        } else {
+            return network.getHttpResponse(400, {}, "Bad query.");
+        }
         response.result = "success";
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
     /**
      * Creating polls in module1
      */
