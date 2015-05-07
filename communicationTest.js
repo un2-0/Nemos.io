@@ -54,6 +54,36 @@ operations["checkVoterSecondAccount"] = {
     }
 }
 
+operations["organiserRegister"] = {
+    params : {
+        "username" : "Organizer Name: ",
+        "password" : "Password: "
+    }
+}
+
+operations["checkVoterSecondIdPassword"] = {
+    params : {
+        "username" : "User Name: ",
+        "secondId" : "Second ID: ",
+        "secondPassword" : "Second Password: ",
+        "selectedPollName" : "Poll Name"
+    }
+}
+
+operations["getSecondIDPassword"] = {
+    params : {
+        "username" : "The Fisrt ID: ",
+        "selectedPollName": "Poll Name"
+    }
+}
+
+operations["getVotingInfo"] = {
+    params : {
+        "secondId": "The Second ID: ",
+        "selectedPollName": "Poll Name: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "
@@ -65,6 +95,7 @@ operations["getFromIpfs"] = {
         "hash" : "Hash: "
     }
 }
+
 
 var contracts = {};
 

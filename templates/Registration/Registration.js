@@ -27,7 +27,7 @@ function receiveRegistrationData(){
 		if (password1.value === password2.value) {
 			
 			/*
-			var newOrganiser = {"userName":userName.value,"password":password1.value};
+			var newOrganiser = {"username":userName.value,"password":password1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/organiserRegister", JSON.stringify(newOrganiser), function(res){ 
 
