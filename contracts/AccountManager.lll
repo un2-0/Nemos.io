@@ -42,16 +42,19 @@
     ; --------------------------------------------------------------------------
     (singleInit "lastAdmin")
     (llInit "adminAddressToAdminName")
+    (llInit "adminNameToAdminAddress")
     (llInit "adminList")
     (llInit "reverseAdminList")
 
     (singleInit "lastVoter")
     (llInit "voterAddressToVoterName")
+    (llInit "voterNameToVoterAddress")
     (llInit "voterList")
     (llInit "reverseVoterList")
 
     (singleInit "lastAnonymousVoter")
     (llInit "anonymousVoterAddressToAnonymousVoterName")
+    (llInit "anonymousVoterNameToAnonymousVoterAddress")
     (llInit "anonymousVoterList")
     (llInit "reverseAnonymousVoterList")
 
@@ -87,6 +90,7 @@
 
             (singleSet "lastAdmin" @0x0)
             (llAddLink "adminAddressToAdminName" @0x0 @0xC0)
+            (llAddLink "adminNameToAdminAddress" @0xC0 @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -129,6 +133,7 @@
 
             (singleSet "lastVoter" @0x0)
             (llAddLink "voterAddressToVoterName" @0x0 @0xC0)
+            (llAddLink "voterNameToVoterAddress" @0xC0 @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -171,6 +176,7 @@
 
             (singleSet "lastAnonymousVoter" @0x0)
             (llAddLink "anonymousVoterAddressToAnonymousVoterName" @0x0 @0xC0)
+            (llAddLink "anonymousVoterNameToAnonymousVoterAddress" @0xC0 @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -279,6 +285,8 @@
                 (llAddLink "reverseAdminList" @0x40 @0x20)
             })
 
+            [0xA0](llGet "adminAddressToAdminName" @0x0)
+            (llRmLink "adminNameToAdminAddress" @0xA0)
             (llRmLink "adminAddressToAdminName" @0x0)
 
             [0x0]1
@@ -332,6 +340,8 @@
                 (llAddLink "reverseVoterList" @0x40 @0x20)
             })
 
+            [0xA0](llGet "voterAddressToVoterName" @0x0)
+            (llRmLink "voterNameToVoterAddress" @0xA0)
             (llRmLink "voterAddressToVoterName" @0x0)
 
             [0x0]1
@@ -385,6 +395,8 @@
                 (llAddLink "reverseAnonymousVoterList" @0x40 @0x20)
             })
 
+            [0xA0](llGet "anonymousVoterAddressToAnonymousVoterName" @0x0)
+            (llRmLink "anonymousVoterNameToAnonymousVoterAddress" @0xA0)
             (llRmLink "anonymousVoterAddressToAnonymousVoterName" @0x0)
 
             [0x0]1

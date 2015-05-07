@@ -43,9 +43,3 @@ transact:
 transact:
     {{AM}} => "createAdmin" "admin" => {{SA}}
 !}superadmin
-
-!{setpassword
-transact:
-    {{SA}} => "setPassword" "admin"
-!}setpassword
-
