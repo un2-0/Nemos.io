@@ -212,8 +212,10 @@ function SmartVoteAPI() {
 		// Start subscribing to tx events.
 		//this.sub();
 		Println("DOUG address: " + dougAddr);
-		plfAddr = this.contractName2Addr("pollfactory");
-		Println("plfAddr: " + plfAddr);
+		emAddr = this.contractName2Addr("electionManager");
+		Println("emAddr: " + emAddr);
+		amAddr = this.contractName2Addr("accountManager");
+		Println("amAddr: " + amAddr);
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
 	}
@@ -222,4 +224,26 @@ function SmartVoteAPI() {
 		Println("vvvvvvvvv");
 		return storageAt(plname2addr(plname), 0xCCCC);
 	}
+
+    this.test2 = function() {
+        var addr = esl.ll.Main(amAddr, sutil.stringToHex("adminList"), sutil.stringToHex("HEAD"));
+        return esl.single.Value(addr, sutil.stringToHex("accountManagerAddress"));
+    }
+
+    this.test3 = function() {
+        var str = '{"person":[name: "Bob", occupation: "Plumber"]}';
+        Println("bbbbhhhhhhhhhhhhhhc     " + str);
+        var bytes = [];
+        for (var i = 0; i < str.length; i++)
+        {
+            bytes.push(str.charCodeAt(i));
+        }
+        Println("bbbbbbbbbbbbbcc     " + str);
+        var hash = ipfs.PushFileData(str);
+        if (hash === "") {
+            Println("Error when adding file to ipfs.");
+            return "0x0";
+        }
+        return hash;
+    }
 };

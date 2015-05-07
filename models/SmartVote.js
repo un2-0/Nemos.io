@@ -308,6 +308,16 @@ function SmartVote() {
 		Println("vvvvvvvvvvvvvvvv" + s);
 	}
 
+    this.test4 = function() {
+        var aa = svApi.test2();
+        Println("ccccccccccccccc " + aa);
+    }
+
+    this.test5 = function() {
+        var bb = svApi.test3();
+        Println("dddddddddddd " + bb);
+    }
+
 	this.init = function() {
 		svApi.init();
 	}
@@ -324,5 +334,7 @@ sv.init();
 //sv.testshowVotings();
 //sv.test2();
 //sv.test3();
+//sv.test4();
+sv.test5();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");
