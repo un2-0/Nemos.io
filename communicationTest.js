@@ -97,6 +97,15 @@ operations["changeFirstPassword"] = {
     }
 }
 
+operations["changeSecondPassword"] = {
+    params : {
+        "username": "First Account Username: ",
+        "secondId": "Second Account ID: ",
+        "newSecondPassword": "New Second Account Password: ",
+        "selectedPollName": "Poll Name: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "

@@ -1377,7 +1377,6 @@ function changeFirstPassword() {
 	
 }
 
-// TODO backend by qiao
 function changeSecondPassword(secondId,selectedPollName) {
 	contentContainer.innerHTML = "";
 	

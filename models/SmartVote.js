@@ -361,7 +361,7 @@ function SmartVote() {
     /**
      * Change the password of the first account of a voter.
      * @param query = {
-     *     "username": <Fist Account Username>,
+     *     "username": <First Account Username>,
      *     "newFirstPassword": <New First Account Password>
      * }
      * @response response = {
@@ -372,6 +372,27 @@ function SmartVote() {
         printQuery(query);
         var fisrtUsername = query.username;
         var newFirstPassword = query.newFirstPassword;
+        // TODO
+    }
+    
+    /**
+     * Change the password of the second account of a voter.
+     * @param query = {
+     *     "username": <First Account Username>,
+     *     "secondId": <Second Account ID>,
+     *     "newSecondPassword": str,
+     *     "selectedPollName": str
+     * }
+     * @response response = {
+     *     "result": "success" or not
+     * }
+     */
+    handlers.changeSecondPassword = function (query) {
+        printQuery(query);
+        var firstUsername = query.username;
+        var secondUsername = query.secondId;
+        var newSecondPassword = query.newSecondPassword;
+        var pollName = query.selectedPollName;
         // TODO
     }
 
