@@ -200,18 +200,26 @@ function SmartVote() {
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
 
+    /**
+     * Get all the basic information about a particular poll/election.
+     * @param query = {}
+     * 
+     * response = {
+     *     "result":"success" | "fail"
+     *     "pollBasicInfo":{
+     *         "pollName": str, 
+     *         "organizerName": str,
+     *         "openTime":
+     *         "closeTime":
+     *         "pollDes":
+     *      }
+     * }
+     */
     handlers.showPollBasicInfo = function (query) {
         printQuery(query);
         var pollName = query.selectedPollName;
         /*
-         * response = {"result":"success" | "fail"
-         *             "pollBasicInfo":{
-         *                 "pollName": "aaa", 
-         *                 "organizerName": "bbb",
-         *                 "openTime": new Date().getTime().toString(),
-         *                 "closeTime": "2930841353650",//new Date().getTime().toString(),
-         *                 "pollDes": "cccc"
-         *                 }
+         * response = {
          *            }
          */
         var response = {};
@@ -231,8 +239,11 @@ function SmartVote() {
      * Show all the polls that:
      * 1. are created by the user (if an organizer)
      * 2. the user can participate (if a voter)
+     * @param query = {"username" : str, "identity" : str}
+     * 
+     * response = {}
      */
-    handlers.showPollList(query) {
+    handlers.showPollList = function (query) {
         printQuery(query);
         var response = {};
         var username = query.username;
@@ -251,6 +262,27 @@ function SmartVote() {
         }
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
+    
+    /**
+     * Check if the voter has already get the second account for a particular
+     * poll.
+     * @param query = {"username": str, "pollName": str}
+     * 
+     * In return:
+     * response = {"result" : "secondPasswordSet" or "secondtPasswordNotSet"
+     *                        or "voterNotInList"
+     *            }
+     */
+    handlers.checkVoterSecondAccount = function (query) {
+        printQuery(query);
+        var username = query.username;
+        var pollName = query.pollName;
+        // TODO
+    }
+    
+    /**
+     * 
+     */
 
 	// functions for testing
     /**

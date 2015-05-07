@@ -389,10 +389,15 @@ function loadBasicPollInformation(selectedPollName) {
 		});	*/
 }
 
+/**
+ * Check if the voter has already get the second account.
+ * If not, then generate a username-password pair as the second pair
+ * @param selectedPollName
+ */
 function checkVoterSecondAccount(selectedPollName) {
 	/*
 	
-	var checkInfo = {"userName": sessionStorage.userName,"pollName": selectedPollName};
+	var checkInfo = {"username": sessionStorage.userName,"pollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
 	
