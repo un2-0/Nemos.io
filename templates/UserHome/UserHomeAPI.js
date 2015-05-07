@@ -19,7 +19,7 @@ function showDefaultContent() {
 
 function LoginAs() {
 	
-	if(sessionStorage.userName != "" && sessionStorage.userName != null && sessionStorage.identity !="" && sessionStorage.identity != null){
+	if(sessionStorage.username != "" && sessionStorage.username != null && sessionStorage.identity !="" && sessionStorage.identity != null){
 		if(sessionStorage.identity == "organiser"){
 			return "organiser";
 			
@@ -108,7 +108,7 @@ function showPollList() {
 		
 		/*Data in request "showPollList" "body":
 		 * 		"identity": voter?organiser?
-		 * 		"userName": the first account id
+		 * 		"username": the first account id
 		 *
 		 *Data that should be in response for "showPollList" request: 
 		 * 		"result": the result of the request,"success" or "fail"
@@ -119,9 +119,9 @@ function showPollList() {
 		 * */
 		
 		/*
-		var userName = {"identity":sessionStorage.identity,"userName":sessionStorage.userName};
+		var username = {"identity":sessionStorage.identity,"username":sessionStorage.username};
 		
-		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(userName), function(res){
+		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(username), function(res){
 			
 			if (res.status == 200) {
 				console.log(res);
@@ -424,7 +424,7 @@ function loadBasicPollInformation(selectedPollName) {
 function checkVoterSecondAccount(selectedPollName) {
 	
 		/*Data in "checkVoterSecondAccount":
-		 * 		"userName": the first account id of the voter
+		 * 		"username": the first account id of the voter
 	 	 * 		"selectedPollName": the poll name that user chose to look at
 		 * 			
 
@@ -437,7 +437,7 @@ function checkVoterSecondAccount(selectedPollName) {
 		 * */	
 	
 	/*	
-	var checkInfo = {"userName": sessionStorage.userName,"pollName": selectedPollName};
+	var checkInfo = {"username": sessionStorage.username,"pollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
 	
@@ -556,7 +556,7 @@ function checkSecondIDPassword(selectedPollName) {
 	secondIDPasswordReceiver.addEventListener("submit", function() {
 
 		/*Data in "checkVoterSecondIdPassword":
-		 * 		"userName": the first account id of the voter
+		 * 		"username": the first account id of the voter
 		 * 		"secondId": the second account id of the voter
 		 * 		"secondPassword"	the second account password ofthe voter
 	 	 * 		"selectedPollName": the poll name that user chose to look at
@@ -572,7 +572,7 @@ function checkSecondIDPassword(selectedPollName) {
 		
 		/*
 		  var secondIDPassword =
-		  {"username":sessionStorage.userName,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
+		  {"username":sessionStorage.username,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
 		  
 		  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",
 		  JSON.stringify(secondIDPassword), function(res){
@@ -628,7 +628,7 @@ function checkSecondIDPassword(selectedPollName) {
 				//same request as above
 			/*	
 				var secondIDPassword =
-				  {"userName":sessionStorage.userName,"secondId":secondId,value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
+				  {"username":sessionStorage.username,"secondId":secondId,value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
 				  
 				  sender.sendAsync("POST", baseUrl+ "/checkVoterSecondIdPassword",JSON.stringify(secondIDPassword), function(res){
 				  
@@ -691,7 +691,7 @@ function getSecondIDPassword(selectedPollName) {
 	
 	/*Happend when the voter has not get the initially random second account id and password
 	 * Data in "getVoterSecondIdPassword":
-	 * 		"userName": the first account id of the voter
+	 * 		"username": the first account id of the voter
  	 * 		"selectedPollName": the poll name that user chose to look at
 	 * 
 	 * 
@@ -708,7 +708,7 @@ function getSecondIDPassword(selectedPollName) {
 	
 	
 	/*
-	var voterGetSecondIdPassword = {"username":sessionStorage.userName,"selectedPollName":selectedPollName};
+	var voterGetSecondIdPassword = {"username":sessionStorage.username,"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
 
@@ -1320,7 +1320,7 @@ function changeFirstPassword() {
 			
 			
 			/*Data in "changeFirstPassword" request:
-			 * 			"userName": first account id
+			 * 			"username": first account id
 			 * 			"newFirstPassword": new first account password
 			 * 			
 			 * Data in response:
@@ -1329,7 +1329,7 @@ function changeFirstPassword() {
 			 * */
 			
 			/*
-			var newFirstPassword = {"userName":sessionStorage.userName,"newFirstPassword":newFirstPassword1.value};
+			var newFirstPassword = {"username":sessionStorage.username,"newFirstPassword":newFirstPassword1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/changeFirstPassword", JSON.stringify(newFirstPassword), function(res){ 
 
@@ -1443,7 +1443,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 		if (newSecondPassword1.value === newSecondPassword2.value) {
 			
 			/*Data in "changeSecondPassword" request:
-			 * 			"userName": first account id
+			 * 			"username": first account id
 			 * 			"secondId": second account id
 			 * 			"newSecondPassword": new second account password
 			 * 			"selectedPollName": the poll name
@@ -1454,7 +1454,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 			 * */
 			
 			/*
-			var newSecondPassword = {"userName":sessionStorage.userName,"secondId":secondId,"newSecondPassword":newSecondPassword1.value,"selectedPollName":selectedPollName};
+			var newSecondPassword = {"username":sessionStorage.username,"secondId":secondId,"newSecondPassword":newSecondPassword1.value,"selectedPollName":selectedPollName};
 			
 			sender.sendAsync("POST", baseUrl+ "/changeSecondPassword", JSON.stringify(newSecondPassword), function(res){ 
 
@@ -1534,7 +1534,7 @@ function module1Creation(moduleLoader) {
 	
 	var organizerName = document.createElement("output");
 	organizerName.id = "organizerName";
-	organizerName.value = sessionStorage.userName;
+	organizerName.value = sessionStorage.username;
 	var labelON = document.createElement("label");
 	labelON.innerHTML = "Oraniser Name(creator):  ";
 	labelON.setAttribute("for", "organizerName");
@@ -1974,7 +1974,7 @@ function module2Creation(moduleLoader) {
 	
 	var organizerName = document.createElement("output");
 	organizerName.id = "organizerName";
-	organizerName.value = sessionStorage.userName;
+	organizerName.value = sessionStorage.username;
 	var labelON = document.createElement("label");
 	labelON.innerHTML = "Oraniser Name(creator):  ";
 	labelON.setAttribute("for", "organizerName");

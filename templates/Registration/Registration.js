@@ -7,8 +7,8 @@ function receiveRegistrationData(){
 	inforContainer.setAttribute("onsubmit","return false;");
 	
 	
-	var userName = document.getElementById("userName");
-	userName.required = true;
+	var username = document.getElementById("username");
+	username.required = true;
 	
 	var password1 = document.getElementById("password1");
 	password1.required = true;
@@ -27,19 +27,19 @@ function receiveRegistrationData(){
 		if (password1.value === password2.value) {
 			
 			/*Data in "organiserRegister" request:
-			 * 			"userName": new first account id
+			 * 			"username": new first account id
 			 * 	
 			 * 			"Password": new account password
 			 * 			
 			 * 			
 			 * Data in response:
-			 * 			"result": "success" or "userNameExist"
+			 * 			"result": "success" or "usernameExist"
 		
 			 * */
 			
 			
 			/*
-			var newOrganiser = {"userName":userName.value,"password":password1.value};
+			var newOrganiser = {"username":username.value,"password":password1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/organiserRegister", JSON.stringify(newOrganiser), function(res){ 
 
@@ -61,12 +61,12 @@ function receiveRegistrationData(){
 								jumpToLogin();
 
 								
-							} else if (body.result == "userNameExist") {
+							} else if (body.result == "usernameExist") {
 								
 								window.alert("Sorry, the user name is existed" +
 										"\nTry another one");
 								
-								userName.scrollIntoView();
+								username.scrollIntoView();
 								
 								inforContainer.reset();
 								
@@ -182,7 +182,7 @@ function jumpToLogin() {
 	
 	window.location.href = "../../index.html";
 	
-	sessionStorage.userName = "";
+	sessionStorage.username = "";
 	sessionStorage.identity = "";
 	
 	

@@ -22,15 +22,15 @@ function init() {
 function loadInformation(){
 	//window.alert("initialing");
 
-	//window.alert(sessionStorage.userName);
+	//window.alert(sessionStorage.username);
 	
 	if(LoginAs() == "organiser"){
-		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organiser: "+ sessionStorage.userName +"<i class='fa fa-caret-down'></i>";
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organiser: "+ sessionStorage.username +"<i class='fa fa-caret-down'></i>";
 		
 	
 	}else if(LoginAs() == "voter"){
 		
-		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Voter: "+ sessionStorage.userName+" <i class='fa fa-caret-down'></i>";
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Voter: "+ sessionStorage.username+" <i class='fa fa-caret-down'></i>";
 		document.getElementById("createPoll").style.display="none";
 	
 	}else{
@@ -75,7 +75,7 @@ function jumpToLogin() {
 	
 	window.location.href = "../../index.html";
 	
-	sessionStorage.userName = "";
+	sessionStorage.username = "";
 	sessionStorage.identity = "";
 	
 	
