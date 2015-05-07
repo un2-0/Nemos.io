@@ -31,8 +31,6 @@ function login(identity){
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
 	
-	
-	
 	/*Data in "Login" request:
 	 * 	"identity": the identity of logging in user
 	 *  "username": username

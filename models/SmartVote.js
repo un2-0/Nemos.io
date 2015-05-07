@@ -128,17 +128,29 @@ function SmartVote() {
 	    }
 	}
 	
+	/**
+	 * Login - as an organizer or a voter.
+	 */
+	// TODO
     handlers.login = function (query) {
-        Println(query.username);
-        Println(query.password);
         var response = {};
+        printQuery(query);
+        var identity = query.identity;
+        if (identity === "organizer") {
+            // login in as an organizer
+        } else if (identity === "voter") {
+            // login in as a voter
+        } else {
+            return network.getHttpResponse(400, {}, "Bad query.");
+        }
         response.result = "success";
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
     /**
-     * Creating polls in module1
+     * Creating polls in module1.
      */
+    // TODO
     handlers.module1CreatePoll = function (query) {
         /*
          * Data structure in request "module1CreatePoll":
@@ -187,7 +199,7 @@ function SmartVote() {
         reponse.publicKeys = generatePublicKeys(voterNum);
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
     handlers.showPollBasicInfo = function (query) {
         printQuery(query);
         var pollName = query.selectedPollName;
@@ -208,9 +220,35 @@ function SmartVote() {
             response.pollBasicInfo = null;
             return network.getHttpResponseJSON(JSON.stringify(response));
         }
+        // TODO
         response.result = "success";
         response.pollBasicInfo = {};
         response.pollBasicInfo.pollName = pollName;
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    /**
+     * Show all the polls that:
+     * 1. are created by the user (if an organizer)
+     * 2. the user can participate (if a voter)
+     */
+    handlers.showPollList(query) {
+        printQuery(query);
+        var response = {};
+        var username = query.username;
+        var identity = query.identity;
+        if (identity === "organizer" && organizerExist(username)) {
+            // TODO
+            // get all the polls that are created by the organizer
+            // set up response
+        } else if (identity === "voter" && voterExist(username)) {
+            // TODO
+            // get all the polls that the voter can participate in
+            // set up response
+        } else {
+            return network.getHttpResponse(400, {},
+                    "Bad query");
+        }
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
 
@@ -224,7 +262,7 @@ function SmartVote() {
             Println(info);
         });
     }
-    
+
     // functions in the middle
     function generatePublicKeys(voterNum) {
         // TODO
@@ -234,6 +272,16 @@ function SmartVote() {
     function pollNameExists(pollName) {
         // TODO
         return true;
+    }
+    
+    function organizerExists(username) {
+        // TODO
+        return false;
+    }
+    
+    function voterExists(username) {
+        // TODO
+        return false;
     }
 
 	function getPolls() {

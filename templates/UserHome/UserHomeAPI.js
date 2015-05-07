@@ -43,9 +43,6 @@ function LoginAs() {
 	
 }
 
-
-
-
 function loadPollModuleSelection() {
 	
 	var pollDetailContainer = document.createElement("DIV");
@@ -114,9 +111,9 @@ function showPollList() {
 	
 	if (LoginAs() != false) {
 		/*
-		var userName = {"identity":sessionStorage.identity,"userName":sessionStorage.userName};
+		var userName = {"identity":sessionStorage.identity,"username":sessionStorage.userName};
 		
-		sender.sendAsync("POST", baseUrl+ "/showPollsList", JSON.stringify(userName), function(res){
+		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(userName), function(res){
 			
 			if (res.status == 200) {
 				console.log(res);
