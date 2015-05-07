@@ -5,39 +5,33 @@ function SmartVote() {
 	var handlers = {};
 	svApi = new SmartVoteAPI();
 
-	// Used to handle all incoming requests. It is set as the callback for
-	// incominghttp requests. It parses the request URL into an object, then
-	// pass that object into the appropriate sub handler (should one exist).
-	// Sub handlers needs to return a response object.
+	/**
+	 * Used to handle all incoming requests. It is set as the callback for
+	 * incoming http requests. It parses the request URL into an object, then
+	 * pass that object into the appropriate sub handler (should one exist).
+	 * Sub handlers needs to return a response object.
+	 * @param httpReq = {
+	 *            Method: POST // always POST
+	 *            Host:localhost:3000
+	 *            Header:{...}
+	 *            Body:     // query goes here
+	 *            URL: {
+	 *                User:
+	 *                Host:
+	 *                Path:/apis/SmartVote/<operation-name>
+	 *                RawQuery: // always empty
+	 *                Fragment:
+	 *                Scheme:
+	 *                Opaque:
+	 *            }
+	 *        }
+	 */
 	this.handle = function (httpReq) {
 		Println("Receiving request...");
-		
-		// all our queries go in body
-		
-		// Println("http request:");
-		// Println(typeof (httpReq));    // object
-		// Println(httpReq);
-		// The structure of httpReq:
-		// httpReq = {
-		//    Method:GET     // or POST
-		//    Host:localhost:3000
-		//    Header:{...}
-		//    Body:     // query goes here, no matter GET or POST
-		//    URL:{
-		//        User:<nil>
-		//        Host:
-		//        Path:/apis/SmartVote/getContractAddress
-		//        RawQuery: // always empty
-		//        Fragment:
-		//        Scheme:
-		//        Opaque:
-		//    }
-		// }
 
 		var urlObj = network.parseUrl(httpReq);
-		// The structure of urlObj
 		// urlObj = {
-		//     path:[getContractAddress]
+		//     path:<opeartion-name>
 		//     options: // always empty
 		//     error:
 		// }
@@ -50,7 +44,8 @@ function SmartVote() {
 		var res = urlObj.path[0];
 		Println("res: " + res);
 		var hFunc = handlers[res];
-		// Return an error.
+
+		// If the according handler method doesn't exist, return an error.
 		if (typeof (hFunc) !== "function") {
 			return network.getHttpResponse(400, {},
 			        "Bad request: no resource named: " + res + ".");
@@ -130,6 +125,14 @@ function SmartVote() {
 	
 	/**
 	 * Login - as an organizer or a voter.
+	 * @param query = {
+	 *            "identity" : "organizer" or "voter",
+	 *            "username" : str,
+	 *            "password" : str
+	 *        }
+	 * @response response = {
+	 *               result = "success" or "userDoesntExist" or "wrongPassWord"
+	 *           }
 	 */
 	// TODO
     handlers.login = function (query) {
@@ -149,34 +152,37 @@ function SmartVote() {
 
     /**
      * Creating polls in module1.
+     * @param query = {
+     *            "pollName" : 
+     *            "organizerName" : 
+     *            "openTime" : 13 digits
+     *            "closeTime" : 13 digits
+     *            "pollDes" : the description of the poll
+     *            "voterNum" : how many voters in the poll
+     *            "canoptNum" : how many candidates/options in the poll
+     *            "rulesNum" : a voter can vote for how many candidates/options in one voting
+     *            "canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that contains 
+     *                all the detail information of all candidates/options in the poll. Each slot in the array includes
+     *                an object {name:?,description:?}
+     *        }
+     * @response response = {
+     *               "result": "success" or "pollNameExist"
+     *               "publicKeys": [{"id":"01", "password":"Doe"},
+     *                             {"id":"02", "password":"Smith"},
+     *                             {"id":"03", "password":"Jones"}]
+     *                             An array that contains all the public id and
+     *                             random password for each voters in the poll.
+     *                             Each slot in the poll should contain a JSON
+     *                             object with "id" and "password"
+     *           }
      */
     // TODO
     handlers.module1CreatePoll = function (query) {
         /*
          * Data structure in request "module1CreatePoll":
          * a stringtified JSON object that contains:
-         *     "pollName" : 
-         *     "organizerName" : 
-         *     "openTime" : 13 digits
-         *     "closeTime" : 13 digits
-         *     "pollDes" : the description of the poll
-         *     "voterNum" : how many voters in the poll
-         *     "canoptNum" : how many candidates/options in the poll
-         *     "rulesNum" : a voter can vote for how many candidates/options in one voting
-         *     "canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that contains 
-         *                all the detail information of all candidates/options in the poll. Each slot in the array includes
-         *                an object {name:?,description:?}
-         * 
          *  Data structure of the response of the "module1CreatPoll":
-         *     "result": "success"(if all good)
-         *               "pollNameExist" (the poll name is existed)
-         *     "publicKeys": An array that contains all the public id and random password
-         *                   for each voters in the poll. Each slot in the poll should contain
-         *                   a JSON object with "id" and "password"
-         *                   [{"id":"01", "password":"Doe"},
-         *                    {"id":"02", "password":"Smith"},
-         *                    {"id":"03", "password":"Jones"}]
-         */
+                  */
         printQuery(query); // TODO can be removed
 
         var pollName = query.pollName;
@@ -204,7 +210,7 @@ function SmartVote() {
      * Get all the basic information about a particular poll/election.
      * @param query = {}
      * 
-     * response = {
+     * @response response = {
      *     "result":"success" | "fail"
      *     "pollBasicInfo":{
      *         "pollName": str, 
@@ -241,7 +247,10 @@ function SmartVote() {
      * 2. the user can participate (if a voter)
      * @param query = {"username" : str, "identity" : str}
      * 
-     * response = {}
+     * @response response = {
+     *               "result": "success" or others
+     *               "pollslist": ["pollname1","pollname2","pollname3", ...]
+     *           }
      */
     handlers.showPollList = function (query) {
         printQuery(query);
@@ -267,11 +276,10 @@ function SmartVote() {
      * Check if the voter has already get the second account for a particular
      * poll.
      * @param query = {"username": str, "pollName": str}
-     * 
-     * In return:
-     * response = {"result" : "secondPasswordSet" or "secondtPasswordNotSet"
-     *                        or "voterNotInList"
-     *            }
+     * @response response = {
+     *               "result" : "secondPasswordSet" or "secondtPasswordNotSet"
+     *                           or "voterNotInList"
+     *           }
      */
     handlers.checkVoterSecondAccount = function (query) {
         printQuery(query);
