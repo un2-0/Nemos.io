@@ -128,6 +128,9 @@ function SmartVote() {
 	    }
 	}
 	
+	/**
+	 * Login - as an organizer or a voter.
+	 */
     handlers.login = function (query) {
         var response = {};
         printQuery(query);
@@ -144,7 +147,7 @@ function SmartVote() {
     }
 
     /**
-     * Creating polls in module1
+     * Creating polls in module1.
      */
     handlers.module1CreatePoll = function (query) {
         /*
@@ -194,7 +197,7 @@ function SmartVote() {
         reponse.publicKeys = generatePublicKeys(voterNum);
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
     handlers.showPollBasicInfo = function (query) {
         printQuery(query);
         var pollName = query.selectedPollName;
@@ -231,7 +234,7 @@ function SmartVote() {
             Println(info);
         });
     }
-    
+
     // functions in the middle
     function generatePublicKeys(voterNum) {
         // TODO
