@@ -55,9 +55,9 @@ operations["checkVoterSecondAccount"] = {
 }
 
 operations["organiserRegister"] = {
-    param : {
+    params : {
         "username" : "Organizer Name: ",
-        "password" : "Password"
+        "password" : "Password: "
     }
 }
 
@@ -67,6 +67,20 @@ operations["checkVoterSecondIdPassword"] = {
         "secondId" : "Second ID: ",
         "secondPassword" : "Second Password: ",
         "selectedPollName" : "Poll Name"
+    }
+}
+
+operations["getSecondIDPassword"] = {
+    params : {
+        "username" : "The Fisrt ID: ",
+        "selectedPollName": "Poll Name"
+    }
+}
+
+operations["getVotingInfo"] = {
+    params : {
+        "secondId": "The Second ID: ",
+        "selectedPollName": "Poll Name: "
     }
 }
 

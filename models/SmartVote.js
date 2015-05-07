@@ -233,8 +233,9 @@ function SmartVote() {
 
     /**
      * Get all the basic information about a particular poll/election.
-     * @param query = {}
-     * 
+     * @param query = {
+     *     "selectedPollName" : str
+     * }
      * @response response = {
      *     "result":"success" | "fail"
      *     "pollBasicInfo":{
@@ -334,10 +335,49 @@ function SmartVote() {
     }
     
     /**
-     * Generate a account
+     * Generate a username-password pair as the second account of a voter.
+     * @param query = {
+     *     "username" : str,
+     *     "selectedPollName": str
+     * }
+     * @response response = {
+     *     "result" : "success",
+           "secondIDPassword": {"id": str,"password": str}
+     * }
      */
     handlers.getSecondIDPassword = function (query) {
         printQuery(query);
+        var firstID = query.username;
+        var pollName = query.selectedPollName;
+        
+        var response = {};
+        response.result = "success";
+        var pair = {};
+        pair.id = generateSecondID(pollName);
+        pair.password = generateSecondPassword(firstID, pollName);
+        response.secondIDPassword = pair;
+
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    /**
+     * Check the ballot by a second ID.
+     * @param query = {
+     *     "secondId": "The Second ID: ",
+     *     "selectedPollName": "Poll Name: "
+     * }
+     * @response response = {
+     *     "rulesNum": "1",
+     *     "candidates": [{"name":"1","canDes":"1"}
+     *                   ,{"name":"2","canDes":"2"},
+     *                    {"name":"3","canDes":"3"}]
+     * }
+     */
+    handlers.getVotingInfo = function (query) {
+        printQuery(query);
+        var secondID = query.secondId;
+        var pollName = query.selectedPollName;
+        // TODO
     }
 
     /**
@@ -412,8 +452,16 @@ function SmartVote() {
     function generatePublicKeys(voterNum) {
         // TODO
     }
+    
+    function generateSecondID(pollName) {
+        // TODO
+    }
+    
+    function generateSecondPassword(firstID, pollName) {
+        // TODO
+    }
 
-	// functions to talk with the blockchain
+	// functions talking with the blockchain
     function pollNameExists(pollName) {
         // TODO
         return true;
@@ -520,6 +568,16 @@ function SmartVote() {
 		Println("vvvvvvvvvvvvvvvv" + s);
 	}
 
+    this.test4 = function() {
+        var aa = svApi.test2();
+        Println("ccccccccccccccc " + aa);
+    }
+
+    this.test5 = function() {
+        var bb = svApi.test3();
+        Println("dddddddddddd " + bb);
+    }
+
 	this.init = function() {
 		svApi.init();
 	}
@@ -536,5 +594,7 @@ sv.init();
 //sv.testshowVotings();
 //sv.test2();
 //sv.test3();
+//sv.test4();
+sv.test5();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

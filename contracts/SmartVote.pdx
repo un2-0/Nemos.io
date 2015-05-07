@@ -38,3 +38,8 @@ transact:
 
 !}setup
 
+#Administrator Registration
+!{superadmin
+transact:
+    {{AM}} => "createAdmin" "admin" => {{SA}}
+!}superadmin
