@@ -14,7 +14,7 @@ function login(identity){
 	} else if (passWord.value == "" || passWord.value == null) {
 		window.alert("please enter your password");
 		form.reset();
-	} 
+	}
 	
 	var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
 	//userinfo.test = "1222333";
@@ -75,6 +75,7 @@ function login(identity){
 			window.alert("failed to login");
 		}
 	});
+	
 	
 }
 
