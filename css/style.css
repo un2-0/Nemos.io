@@ -311,13 +311,12 @@ a:hover {
 
 #fpBtn {
 	color: #004a80;
-	/* float: right; */
+	float: right;
 	font-size: 14px;
-	/* margin: 5px 5px 0 0; */
+	margin-right: 25px;
 	text-decoration: underline;
+	
 }
-
-
 
 p.ex {
     margin-top: 100px;
