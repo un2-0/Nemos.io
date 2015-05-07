@@ -241,7 +241,7 @@ function loadBasicPollInformation(selectedPollName) {
 						,"pollBasicInfo":{"pollName": selectedPollName, 
 							"organizerName": "bbb",
 							"openTime": new Date().getTime().toString(),
-							"closeTime": "1130841353650",
+							"closeTime": "2130841353650",
 							"pollDes": "cccc"}
 				};
 				
@@ -448,7 +448,7 @@ function checkVoterSecondAccount(selectedPollName) {
 			body = JSON.parse(body);
 		*/
 	
-			var	body = {"result":"secondPasswordNotSet"};
+			var	body = {"result":"secondPasswordSet"};
 
 			
 			if (body.result == "secondPasswordSet") {
