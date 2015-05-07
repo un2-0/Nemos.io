@@ -98,13 +98,28 @@ function loadPollModuleSelection() {
 	
 }
 
+
+
 function showPollList() {
 	
 	contentContainer.innerHTML = "";
 	
 	if (LoginAs() != false) {
+		
+		/*Data in request "showPollList" "body":
+		 * 		"identity": voter?organiser?
+		 * 		"userName": the first account id
+		 *
+		 *Data that should be in response for "showPollList" request: 
+		 * 		"result": the result of the request,"success" or "fail"
+		 * 		
+		 * 		"pollslist": an array that contains all the poll names of the user
+		 * 						each slot in array should contain a poll name string.
+		 *
+		 * */
+		
 		/*
-		var userName = {"identity":sessionStorage.identity,"username":sessionStorage.userName};
+		var userName = {"identity":sessionStorage.identity,"userName":sessionStorage.userName};
 		
 		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(userName), function(res){
 			
@@ -192,6 +207,25 @@ function loadBasicPollInformation(selectedPollName) {
 		var currentDate = new Date();
 		
 		var selectedPollNameJSON = {"selectedPollName":selectedPollName};
+		
+		/*Data in "showPollBasicInfo":
+		 * 		"selectedPollName": the poll name that user chose to look at
+		 * 			
+		 * 
+		 * 
+		 *Data should be in response of the request: 
+		 *			"result":
+		 *			"pollBasicInfo": 
+		 *							an object that carries: 
+		 *							"pollName" -- the poll name
+		 *							"organizerName" -- the creator of the poll
+		 *							"openTime" -- the openTime of the poll. ps: in form of the number of how many millisecond since 1970 jan 1st 00:00 in string
+		 *							"closeTime" -- close Time
+		 *							"pollDes" -- the description of the poll 
+		
+		 * */
+		
+		
 		/*
 		sender.sendAsync("POST", baseUrl+ "/showPollBasicInfo", JSON.stringify(selectedPollNameJSON), function(res){
 			
@@ -207,7 +241,7 @@ function loadBasicPollInformation(selectedPollName) {
 						,"pollBasicInfo":{"pollName": selectedPollName, 
 							"organizerName": "bbb",
 							"openTime": new Date().getTime().toString(),
-							"closeTime": "1130841353650",//new Date().getTime().toString(),
+							"closeTime": "1130841353650",
 							"pollDes": "cccc"}
 				};
 				
@@ -388,9 +422,22 @@ function loadBasicPollInformation(selectedPollName) {
  * @param selectedPollName
  */
 function checkVoterSecondAccount(selectedPollName) {
-	/*
 	
-	var checkInfo = {"username": sessionStorage.userName,"pollName": selectedPollName};
+		/*Data in "checkVoterSecondAccount":
+		 * 		"userName": the first account id of the voter
+	 	 * 		"selectedPollName": the poll name that user chose to look at
+		 * 			
+
+		 *Data should be in response of the request: 
+		 *			"result": the result of the operation, could be:
+		 *						"secondPasswordSet" -- the voter has already retreived the random second account Id and password
+		 *						"secondPasswordNotSet" -- the voter did not get the random second account id and password
+		 						"voterNotInList" -- the voter are not eligible to vote in this poll
+	
+		 * */	
+	
+	/*	
+	var checkInfo = {"userName": sessionStorage.userName,"pollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
 	
@@ -401,16 +448,15 @@ function checkVoterSecondAccount(selectedPollName) {
 			body = JSON.parse(body);
 		*/
 	
-			var	body = {"result":"secondPasswordSet"};
-	
-	
-	
+			var	body = {"result":"secondPasswordNotSet"};
+
+			
 			if (body.result == "secondPasswordSet") {
 				
 				checkSecondIDPassword(selectedPollName);
 				
 				
-			} else if (body.result == "secondtPasswordNotSet") {
+			} else if (body.result == "secondPasswordNotSet") {
 				
 				window.alert("You have not got your randomly assigned second account ID and Password, generating one for you.");
 				
@@ -509,6 +555,21 @@ function checkSecondIDPassword(selectedPollName) {
 	
 	secondIDPasswordReceiver.addEventListener("submit", function() {
 
+		/*Data in "checkVoterSecondIdPassword":
+		 * 		"userName": the first account id of the voter
+		 * 		"secondId": the second account id of the voter
+		 * 		"secondPassword"	the second account password ofthe voter
+	 	 * 		"selectedPollName": the poll name that user chose to look at
+		 * 
+		 * 
+		 *Data should be in response of the request: 
+		 *			"result": the result of the operation, could be:
+		 *						"success" -- 
+		 *						"userDoesntExist" -- the second account id is not in the voter list of the poll
+		 						"wrongPassWord" -- the second account password is the not correct password of the second account id 
+		
+		 * */
+		
 		/*
 		  var secondIDPassword =
 		  {"username":sessionStorage.userName,"secondId":secondId.value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
@@ -563,7 +624,8 @@ function checkSecondIDPassword(selectedPollName) {
 			
 			if(secondPassword.value != "" && secondPassword.value != null)
 			{
-				
+			
+				//same request as above
 			/*	
 				var secondIDPassword =
 				  {"userName":sessionStorage.userName,"secondId":secondId,value,"secondPassword":secondPassword.value,"selectedPollName":selectedPollName};
@@ -635,6 +697,24 @@ function checkSecondIDPassword(selectedPollName) {
 // TODO backend by qiao
 function getSecondIDPassword(selectedPollName) {
 	
+	/*Happend when the voter has not get the initially random second account id and password
+	 * Data in "getVoterSecondIdPassword":
+	 * 		"userName": the first account id of the voter
+ 	 * 		"selectedPollName": the poll name that user chose to look at
+	 * 
+	 * 
+	 *Data should be in response of the request: 
+	 *			"result": the result of the operation.
+	 *			"secondIdPassword": {"id": random second account id,"password": random second account password}
+	 * 
+	 * e.g body = {"result":"success",
+		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
+				   };
+	 * 
+	 * 
+	 * */
+	
+	
 	/*
 	var voterGetSecondIdPassword = {"userName":sessionStorage.userName,"selectedPollName":selectedPollName};
 	
@@ -649,7 +729,7 @@ function getSecondIDPassword(selectedPollName) {
 	
 		//for local test
 		var	body = {"result":"success",
-		            "secondIDPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
+		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
 				   };
 					
 					if (body.result == "success") {
@@ -659,7 +739,7 @@ function getSecondIDPassword(selectedPollName) {
 						var secondIdPassword = document.createElement("H3");
 						secondIdPassword.id = "secondIdPassword";
 						
-						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIDPassword.id+ "*******Password: "+body.secondIDPassword.password;
+						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIdPassword.id+ "*******Password: "+body.secondIdPassword.password;
 						
 						
 						var backToPollBasicInfo = document.createElement("BUTTON");
@@ -702,6 +782,48 @@ function getSecondIDPassword(selectedPollName) {
 // TODO backend by qiao
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
+	
+	/*Happend when the voter has not get the initially random second account id and password
+	 * Data in "getVoterSecondIdPassword":
+	 * 
+	 * 		"secondId": the second account id of the voter
+ 	 * 		"selectedPollName": the poll name that user chose to look at
+	 * 
+	 * 
+	 *Data should be in response of the request: 
+	 *
+	 *			"result":"voterVoted" ? "voterNotVoted"
+	 *
+	 *			"rulesNum": 
+	 *
+	 *			"candidates": an array contains all the name and description of all 
+	 *
+	 * 			"votes": 	exists when the voter has voted previously (with result "voterVoted"), 
+	 * 						it should be an array that each slot in it should be "1"(if voter voted for candidate) or "0"(if not)
+	 * 						each slot represent a voter. for example votes[0] represent the vote from voter for candidate 1.
+	 * 						ps: the length of votes should be equal with the length of candidates					
+	 * 
+	 * e.g. 3 candidates, one voter can vote for only one candidate
+	 *  body = {			"result":"voterNotVoted",
+							"rulesNum": "1",
+							"candidates": [{"name":"1","canDes":"1"}
+							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}]
+							
+					};
+	 * 
+	 * OR
+	 * 	body = {			"result":"voterVoted",
+							"rulesNum": "1",
+							"candidates": [{"name":"1","canDes":"1"}
+							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}],
+							"votes":["1","0","0"]
+							
+					};
+	 * 	
+	 * 
+	 * */
+	
+	
 	/*
 	var voterVotingInfo = {"secondId": secondIdValue,"selectedPollName":selectedPollName};
 	
@@ -718,6 +840,7 @@ function voting(secondIdValue,selectedPollName) {
 					
 					//test
 					var body = {
+							"result":"voterNotvoted",
 							"rulesNum": "1",
 							"candidates": [{"name":"1","canDes":"1"}
 							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}]
@@ -851,6 +974,18 @@ function voting(secondIdValue,selectedPollName) {
 								}
 								
 							}
+							
+							/*Data in "submitVote":
+							 * 			"secondId": the voter second account id
+							 * 			"selecedPollName": the poll name
+							 * 			"votes": array, value in each slot is either "1"(string) or "0"(string). which means the vote for candidate or not
+							 * 
+							 * Data in response:
+							 * 
+							 * 			"result": "success" (if all good) or some other string (bad response -- submition failed)
+							 * 
+							 * */
+							
 						/*
 							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
 
@@ -912,6 +1047,43 @@ function voting(secondIdValue,selectedPollName) {
 // TODO backend by qiao
 function showResult(selectedPollName) {
 	contentContainer.innerHTML = "";
+	
+	/*Data in "getResult" request:
+	 * 			"selectedPollName": the poll name that has closed and contained result
+	 * 
+	 * Data in response:
+	 * 			"result": "success" (if all good) or some other string (bad response -- no result to provide or something else)
+	 * 			
+	 * 			"candidates": an array that each slot has an object that contains:
+	 * 											"name": candidate name
+	 * 											"canDes": the description of the candidate
+	 * 											"votes": string, number of vote count of that the candidate gained
+	 * 													 
+	 * 			"log": array, each slot has an object with:
+	 * 							"id": second account id
+	 * 							"votes": array, its length equals with length of candidates array. each slot should be "1" or "0".
+	 * 	
+	 * 
+	 * 
+	 * e.g.
+	 * 		body = {"result": "success",
+							"candidates": [{"name":"a","canDes":"a","votes":"4"},
+							               {"name":"b","canDes":"b","votes":"2"},
+							               {"name":"c","canDes":"c","votes":"4"}],
+							"log": [{"id":"aaa","votes":["1","0","1"]},
+							        {"id":"bbb","votes":["0","1","1"]},
+							        {"id":"ccc","votes":["1","0","1"]},
+							        {"id":"ddd","votes":["1","1","0"]},
+							        {"id":"fff","votes":["1","0","1"]},
+							]
+							
+							
+					};
+	 * 
+	 * 
+	 * 
+	 * */
+	
 	/*
 	var pollName = {"selectedPollName":selectedPollName};
 	
@@ -1165,6 +1337,16 @@ function changeFirstPassword() {
 		
 		if (newFirstPassword1.value === newFirstPassword2.value) {
 			
+			
+			/*Data in "changeFirstPassword" request:
+			 * 			"userName": first account id
+			 * 			"newFirstPassword": new first account password
+			 * 			
+			 * Data in response:
+			 * 			"result": "success" or not
+		
+			 * */
+			
 			/*
 			var newFirstPassword = {"userName":sessionStorage.userName,"newFirstPassword":newFirstPassword1.value};
 			
@@ -1278,6 +1460,17 @@ function changeSecondPassword(secondId,selectedPollName) {
 	newSecondPasswordReceiver.addEventListener("submit",function(){
 		
 		if (newSecondPassword1.value === newSecondPassword2.value) {
+			
+			/*Data in "changeSecondPassword" request:
+			 * 			"userName": first account id
+			 * 			"secondId": second account id
+			 * 			"newSecondPassword": new second account password
+			 * 			"selectedPollName": the poll name
+			 * 			
+			 * Data in response:
+			 * 			"result": "success" or not
+		
+			 * */
 			
 			/*
 			var newSecondPassword = {"userName":sessionStorage.userName,"secondId":secondId,"newSecondPassword":newSecondPassword1.value,"selectedPollName":selectedPollName};

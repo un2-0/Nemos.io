@@ -26,6 +26,18 @@ function receiveRegistrationData(){
 		
 		if (password1.value === password2.value) {
 			
+			/*Data in "organiserRegister" request:
+			 * 			"userName": new first account id
+			 * 	
+			 * 			"Password": new account password
+			 * 			
+			 * 			
+			 * Data in response:
+			 * 			"result": "success" or "userNameExist"
+		
+			 * */
+			
+			
 			/*
 			var newOrganiser = {"username":userName.value,"password":password1.value};
 			
