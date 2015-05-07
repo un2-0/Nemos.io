@@ -47,6 +47,13 @@ operations["showPollList"] = {
     }
 }
 
+operations["checkVoterSecondAccount"] = {
+    params : {
+        "username" : "User Name",
+        "pollName" : "Poll Name"
+    }
+}
+
 var contracts = {};
 
 window.onload = init;
