@@ -6,7 +6,7 @@ var temp4;
 
 var pollsObjs = [];
 
-window.onload = init;
+window.onload(init());
 
 
 function init() {
@@ -42,9 +42,6 @@ function LoginAs() {
 	}
 	
 }
-
-
-
 
 function loadPollModuleSelection() {
 	
@@ -114,9 +111,9 @@ function showPollList() {
 	
 	if (LoginAs() != false) {
 		/*
-		var userName = {"identity":sessionStorage.identity,"userName":sessionStorage.userName};
+		var userName = {"identity":sessionStorage.identity,"username":sessionStorage.userName};
 		
-		sender.sendAsync("POST", baseUrl+ "/showPollsList", JSON.stringify(userName), function(res){
+		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(userName), function(res){
 			
 			if (res.status == 200) {
 				console.log(res);
@@ -392,10 +389,15 @@ function loadBasicPollInformation(selectedPollName) {
 		});	*/
 }
 
+/**
+ * Check if the voter has already get the second account.
+ * If not, then generate a username-password pair as the second pair
+ * @param selectedPollName
+ */
 function checkVoterSecondAccount(selectedPollName) {
 	/*
 	
-	var checkInfo = {"userName": sessionStorage.userName,"pollName": selectedPollName};
+	var checkInfo = {"username": sessionStorage.userName,"pollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
 	

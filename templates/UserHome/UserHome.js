@@ -2,7 +2,9 @@ var contentContainer;
 var notification;
 var	sender = new HttpAPI();
 var temp;
+
 baseUrl = "/apis/SmartVote";
+
 window.onload(init());
 
 
@@ -78,5 +80,7 @@ function jumpToLogin() {
 	
 	
 }
+
+
 
 

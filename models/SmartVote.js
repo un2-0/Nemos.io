@@ -128,17 +128,29 @@ function SmartVote() {
 	    }
 	}
 	
+	/**
+	 * Login - as an organizer or a voter.
+	 */
+	// TODO
     handlers.login = function (query) {
-        Println(query.username);
-        Println(query.password);
         var response = {};
+        printQuery(query);
+        var identity = query.identity;
+        if (identity === "organizer") {
+            // login in as an organizer
+        } else if (identity === "voter") {
+            // login in as a voter
+        } else {
+            return network.getHttpResponse(400, {}, "Bad query.");
+        }
         response.result = "success";
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
     /**
-     * Creating polls in module1
+     * Creating polls in module1.
      */
+    // TODO
     handlers.module1CreatePoll = function (query) {
         /*
          * Data structure in request "module1CreatePoll":
@@ -187,19 +199,27 @@ function SmartVote() {
         reponse.publicKeys = generatePublicKeys(voterNum);
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
-    
+
+    /**
+     * Get all the basic information about a particular poll/election.
+     * @param query = {}
+     * 
+     * response = {
+     *     "result":"success" | "fail"
+     *     "pollBasicInfo":{
+     *         "pollName": str, 
+     *         "organizerName": str,
+     *         "openTime":
+     *         "closeTime":
+     *         "pollDes":
+     *      }
+     * }
+     */
     handlers.showPollBasicInfo = function (query) {
         printQuery(query);
         var pollName = query.selectedPollName;
         /*
-         * response = {"result":"success" | "fail"
-         *             "pollBasicInfo":{
-         *                 "pollName": "aaa", 
-         *                 "organizerName": "bbb",
-         *                 "openTime": new Date().getTime().toString(),
-         *                 "closeTime": "2930841353650",//new Date().getTime().toString(),
-         *                 "pollDes": "cccc"
-         *                 }
+         * response = {
          *            }
          */
         var response = {};
@@ -208,10 +228,113 @@ function SmartVote() {
             response.pollBasicInfo = null;
             return network.getHttpResponseJSON(JSON.stringify(response));
         }
+        // TODO
         response.result = "success";
         response.pollBasicInfo = {};
         response.pollBasicInfo.pollName = pollName;
         return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    /**
+     * Show all the polls that:
+     * 1. are created by the user (if an organizer)
+     * 2. the user can participate (if a voter)
+     * @param query = {"username" : str, "identity" : str}
+     * 
+     * response = {}
+     */
+    handlers.showPollList = function (query) {
+        printQuery(query);
+        var response = {};
+        var username = query.username;
+        var identity = query.identity;
+        if (identity === "organizer" && organizerExist(username)) {
+            // TODO
+            // get all the polls that are created by the organizer
+            // set up response
+        } else if (identity === "voter" && voterExist(username)) {
+            // TODO
+            // get all the polls that the voter can participate in
+            // set up response
+        } else {
+            return network.getHttpResponse(400, {},
+                    "Bad query");
+        }
+        return network.getHttpResponseJSON(JSON.stringify(response));
+    }
+    
+    /**
+     * Check if the voter has already get the second account for a particular
+     * poll.
+     * @param query = {"username": str, "pollName": str}
+     * 
+     * In return:
+     * response = {"result" : "secondPasswordSet" or "secondtPasswordNotSet"
+     *                        or "voterNotInList"
+     *            }
+     */
+    handlers.checkVoterSecondAccount = function (query) {
+        printQuery(query);
+        var username = query.username;
+        var pollName = query.pollName;
+        // TODO
+    }
+    
+    /**
+     * Demo for using ipfs - push a JSON string into ipfs and return the hash.
+     * @param query = {"filedata": a JSON str}
+     * @response response = {
+     *               result = "success" or "failure",
+     *               result_text = str,
+     *               hash = str
+     *           }
+     */
+    handlers.pushToIpfs = function (query) {
+        printQuery(query);
+        var response = {};
+        var filedata = query.filedata;
+
+        if (filedata == "") {
+            response.result = "failure";
+            response.result_text = "Empty filedata";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+        
+        var hashObj = ipfs.PushFileData(filedata);
+        if(hashObj.Error !== "") {
+            response.result = "failure";
+            response.result_text = "Someting wrong with ipfs";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        } else {
+            response.result = "success";
+            response.hash = hashObj.Data;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
+    }
+    
+    /**
+     * Demo for using ipfs - get a JSON string from ipfs by a filename.
+     * @param query = {"hash" : str}
+     * @response response = {
+     *               result : "success" or "failure",
+     *               result_text : str
+     *               filedata : a JSON str
+     *           }
+     */
+    handlers.getFromIpfs = function (query) {
+        printQuery(query);
+        var response = {};
+        var fileObj = ipfs.GetFile(query.hash, false);
+        
+        if(fileObj.Error !== "") {
+            response.result = "failure";
+            response.result_text = "Cannot get a file.";
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        } else {
+            response.result = "success";
+            response.filedata = fileObj.Data;
+            return network.getHttpResponseJSON(JSON.stringify(response));
+        }
     }
 
 	// functions for testing
@@ -224,7 +347,7 @@ function SmartVote() {
             Println(info);
         });
     }
-    
+
     // functions in the middle
     function generatePublicKeys(voterNum) {
         // TODO
@@ -234,6 +357,16 @@ function SmartVote() {
     function pollNameExists(pollName) {
         // TODO
         return true;
+    }
+    
+    function organizerExists(username) {
+        // TODO
+        return false;
+    }
+    
+    function voterExists(username) {
+        // TODO
+        return false;
     }
 
 	function getPolls() {
@@ -267,6 +400,25 @@ function SmartVote() {
 		}
 		return network.getHttpResponseJSON(hash);
 	}
+	
+	// functions talking with ipfs
+	/**
+	 * Writes a file to the ipfs file system and returns the hash
+     * as a hex string.
+     * NOTE: The hash is stripped of its first two bytes, in order to 
+     * get a 32 byte value. The first byte is the hashing algorithm
+     * used (it's always 0x12), and the second is the length of the
+     * hash (it is always 0x20). See DappCore.ipfsHeader.
+     */
+    function writeFileToIpfs(data) {
+        var hashObj = ipfs.PushFileData(data);
+        if(hashObj.Error !== "") {
+            return "";
+        } else {
+            // This would be the 32 byte hash (omitting the initial "1220").
+            return "0x" + hashObj.Data.slice(6);
+        }
+    };
 
 	this.testshowVotings = function() {
 		return svApi.showPolls();

@@ -14,7 +14,7 @@ function login(identity){
 	} else if (passWord.value == "" || passWord.value == null) {
 		window.alert("please enter your password");
 		form.reset();
-	} 
+	}
 	
 	var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
 	//userinfo.test = "1222333";
@@ -30,8 +30,6 @@ function login(identity){
 	//for local test
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
-	
-	
 	
 	/*Data in "Login" request:
 	 * 	"identity": the identity of logging in user
@@ -77,6 +75,7 @@ function login(identity){
 			window.alert("failed to login");
 		}
 	});
+	
 	
 }
 

@@ -14,7 +14,49 @@
 <link rel="stylesheet" type="text/css" href="../../css/theme.css">
 <link rel="stylesheet" type="text/css" href="../../css/premium.css">
 
+<script src="../../lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	
+		$(function() {
+			var match = document.cookie.match(new RegExp('color=([^;]+)'));
+			if (match)
+				var color = match[1];
+			if (color) {
+				$('body').removeClass(function(index, css) {
+					return (css.match(/\btheme-\S+/g) || []).join(' ')
+				})
+				$('body').addClass('theme-' + color);
+			}
+
+			$('[data-popover="true"]').popover({
+				html : true
+			});
+
+		});
+	</script>
+	
+<script type="text/javascript">
+		$(function() {
+			var uls = $('.sidebar-nav > ul > *').clone();
+			uls.addClass('visible-xs');
+			$('#main-menu').append(uls.clone());
+		});
+	</script>
+
+	<script src="../../lib/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript">
+		$("[rel=tooltip]").tooltip();
+		$(function() {
+			$('.demo-cancel-click').click(function() {
+				return false;
+			});
+		});
+	</script>
+
+
 <style type="text/css">
+
 #line-chart {
 	height: 300px;
 	width: 800px;
@@ -25,6 +67,10 @@
 .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
 	color: #fff;
 }
+
+
+
+
 </style>
 
 </head>
@@ -56,19 +102,19 @@
 
 	<div class="navbar navbar-default" role="navigation">
 		<div class="navbar-header">
-			<a class="" href="../../index.html"><span class="navbar-brand"><span
-					class="fa fa-paper-plane"></span> SmartVote</span></a>
+			<a href="../../index.html"><span class="navbar-brand"><span
+					class="fa fa-paper-plane"></span>SmartVote</span></a>
 		</div>
 
-		<div class="navbar-collapse collapse" style="height: 1px;"></div>
+		<!--div class="navbar-collapse collapse" style="height: 1px;"></div-->
 	</div>
 
 	<div class="dialog">
 		<div class="panel panel-default">
 			<p class="panel-heading no-collapse">Sign Up</p>
 			<div class="panel-body">
-				<form onsubmit=" matchPassword()">
-					<div class="form-group">
+				<form id="reInfoContainer">
+					<!--div class="form-group">
 						<label>First Name</label> <input type="text" name="firstname"
 							class="form-control span12">
 					</div>
@@ -83,9 +129,9 @@
 					<div class="form-group">
 						<label>Email Address</label> <input type="email"
 							name="emailaddress" class="form-control span12">
-					</div>
+					</div-->
 					<div class="form-group">
-						<label>Username</label> <input type="text" name="username"
+						<label>Username</label> <input id="userName" type="text" name="userName"
 							class="form-control span12">
 					</div>
 
@@ -104,7 +150,7 @@
 					<div class="form-group">
 						<input type="submit" class="btn btn-primary pull-right"
 							value="Sign Up!"> <label class="remember-me"><input
-							type="checkbox"> I agree with the <a
+							id="termCanditionAgreeCB" type="checkbox"> I agree with the <a
 							href="#">Terms and Conditions</a></label>
 					</div>
 
@@ -115,42 +161,10 @@
 	</div>
 	
 	<!-- load scripts and plugins  -->
-	<script src="Registration.js"></script>
-	<script src="../../lib/jquery-1.11.1.min.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		$(function() {
-			var match = document.cookie.match(new RegExp('color=([^;]+)'));
-			if (match)
-				var color = match[1];
-			if (color) {
-				$('body').removeClass(function(index, css) {
-					return (css.match(/\btheme-\S+/g) || []).join(' ')
-				})
-				$('body').addClass('theme-' + color);
-			}
+	
+	
+	<script src="Registration.js" type="text/javascript"></script>
 
-			$('[data-popover="true"]').popover({
-				html : true
-			});
-
-		});
-	</script>
-	<script type="text/javascript">
-		$(function() {
-			var uls = $('.sidebar-nav > ul > *').clone();
-			uls.addClass('visible-xs');
-			$('#main-menu').append(uls.clone());
-		});
-	</script>
-
-	<script src="../../lib/bootstrap/js/bootstrap.js"></script>
-	<script type="text/javascript">
-		$("[rel=tooltip]").tooltip();
-		$(function() {
-			$('.demo-cancel-click').click(function() {
-				return false;
-			});
-		});
-	</script>
+	
 </body>
 </html>
