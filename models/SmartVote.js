@@ -359,6 +359,26 @@ function SmartVote() {
 
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
+    
+    /**
+     * Check the ballot by a second ID.
+     * @param query = {
+     *     "secondId": "The Second ID: ",
+     *     "selectedPollName": "Poll Name: "
+     * }
+     * @response response = {
+     *     "rulesNum": "1",
+     *     "candidates": [{"name":"1","canDes":"1"}
+     *                   ,{"name":"2","canDes":"2"},
+     *                    {"name":"3","canDes":"3"}]
+     * }
+     */
+    handlers.getVotingInfo = function (query) {
+        printQuery(query);
+        var secondID = query.secondId;
+        var pollName = query.selectedPollName;
+        // TODO
+    }
 
     /**
      * Demo for using ipfs - push a JSON string into ipfs and return the hash.

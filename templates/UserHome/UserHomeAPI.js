@@ -690,8 +690,6 @@ function getSecondIDPassword(selectedPollName) {
 	
 }
 
-
-// TODO backend by qiao
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	/*
@@ -793,9 +791,6 @@ function voting(secondIdValue,selectedPollName) {
 												
 					}
 					
-					
-					
-					
 					if (body.result == "voterVoted") {
 						
 						for (var i = 0; i < checkBoxes.length; i++) {
@@ -808,7 +803,6 @@ function voting(secondIdValue,selectedPollName) {
 						
 					}	
 					
-
 					votingContainer.addEventListener("submit",function(){
 						
 						var count = 0;
@@ -820,8 +814,6 @@ function voting(secondIdValue,selectedPollName) {
 							}
 							
 						}
-						
-						
 						
 						if(count > Number(body.rulesNum) ){
 							
@@ -860,7 +852,6 @@ function voting(secondIdValue,selectedPollName) {
 												
 												window.alert("Your vote has been successfully submited." +
 														"\nYou can also login again to change your vote when poll is open");
-												
 
 												window.location.reload();
 												
@@ -881,8 +872,6 @@ function voting(secondIdValue,selectedPollName) {
 						}
 						
 					});
-					
-					
 			        
 		/*	
 					

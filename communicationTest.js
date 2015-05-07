@@ -70,6 +70,20 @@ operations["checkVoterSecondIdPassword"] = {
     }
 }
 
+operations["getSecondIDPassword"] = {
+    params : {
+        "username" : "The Fisrt ID: ",
+        "selectedPollName": "Poll Name"
+    }
+}
+
+operations["getVotingInfo"] = {
+    params : {
+        "secondId": "The Second ID: ",
+        "selectedPollName": "Poll Name: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "
