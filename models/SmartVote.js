@@ -72,46 +72,7 @@ function SmartVote() {
 		return resp;
 	}
 
-	handlers.showVotings = function(urlObj) {
-		return getPolls();
-	}
-
-	handlers.addVt = function(urlObj) {
-		return createPollAccount(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2], urlObj.path.toString().split("&")[3], urlObj.path.toString().split("&")[4], urlObj.path.toString().split("&")[5], urlObj.path.toString().split("&")[6], urlObj.path.toString().split("&")[7]);
-	}
-
-	handlers.getOpnum = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getOpnum(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.getDescription = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getDescription(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.getOpentime = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getOpentime(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.getClosetime = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getClosetime(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.getCreatetime = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getCreatetime(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.getCreatorusrname = function(urlObj, httpReq) {
-		return network.getHttpResponseJSON(svApi.getCreatorusrname(urlObj.path.toString().split("&")[1]));
-	}
-
-	handlers.showStat = function(urlObj, httpReq) {
-		return getStat(urlObj.path.toString().split("&")[1]);
-	}
-
-	handlers.vote = function(urlObj, httpReq) {
-		return vote(urlObj.path.toString().split("&")[1], urlObj.path.toString().split("&")[2]);
-	}
-
+/*
 	handlers.getContractAddress = function (query) {
 	    // create the response JSON object
 	    var response;
@@ -122,7 +83,7 @@ function SmartVote() {
             return network.getHttpResponse(400, {}, "Bad query.");
 	    }
 	}
-	
+*/
 	/**
 	 * Login - as an organizer or a voter.
 	 * @param query = {
@@ -134,20 +95,19 @@ function SmartVote() {
 	 *               result = "success" or "userDoesntExist" or "wrongPassWord"
 	 *           }
 	 */
-	// TODO
     handlers.login = function (query) {
         var response = {};
         printQuery(query);
         var identity = query.identity;
-        if (identity === "organizer") {
-            // login in as an organizer
+        if (identity === "organiser") {
+            response.result = checkOrganizer(query.username, query.password);
         } else if (identity === "voter") {
-            // login in as a voter
+            response.result = checkVoter(query.username, query.password);
         } else {
             return network.getHttpResponse(400, {}, "Bad query.");
         }
-        response.result = "success";
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        Println(response.result);
+        return network.getHttpResponseJSON(response);
     }
 
     /**
@@ -224,11 +184,11 @@ function SmartVote() {
         if (organizerExists(organizerName)) {
             response.result = "userNameExist";
         } else {
-            // TODO
+            registerOrganizer(organizerName, password);
             response.result = "success";
         }
         
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        return network.getHttpResponseJSON(response);
     }
 
     /**
@@ -468,47 +428,49 @@ function SmartVote() {
     }
     
     function organizerExists(username) {
-        // TODO
-        return false;
+        return svApi.organizerExists(username);
     }
     
     function voterExists(username) {
-        // TODO
-        return false;
+        return svApi.voterExists(username);
     }
 
-	function getPolls() {
-		return network.getHttpResponseJSON(svApi.showPolls());
-	}
-
-	function createPollAccount(plname, opnum, description, opentime, closetime ,createtime, creatorusrname) {
-		svApi.createPollAccount(plname);
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		svApi.initPoll(plname, opnum, description, opentime, closetime ,createtime, creatorusrname);
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		svApi.setStatus(plname, 1);
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		return network.getHttpResponseJSON("success");
-	}
-
-	function getStat(plname) {
-		return network.getHttpResponseJSON(svApi.getStat(plname));
-	}
-
-	function vote(plname, opnum) {
-		var hash = svApi.vote(plname, opnum);
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		return network.getHttpResponseJSON(hash);
-	}
+    function registerOrganizer(username, password) {
+        svApi.registerOrganizer(username);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        svApi.setOrganizerPassword(username, password);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return ;
+    }
 	
+    function checkOrganizer(username, password) {
+        if (!organizerExists(username)) {
+            return "userDoesntExist";
+        }
+        else {
+            if (svApi.checkOrganizerPassword(username, password)) {
+                return "success";
+            }
+            return "wrongPassWord";
+        }
+    }
+
+    function checkVoter(username, password) {
+        if (!voterExists(username)) {
+            return "userDoesntExist";
+        }
+        else {
+            if (svApi.checkVoterPassword(username, password)) {
+                return "success";
+            }
+            return "wrongPassWord";
+        }
+    }
+
 	// functions talking with ipfs
 	/**
 	 * Writes a file to the ipfs file system and returns the hash
@@ -528,9 +490,6 @@ function SmartVote() {
         }
     };
 
-	this.testshowVotings = function() {
-		return svApi.showPolls();
-	}
 
 	this.test = function() {
 		var plAddr = svApi.createPollAccount("myFirstPoll");
@@ -555,7 +514,7 @@ function SmartVote() {
 			monk.Commit();
 		}
 		svApi.initPoll(plname, 20, "2222", "3333", "444444" ,"55555555", "6666666666");
-		if (COMMITING) {
+		if (COMMITTING) {
 			monk.Commit();
 		}
 		println("ccccccccccccccccc" + svApi.test1(plname));
@@ -569,13 +528,21 @@ function SmartVote() {
 	}
 
     this.test4 = function() {
-        var aa = svApi.test2();
-        Println("ccccccccccccccc " + aa);
+        svApi.registerOrganizer("asd");
+        if (COMMITTING) {
+			monk.Commit();
+		}
+        svApi.setOrganizerPassword("asd", "123456");
+        if (COMMITTING) {
+			monk.Commit();
+		}
+        return ;
     }
 
     this.test5 = function() {
-        var bb = svApi.test3();
-        Println("dddddddddddd " + bb);
+        Println(svApi.organizerExists("asd"));
+        Println(svApi.organizerExists("admin"));
+        Println(svApi.organizerExists("asdssss"));
     }
 
 	this.init = function() {

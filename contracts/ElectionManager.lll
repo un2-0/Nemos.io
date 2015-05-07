@@ -32,6 +32,7 @@
     ; --------------------------------------------------------------------------
     ; Variables
     ; --------------------------------------------------------------------------
+    (singleInit "buffer" 0)
     (singleInit "lastElection" 0)
     (kvInit "lastModified")
     (llInit "electionAddressToElectionName")
@@ -50,7 +51,7 @@
         ;       0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createElection") {
-            [0xC0](elecname) ;Store the name of election in case of conflict
+            (singleSet "buffer "(elecname)) ;Store the name of election in case of conflict
             [0xA0](crtraddr) ;Store the address of user in case of conflict
             
             ;Get the address of accountManager
@@ -80,13 +81,13 @@
 
             ;If there is an election stored
             (unless (= (singleGet "lastElection") 0) {
-                (llAddLink (singleGet "electionList" "lastElection") @0x0)
+                (llAddLink (singleGet "lastElection") @0x0)
                 (llAddLink "reverseElectionList" @0x0 (singleGet "lastElection"))
             })
 
             (singleSet "lastElection" @0x0)
-            (llAddLink "electionAddressToElectionName" @0x0 @0xC0)
-            (llAddLink "electionNameToElectionAddress" @0xC0 @0x0)
+            (llAddLink "electionAddressToElectionName" @0x0 (singleGet "buffer"))
+            (llAddLink "electionNameToElectionAddress" (singleGet "buffer") @0x0)
             
             [0x20]"setPerm"
             [0x40]"electionAccount"

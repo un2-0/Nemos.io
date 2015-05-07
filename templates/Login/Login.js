@@ -26,11 +26,11 @@ function login(identity){
 	
 	sessionStorage.userName = userName.value;
 	sessionStorage.identity = identity;
-	
+/*	
 	//for local test
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
-	
+*/
 	/*Data in "Login" request:
 	 * 	"identity": the identity of logging in user
 	 *  "username": username
@@ -46,7 +46,6 @@ function login(identity){
 		if (res.status == 200) {
 			console.log(res);
 			var body = res.response;
-			
 			body = JSON.parse(body);
 			
 			if (body.result == "success") {

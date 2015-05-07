@@ -40,6 +40,8 @@
     ; --------------------------------------------------------------------------
     ; Variables
     ; --------------------------------------------------------------------------
+    (singleInit "buffer")
+
     (singleInit "lastAdmin")
     (llInit "adminAddressToAdminName")
     (llInit "adminNameToAdminAddress")
@@ -68,7 +70,7 @@
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createAdmin") {
-            [0xC0](usrname) ;Store the username in case of conflict
+            (singleSet "buffer" (usrname)) ;Store the username in case of conflict
 
             ;Create the contract
             [0x0](create 0 0 (lll {
@@ -84,13 +86,13 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastAdmin") 0) {
-                (llAddLink (singleGet "adminList" "lastAdmin") @0x0)
+                (llAddLink (singleGet "lastAdmin") @0x0)
                 (llAddLink "reverseAdminList" @0x0 (singleGet "lastAdmin"))
             })
 
             (singleSet "lastAdmin" @0x0)
-            (llAddLink "adminAddressToAdminName" @0x0 @0xC0)
-            (llAddLink "adminNameToAdminAddress" @0xC0 @0x0)
+            (llAddLink "adminAddressToAdminName" @0x0 (singleGet "buffer"))
+            (llAddLink "adminNameToAdminAddress" (singleGet "buffer") @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -111,7 +113,7 @@
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createVoter") {
-            [0xC0](usrname) ;Store the username in case of conflict
+            (singleSet "buffer" (usrname)) ;Store the username in case of conflict
 
             ;Create the contract
             [0x0](create 0 0 (lll {
@@ -127,13 +129,13 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastVoter") 0) {
-                (llAddLink (singleGet "voterList" "lastVoter") @0x0)
+                (llAddLink (singleGet "lastVoter") @0x0)
                 (llAddLink "reverseVoterList" @0x0 (singleGet "lastVoter"))
             })
 
             (singleSet "lastVoter" @0x0)
-            (llAddLink "voterAddressToVoterName" @0x0 @0xC0)
-            (llAddLink "voterNameToVoterAddress" @0xC0 @0x0)
+            (llAddLink "voterAddressToVoterName" @0x0 (singleGet "buffer"))
+            (llAddLink "voterNameToVoterAddress" (singleGet "buffer") @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -154,7 +156,7 @@
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createAnonymousVoter") {
-            [0xC0](usrname) ;Store the username in case of conflict
+            (singleSet "buffer" (usrname)) ;Store the username in case of conflict
 
             ;Create the contract
             [0x0](create 0 0 (lll {
@@ -170,13 +172,13 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastAnonymousVoter") 0) {
-                (llAddLink (singleGet "anonymousVoterList" "lastAnonymousVoter") @0x0)
+                (llAddLink (singleGet "lastAnonymousVoter") @0x0)
                 (llAddLink "reverseAnonymousVoterList" @0x0 (singleGet "lastAnonymousVoter"))
             })
 
             (singleSet "lastAnonymousVoter" @0x0)
-            (llAddLink "anonymousVoterAddressToAnonymousVoterName" @0x0 @0xC0)
-            (llAddLink "anonymousVoterNameToAnonymousVoterAddress" @0xC0 @0x0)
+            (llAddLink "anonymousVoterAddressToAnonymousVoterName" @0x0 (singleGet "buffer"))
+            (llAddLink "anonymousVoterNameToAnonymousVoterAddress" (singleGet "buffer") @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"

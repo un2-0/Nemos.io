@@ -65,7 +65,7 @@
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
         (when (= (cmd) "setPassword") {
-            (singleSet "password" pswrd)
+            (singleSet "password" (pswrd))
 
             [0x0]1
             (return 0x0 0x20)
