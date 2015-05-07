@@ -1,3 +1,6 @@
+var	sender = new HttpAPI();
+baseUrl = "/apis/SmartVote";
+
 window.onload = receiveRegistrationData;
 
 
@@ -38,7 +41,6 @@ function receiveRegistrationData(){
 			 * */
 			
 			
-			/*
 			var newOrganiser = {"username":username.value,"password":password1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/organiserRegister", JSON.stringify(newOrganiser), function(res){ 
@@ -48,10 +50,6 @@ function receiveRegistrationData(){
 							var body = res.response;
 							
 							body = JSON.parse(body);
-				*/			
-							//test
-			
-							var body = {"result":"success"};
 							
 							
 							if (body.result == "success") {
@@ -73,16 +71,13 @@ function receiveRegistrationData(){
 							}else {
 								
 								window.alert("bad response");
-							}			
-			/*				
+							}		
 							
 				} else {
 					window.alert("failed to change second password");
 				}
 
 			});			
-							
-			*/				
 							
 							
 			

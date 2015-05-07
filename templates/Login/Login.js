@@ -15,66 +15,66 @@ function login(identity){
 		window.alert("please enter your password");
 		form.reset();
 	}
+    else {
+	    var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
+	    //userinfo.test = "1222333";
+	    console.log(userinfo);
 	
-	var userinfo = { "identity":identity,"username" : userName.value.toString() , "password" : passWord.value.toString() };
-	//userinfo.test = "1222333";
-	console.log(userinfo);
 	
+	    //for test
+	    //Note that: browser in Eclipse doesnt support session storage,plz test in chrome
 	
-	//for test
-	//Note that: browser in Eclipse doesnt support session storage,plz test in chrome
-	
-	sessionStorage.userName = userName.value;
-	sessionStorage.identity = identity;
+	    sessionStorage.userName = userName.value;
+	    sessionStorage.identity = identity;
 /*	
 	//for local test
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.userName+"\nidentity insession: "+sessionStorage.identity);
 	window.location.href = "templates/UserHome/UserHome.html";
 */
-	/*Data in "Login" request:
-	 * 	"identity": the identity of logging in user
-	 *  "username": username
-	 * 	"password": password
-	 * 
-	 * Data should be in "Login" response: 
-	 *  "result" =  "success"(if username and password all good)
-	 *  			"userDoesntExist" (if user id doesnt exist)
-	 *  			"wrongPassWord" (if user id exist but the password is wrong)
-	*/
-	sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
+	    /*Data in "Login" request:
+	     * 	"identity": the identity of logging in user
+    	 *  "username": username
+	     * 	"password": password
+    	 * 
+    	 * Data should be in "Login" response: 
+	     *  "result" =  "success"(if username and password all good)
+	     *  			"userDoesntExist" (if user id doesnt exist)
+    	 *  			"wrongPassWord" (if user id exist but the password is wrong)
+	    */
+	    sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
 		
-		if (res.status == 200) {
-			console.log(res);
-			var body = res.response;
-			body = JSON.parse(body);
+	    	if (res.status == 200) {
+		    	console.log(res);
+	    		var body = res.response;
+		    	body = JSON.parse(body);
 			
-			if (body.result == "success") {
+		    	if (body.result == "success") {
 				
-				sessionStorage.userName = userName.value;
+		    		sessionStorage.userName = userName.value;
 				
 
-				window.location.href = "templates/UserHome/UserHome.html";
+		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-			} else if (body.result == "userDoesntExist") {
+		    	} else if (body.result == "userDoesntExist") {
 				
-				window.alert("Sorry, the user name does not exist");
-				form.reset();
+		    		window.alert("Sorry, the user name does not exist");
+		    		form.reset();
+		    		
+		    	} else if (body.result == "wrongPassWord"){
+		    		
+		    		window.alert("Sorry, your password is wrong");
+		    		form.reset();
 				
-			} else if (body.result == "wrongPassWord"){
+		    	} else {
 				
-				window.alert("Sorry, your password is wrong");
-				form.reset();
-				
-			} else {
-				
-				window.alert("bad response");
-			}
-	        
-	    } else {
-			window.alert("failed to login");
-		}
-	});
-	
+		    		window.alert("bad response");
+		    	}
+	            
+	        } else {
+		    	window.alert("failed to login");
+		    }
+    	});
+    }	
 	
 }
 
