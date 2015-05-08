@@ -12,6 +12,41 @@ function init() {
 	
 	contentContainer = document.getElementById("contentContainer");
 	
+	main = document.getElementById("main");
+	main.addEventListener("click",function(){
+		showDefaultContent();		
+	});
+	
+	
+	showPolls = document.getElementById("showPolls");
+	showPolls.addEventListener("click",function(){
+		showPolls();		
+	});
+	
+	
+	createPoll = document.getElementById("createPoll");
+	createPoll.addEventListener("click",function(){
+		createPoll();		
+	});
+	
+	
+	anoPoll = document.getElementById("anoPoll");
+	anoPoll.addEventListener("click",function(){
+		showAnoPoll();		
+	});
+	
+	changeFirstPassword = document.getElementById("changeFirstPassword");
+	changeFirstPassword.addEventListener("click",function(){
+		changeFirstPassword();		
+	});
+	
+	
+	logout = document.getElementById("logout");
+	logout.addEventListener("click",function(){
+		jumpToLogin();		
+	});
+	
+	
 	notification = document.createElement("h3");	
 
 	loadInformation();
