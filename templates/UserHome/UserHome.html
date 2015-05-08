@@ -85,11 +85,11 @@
 						<li><a href="#">My Account</a></li>
 						<li class="divider"></li>
 						<li id="changeFirstPassword"><a
-							href="#">Change password</a></li>
+							href="#" onclick="changeFirstPassword()">Change password</a></li>
 						<!--li><a href="./">xxxx</a></li-->
 						<!--li><a tabindex="-1" href="./">xxxx</a></li-->
 						<li class="divider"></li>
-						<li id = "logout"><a tabindex="-1" href="#">Logout</a></li>
+						<li id = "logout" ><a tabindex="-1" href="#" onclick="jumpToLogin()">Logout</a></li>
 					</ul></li>
 			</ul>
 
@@ -103,13 +103,13 @@
 				data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i>
 					Dashboard<i class="fa fa-collapse"></i></a></li>
 			<li><ul class="dashboard-menu nav nav-list collapse in">
-					<li id="main"><a href="#"><span
+					<li id="main"><a href="#" onclick="showDefaultContent()"><span
 							class="fa fa-caret-right"></span>Main</a></li>
-					<li id="showPolls"><a href="#"><span
+					<li id="showPolls"><a href="#" onclick="showPolls()"><span
 							class="fa fa-caret-right"></span>Polls list</a></li>
-					<li id="createPoll"><a href="#"><span
+					<li id="createPoll"><a href="#" onclick="createPoll()"><span
 							class="fa fa-caret-right"></span>Create a Poll</a></li>
-					<li id="anoPoll"><a href="#"><span class="fa fa-caret-right"></span>
+					<li id="anoPoll"><a href="#" onclick="anoPoll()"><span class="fa fa-caret-right"></span>
 							Poll</a></li>
 					
 				</ul></li>
@@ -150,7 +150,7 @@
 
 			<h1 class="page-title">Dashboard</h1>
 			<ul class="breadcrumb">
-				<li><a href="../../index.html">Home</a></li>
+				<li><a href="#" onclick="jumpToLogin()">Home</a></li>
 				<li class="active">Dashboard</li>
 			</ul>
 

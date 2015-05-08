@@ -6,10 +6,10 @@ var temp4;
 
 var pollsObjs = [];
 
-window.onload = init;
+window.onload = apiInit;
 
 
-function init() {
+function apiInit() {
 	contentContainer = document.getElementById("contentContainer");
 }
 
