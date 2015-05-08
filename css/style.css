@@ -294,15 +294,25 @@ a:hover {
 #loginBtn2  {
 	float: left;
 	margin-top: 5px;
-    margin-bottom: 10px;
-    margin-right: 30px;
+    margin-bottom: 5px;
+    margin-right: 40px;
+    margin-left: 30px;
+    position: relative;
+	
+} 
+
+#loginBtn3  {
+	float: left;
+	margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 10px;
     margin-left: 30px;
     position: relative;
 	
 } 
 #regBtn  {
 	color: #004a80;
-/* 	float: right; */
+   /*  float: right; */
 	font-size: 14px;
 	/* margin: 5px 5px 0 0; */
     text-decoration: underline;
