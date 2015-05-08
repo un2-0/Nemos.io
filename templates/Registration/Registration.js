@@ -74,7 +74,7 @@ function receiveRegistrationData(){
 							}		
 							
 				} else {
-					window.alert("failed to change second password");
+					window.alert("failed to create new organiser account");
 				}
 
 			});			

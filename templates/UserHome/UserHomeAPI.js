@@ -402,7 +402,7 @@ function loadBasicPollInformation(selectedPollName) {
 		
 			}else{
 				
-				window.alert("failed to get poll basic information");
+				window.alert("bad response");
 				}
 			
 	/*	
@@ -1246,7 +1246,7 @@ function showResult(selectedPollName) {
 					}
 		/*	        
 			    } else {
-					window.alert("failed to login");
+					window.alert("failed to get poll result");
 				}
 
 		});
@@ -1354,7 +1354,7 @@ function changeFirstPassword() {
 			/*				
 							
 				} else {
-					window.alert("failed to change second password");
+					window.alert("failed to change first account password");
 				}
 
 			});			
@@ -1478,7 +1478,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 			/*				
 							
 				} else {
-					window.alert("failed to change second password");
+					window.alert("failed to change second account password");
 				}
 
 			});			
