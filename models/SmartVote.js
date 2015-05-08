@@ -157,6 +157,7 @@ function SmartVote() {
         
         var response = {};
         response = createElection(query);
+        registerVoters(pollName, response.publicKeys);
         return network.getHttpResponseJSON(response);
     }
     
@@ -189,7 +190,6 @@ function SmartVote() {
         var password = query.password;
         var response = {};
         response.result = registerOrganizer(organizerName, password);
-        Println(response);
         return network.getHttpResponseJSON(response);
     }
 
@@ -468,17 +468,34 @@ function SmartVote() {
 
     // functions in the middle
     function generatePublicKeys(voterNum) {
-        return svApi.generatePubliKeys(voterNum);
+        return svApi.generatePublicKeys(voterNum);
     }
 
     function registerVoters(pollName, publicKeys) {
         for (var i = 0; i < publicKeys.length; i++) {
-            registerVoter(pollName, publicKeys[i].id, publicKeys[i].password);
+            registerVoter(publicKeys[i].id, publicKeys[i].password);
+            registerElection(publicKeys[i].id, pollName);
         }
     }
 
-    function registerVoter() {
-        
+    function registerVoter(username, password) {
+        svApi.registerVoter(username);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        svApi.setVoterPassword(username, password);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return "success";
+    }
+
+    function registerElection(username, pollName) {
+        svApi.registerElection(username, pollName);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return "success";
     }
     
     function generateSecondID(electionName) {
@@ -503,7 +520,6 @@ function SmartVote() {
     }
 
     function registerOrganizer(username, password) {
-        Println("------------------");
         if (organizerExists(username)) {
             return "usernameExist";
         }
@@ -588,14 +604,13 @@ function SmartVote() {
             //    monk.Commit();
             //}
             response.result = "success";
-            response.publicKeys = generatePublicKeys(voterNum);
-            registerVoters(pollName, publicKeys);
+            response.publicKeys = generatePublicKeys(query.voterNum);
         }
-            return response;
+        return response;
     }
 
     function setOpenTime(electionName, openTime) {
-        return svApi.setOpentTime(electionName, openTime);
+        return svApi.setOpenTime(electionName, openTime);
     }
 
     function setCloseTime(electionName, closeTime) {
