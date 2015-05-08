@@ -159,6 +159,19 @@ function SmartVote() {
         response = createElection(query);
         return network.getHttpResponseJSON(response);
     }
+    
+    /**
+     * Create polls in module2.
+     * @param query = {
+
+     * }
+     * @response response = {
+     * }
+     */
+    // TODO
+    handlers.module2CreatePoll = function (query) {
+         
+    }
 
     /**
      * Organizer registration.
@@ -326,6 +339,62 @@ function SmartVote() {
         printQuery(query);
         var secondID = query.secondId;
         var electionName = query.selectedElectionName;
+        // TODO
+    }
+    
+    /**
+     * Show the result of a poll.
+     * @param query = {"selectedPollName" : str"}
+     * @response response = {
+     *     "result": "success" or else
+     *     "candidates": [{"name": str, "canDes": str, "votes":num}, ...]
+     *     "log": [{"id": <second account id>,
+     *              "votes": <array, its length equals with length of candidates
+     *                        array. each slot should be "1" or "0">
+     *             }, ...]
+     * }
+     */
+    handlers.showResult = function (query) {
+        printQuery(query);
+        var pollName = query.selectedPollName;
+        // TODO
+    }
+    
+    /**
+     * Change the password of the first account of a voter.
+     * @param query = {
+     *     "username": <First Account Username>,
+     *     "newFirstPassword": <New First Account Password>
+     * }
+     * @response response = {
+     *     "result": "success" or not
+     * }
+     */
+    handlers.changeFirstPassword = function (query) {
+        printQuery(query);
+        var fisrtUsername = query.username;
+        var newFirstPassword = query.newFirstPassword;
+        // TODO
+    }
+    
+    /**
+     * Change the password of the second account of a voter.
+     * @param query = {
+     *     "username": <First Account Username>,
+     *     "secondId": <Second Account ID>,
+     *     "newSecondPassword": str,
+     *     "selectedPollName": str
+     * }
+     * @response response = {
+     *     "result": "success" or not
+     * }
+     */
+    handlers.changeSecondPassword = function (query) {
+        printQuery(query);
+        var firstUsername = query.username;
+        var secondUsername = query.secondId;
+        var newSecondPassword = query.newSecondPassword;
+        var pollName = query.selectedPollName;
         // TODO
     }
 

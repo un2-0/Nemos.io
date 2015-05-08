@@ -84,6 +84,28 @@ operations["getVotingInfo"] = {
     }
 }
 
+operations["showResult"] = {
+    params : {
+        "selectedPollName" : "Poll Name: "
+    }
+}
+
+operations["changeFirstPassword"] = {
+    params : {
+        "username": "Fist Account Username: ",
+        "newFirstPassword": "New First Account Password: "
+    }
+}
+
+operations["changeSecondPassword"] = {
+    params : {
+        "username": "First Account Username: ",
+        "secondId": "Second Account ID: ",
+        "newSecondPassword": "New Second Account Password: ",
+        "selectedPollName": "Poll Name: "
+    }
+}
+
 operations["pushToIpfs"] = {
     params : {
         "filedata" : "File Data: "
