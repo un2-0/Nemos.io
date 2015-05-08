@@ -3,17 +3,17 @@ baseUrl = "/apis/SmartVote";
 
 function login(identity){
 	
-	var form = document.getElementById("loginForm");
+	var loginForm = document.getElementById("loginForm");
 	var username = document.getElementById("username");
 	var passWord = document.getElementById("password");
 	
 
 	if (username.value == "" || username.value == null) {
 		window.alert("please enter the username");
-		form.reset();
+
 	} else if (passWord.value == "" || passWord.value == null) {
 		window.alert("please enter your password");
-		form.reset();
+	
 	}
     else {
 	    var userinfo = { "identity":identity,"username" : username.value.toString() , "password" : passWord.value.toString() };
@@ -58,12 +58,12 @@ function login(identity){
 		    	} else if (body.result == "userDoesntExist") {
 				
 		    		window.alert("Sorry, the user name does not exist");
-		    		form.reset();
+		    		loginForm.reset();
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
 		    		window.alert("Sorry, your password is wrong");
-		    		form.reset();
+		    		loginForm.reset();
 				
 		    	} else {
 				
