@@ -234,11 +234,36 @@ function SmartVoteAPI() {
 		return hash;
     }
 
+    this.registerVoter = function(username) {
+        var txData = [];
+        txData.push("createVoter");
+        txData.push(username);
+        var hash = sendMsg(amAddr, txData);
+		return hash;
+    }
+
+    this.registerElection = function(username, pollName) {
+        var txData = [];
+        txData.push("registerElection");
+        txData.push(electionNameToElectionAddress(pollName));
+        var hash = sendMsg(voterNameToVoterAddress(username), txData);
+		return hash;
+
+    }
+
     this.setOrganizerPassword = function(username, password) {
         var txData = [];
         txData.push("setPassword");
         txData.push(password);
         var hash = sendMsg(adminNameToAdminAddress(username), txData);
+        return hash;
+    }
+
+    this.setVoterPassword = function(username, password) {
+        var txData = [];
+        txData.push("setPassword");
+        txData.push(password);
+        var hash = sendMsg(voterNameToVoterAddress(username), txData);
         return hash;
     }
 
@@ -257,6 +282,7 @@ function SmartVoteAPI() {
     }
 
     this.createElection = function(username, electionName) {
+        var adminAddr = adminNameToAdminAddress(username);
         var txData = [];
         txData.push("createElection");
         txData.push(adminAddr);
@@ -288,15 +314,16 @@ function SmartVoteAPI() {
     }
 
     this.generatePublicKeys = function(voterNum) {
-        var JSONstr = {"id":"", "password":""};
-        var publicKeys = {};
+        var id = "";
+        var password = "";
+        var publicKeys = [];
         var idPrefix = generateIdPrefix();
         for (var i = 0; i < voterNum; i++) {
-            JSONstr.id = idPrefix + padLeft((i + 1).toString(), voterNum.toString().length);
-            JSONstr.password = generateRandomPassword(6);
-            publicKeys[i] = JSONstr;
+            id = idPrefix + padLeft((i + 1).toString(), voterNum.toString().length);
+            password = generateRandomPassword(8);
+            publicKeys.push({"id":id, "password":password});
         }
-        return PublicKeys;
+        return publicKeys;
     }
 
     function generateIdPrefix() {
@@ -331,6 +358,10 @@ function SmartVoteAPI() {
 
     function anonymousVoterNameToAnonymousVoterAddress(username) {
         return esl.ll.Main(amAddr, sutil.stringToHex("anonymousVoterNameToAnonymousVoterAddress"), sutil.stringToHex(username));
+    }
+
+    function electionNameToElectionAddress(electionName) {
+        return esl.ll.Main(emAddr, sutil.stringToHex(electionName), sutil.stringToHex(electionName));
     }
 
 	this.init = function() {
