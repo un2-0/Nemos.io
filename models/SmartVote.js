@@ -145,25 +145,19 @@ function SmartVote() {
                   */
         printQuery(query); // TODO can be removed
 
-        var electionName = query.electionName;
-        var organizerName = query.organizerName;
+        var pollName = query.pollName;
+        var organizerName = query.username;
         var openTime = parseInt(query.openTime, 10);
         var closeTime = parseInt(query.closeTime, 10);
-        var electionDes = query.electionDes;
+        var pollDes = query.pollDes;
         var voterNum = parseInt(query.voterNum, 10);
         var canoptNum = parseInt(query.canoptNum, 10);
         var rulesNum = parseInt(query.rulesNum, 10);
         var canOpts = query.canOpts;
         
         var response = {};
-        if (electionNameExists(electionName)) {
-            response.result = "electionNameExist";
-            response.publicKeys = null;
-            return network.getHttpResponseJSON(JSON.stringify(response));
-        }
-        reponse.result = "success";
-        reponse.publicKeys = generatePublicKeys(voterNum);
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        response = createElection(query);
+        return network.getHttpResponseJSON(response);
     }
 
     /**
@@ -173,7 +167,7 @@ function SmartVote() {
      *     "password" : str
      * }
      * @response response = {
-     *               result = "success" or "userNameExist"
+     *               result = "success" or "usernameExist"
      * }
      */
     handlers.organiserRegister = function (query) {
@@ -181,13 +175,8 @@ function SmartVote() {
         var organizerName = query.username;
         var password = query.password;
         var response = {};
-        if (organizerExists(organizerName)) {
-            response.result = "userNameExist";
-        } else {
-            registerOrganizer(organizerName, password);
-            response.result = "success";
-        }
-        
+        response.result = registerOrganizer(organizerName, password);
+        Println(response);
         return network.getHttpResponseJSON(response);
     }
 
@@ -410,7 +399,17 @@ function SmartVote() {
 
     // functions in the middle
     function generatePublicKeys(voterNum) {
-        // TODO
+        return svApi.generatePubliKeys(voterNum);
+    }
+
+    function registerVoters(pollName, publicKeys) {
+        for (var i = 0; i < publicKeys.length; i++) {
+            registerVoter(pollName, publicKeys[i].id, publicKeys[i].password);
+        }
+    }
+
+    function registerVoter() {
+        
     }
     
     function generateSecondID(electionName) {
@@ -423,8 +422,7 @@ function SmartVote() {
 
 	// functions talking with the blockchain
     function electionNameExists(electionName) {
-        // TODO
-        return true;
+        return svApi.electionNameExists(electionName);
     }
     
     function organizerExists(username) {
@@ -436,15 +434,39 @@ function SmartVote() {
     }
 
     function registerOrganizer(username, password) {
-        svApi.registerOrganizer(username);
-        if (COMMITTING) {
-            monk.Commit();
+        Println("------------------");
+        if (organizerExists(username)) {
+            return "usernameExist";
         }
-        svApi.setOrganizerPassword(username, password);
-        if (COMMITTING) {
-            monk.Commit();
+        else {
+            svApi.registerOrganizer(username);
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            svApi.setOrganizerPassword(username, password);
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            return "success";
+        }        
+    }
+
+    function registerVoter(username, password) {
+        // TODO
+        if (voterExists(username)) {
+            return "usernameExist";
         }
-        return ;
+        else {
+            svApi.registerVoter(username);
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            svApi.setVoterPassword(username, password);
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            return "success";
+        }        
     }
 	
     function checkOrganizer(username, password) {
@@ -469,6 +491,50 @@ function SmartVote() {
             }
             return "wrongPassWord";
         }
+    }
+
+    function createElection(query) {
+        var response = {};
+        var organizerName = query.organizerName;
+        var pollName = query.pollName;
+        if (electionNameExists(pollName)) {
+            response.result = "pollNameExist";
+            response.publicKeys = null;
+        }
+        else {
+            svApi.createElection(organizerName, pollName);
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            setOpenTime(pollName, parseInt(query.openTime, 10));
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            setCloseTime(pollName, parseInt(query.closeTime, 10));
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            //setDescription(pollName, query.pollDes);
+            //if (COMMITTING) {
+            //    monk.Commit();
+            //}
+            response.result = "success";
+            response.publicKeys = generatePublicKeys(voterNum);
+            registerVoters(pollName, publicKeys);
+        }
+            return response;
+    }
+
+    function setOpenTime(electionName, openTime) {
+        return svApi.setOpentTime(electionName, openTime);
+    }
+
+    function setCloseTime(electionName, closeTime) {
+        return svApi.setCloseTime(electionName, closeTime);
+    }
+
+    function setDescription(electionName, description) {
+        return svApi.setDescription(electionName, description);
     }
 
 	// functions talking with ipfs
@@ -545,6 +611,17 @@ function SmartVote() {
         Println(svApi.organizerExists("asdssss"));
     }
 
+    this.test6 = function() {
+        Println(svApi.generatePublicKeys("test", 10));
+/*
+String.fromCharCode(65)
+        for (var i = 0; i < currentTime; i++) {
+            currentNum = parseInt(currentTime.charAt(i), 10) % 36;
+            resNum
+        }*/
+        //return prefix;
+    }
+
 	this.init = function() {
 		svApi.init();
 	}
@@ -562,6 +639,7 @@ sv.init();
 //sv.test2();
 //sv.test3();
 //sv.test4();
-sv.test5();
+//sv.test5();
+//sv.test6();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

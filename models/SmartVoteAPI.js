@@ -206,8 +206,6 @@ function SmartVoteAPI() {
 */
 
     this.organizerExists = function(username) {
-        var aa = esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username));
-        Println(sutil.hexToString(esl.single.Value(aa, sutil.stringToHex("password"))));
         if (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0") {
             return true;
         };
@@ -218,6 +216,13 @@ function SmartVoteAPI() {
         if (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0") {
             return true;
         };
+        return false;
+    }
+
+    this.electionNameExists = function(electionName) {
+        if (esl.ll.Main(emAddr, sutil.stringToHex("electionNameToElectionAddress"), sutil.stringToHex(electionName)) != "0x0") {
+            return true;
+        }
         return false;
     }
 
@@ -250,6 +255,67 @@ function SmartVoteAPI() {
         }
         return false;
     }
+
+    this.createElection = function(username, electionName) {
+        var txData = [];
+        txData.push("createElection");
+        txData.push(adminAddr);
+        txData.push(electionName);
+        var hash = sendMsg(adminNameToAdminAddress(username), txData);
+        return hash;
+    }
+
+    this.setOpenTime = function(electionName, openTime) {
+        var txData = [];
+        txData.push("setSingleAttribute");
+        txData.push("opened");
+        txData.push(openTime.toString());
+        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        return hash;
+    }
+
+    this.setCloseTime = function(electionName, closeTime) {
+        var txData = [];
+        txData.push("setSingleAttribute");
+        txData.push("closed");
+        txData.push(closeTime.toString());
+        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        return hash;
+    }
+
+    this.setDescription = function(electionName, description) {
+        return ;
+    }
+
+    this.generatePublicKeys = function(voterNum) {
+        var JSONstr = {"id":"", "password":""};
+        var publicKeys = {};
+        var idPrefix = generateIdPrefix();
+        for (var i = 0; i < voterNum; i++) {
+            JSONstr.id = idPrefix + padLeft((i + 1).toString(), voterNum.toString().length);
+            JSONstr.password = generateRandomPassword(6);
+            publicKeys[i] = JSONstr;
+        }
+        return PublicKeys;
+    }
+
+    function generateIdPrefix() {
+        return parseInt((new Date()).getTime(), 10).toString(36);
+    }
+
+    function generateRandomPassword(passwordLength) {
+        var password = new Array(passwordLength + 1).join().replace(/(.|$)/g, function(){return ((Math.random()*36)|0).toString(36)[Math.random()<.5?"toString":"toUpperCase"]();});;
+        return password;
+    }
+    
+    function padLeft(indexStr,length){ 
+        if(indexStr.length >= length) {
+            return indexStr; 
+        }
+        else {
+            return padLeft("0" +indexStr, length); 
+        }
+} 
 
     function contractNameToAddress(contractName) {
 	    return esl.ll.Main(dougAddr, sutil.stringToHex("DOUG"), sutil.stringToHex(contractName));
