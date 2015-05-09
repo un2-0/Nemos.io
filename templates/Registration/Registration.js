@@ -179,6 +179,6 @@ function jumpToLogin() {
 	
 	sessionStorage.username = "";
 	sessionStorage.identity = "";
-	
+	sessionStorage.pollName = "";
 	
 }

@@ -37,47 +37,62 @@ function login(identity){
 	     * 	"password": password
     	 * 
     	 * Data should be in "Login" response: 
-	     *  "result" =  "success"(if username and password all good)
+	     *  "result" =  "success"(if username and password all good) (for voters and organisers)
+	     *  			"successAno" (if username and password all good)(for anonymous voters)
 	     *  			"userDoesntExist" (if user id doesnt exist)
     	 *  			"wrongPassWord" (if user id exist but the password is wrong)
+	    
+	    *
+	    *	"pollName" = this data exists when result = successAno, this presents the poll name of the
+	    *					second account belongs to
+	    *
 	    */
+	    
+	    
+	    
+	    /*
 	    sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
 		
 	    	if (res.status == 200) {
 		    	console.log(res);
 	    		var body = res.response;
 		    	body = JSON.parse(body);
-			
-		    	if (body.result == "success") {
-				
+			*/
+	    		var body = {"result":"successAno","pollName":"ssddd"};
+	    
+	    		
+		    	if (body.result == "success") {  		
+		    		
 		    		sessionStorage.username = username.value;
 				
-
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-		    	} else if (body.result == "userDoesntExist") {
+		    	}else if(body.result == "successAno"){
+		    		
+		    		sessionStorage.username = username.value;
+		    		sessionStorage.pollName = body.pollName;
+					
+		    		window.location.href = "templates/UserHome/UserHome.html";
+		    	
+		    	}else if (body.result == "userDoesntExist") {
 				
 		    		window.alert("Sorry, the user name does not exist");
-		    		loginForm.reset();
+		    		
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
 		    		window.alert("Sorry, your password is wrong");
-		    		loginForm.reset();
+		    		
 				
 		    	} else {
 				
 		    		window.alert("bad response");
 		    	}
-	            
+	   /*         
 	        } else {
 		    	window.alert("failed to login");
 		    }
-    	});
+    	});*/
     }	
 	
-}
-
-function jumpToRegistration(){
-	window.location.href = "templates/Registration/Register.html";
 }
