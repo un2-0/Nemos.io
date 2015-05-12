@@ -1,0 +1,163 @@
+; ------------------------------------------------------------------------------
+; ElectionManager
+; ------------------------------------------------------------------------------
+; - createElection
+; - removeElection
+; ------------------------------------------------------------------------------
+
+{
+    ; --------------------------------------------------------------------------
+    ; References
+    ; --------------------------------------------------------------------------
+    (include "./Election.lll")
+    (include "./defs/single.def")
+    (include "./defs/stdll.def")
+    (include "./defs/stdkv.def")
+    (include "./env.def")
+
+    ; --------------------------------------------------------------------------
+    ; Constants
+    ; --------------------------------------------------------------------------
+    (def 'DAPPDOUG 0xdaffe)
+
+    ; --------------------------------------------------------------------------
+    ; Parameters
+    ; --------------------------------------------------------------------------
+    (def 'cmd () (calldataload 0x0))
+	
+    (def 'crtraddr () (calldataload 0x20)) ;User address of the creator of the election
+	
+    (def 'elecname () (calldataload 0x40)) ;Name of the election
+
+    ; --------------------------------------------------------------------------
+    ; Variables
+    ; --------------------------------------------------------------------------
+    (singleInit "buffer" 0)
+    (singleInit "lastElection" 0)
+    (kvInit "lastModified")
+    (llInit "electionAddressToElectionName")
+    (llInit "electionNameToElectionAddress")
+    (llInit "electionList")
+    (llInit "reverseElectionList")
+
+    (return 0 (lll {
+
+        ; ----------------------------------------------------------------------
+        ; Create a contract for a new election.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "createElection" crtraddr elecname
+        ; Returns:
+        ;       0 - fail
+        ;       0xADDRESS - the address of the newly created contract
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "createElection") {
+            (singleSet "buffer "(elecname)) ;Store the name of election in case of conflict
+            [0xA0](crtraddr) ;Store the address of user in case of conflict
+            
+            ;Get the address of accountManager
+            [0x0]"checkName"
+            [0x20]"accountManager"
+            (CALL (gass) DAPPDOUG 0 0x0 0x40 0x40 0x20)
+
+            ;Then check if the caller has permission to create election
+            [0x0]"checkBlacklist"
+            [0x20]@0xA0
+            (CALL (gass) @0x40 0 0x0 0x40 0x40 0x20)
+
+            (unless (= @0x40 0) (STOP))
+            
+            ;Create the contract and save its address in memory 0x0
+            [0x0](create 0 0 (lll {
+                (election)
+            } 0))
+
+            [[@0x0]]1
+
+            ;If there is no election stored
+            (when (= (singleGet "lastElection") 0) {
+                (llAddLink "electionList" "HEAD" @0x0)
+                (llAddLink "reverseElectionList" @0x0 "HEAD")
+            })
+
+            ;If there is an election stored
+            (unless (= (singleGet "lastElection") 0) {
+                (llAddLink (singleGet "lastElection") @0x0)
+                (llAddLink "reverseElectionList" @0x0 (singleGet "lastElection"))
+            })
+
+            (singleSet "lastElection" @0x0)
+            (llAddLink "electionAddressToElectionName" @0x0 (singleGet "buffer"))
+            (llAddLink "electionNameToElectionAddress" (singleGet "buffer") @0x0)
+            
+            [0x20]"setPerm"
+            [0x40]"electionAccount"
+            [0x60]@0x0
+            [0x80]1
+            (CALL (gass) DAPPDOUG 0 0x20 0x80 0x20 0x20)
+
+            [0x20]"init"
+            [0x40]@0xA0
+            (CALL (gass) @0x0 0 0x20 0x40 0x20 0x20)
+
+            (kvSet "lastModified" @0x0 (TIMESTAMP))
+
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Delete an election
+        ; ----------------------------------------------------------------------
+        ; Calldata: "removeElection" (CALLER)
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (= (cmd) "removeElection") {
+            [0x0](CALLER) ;Address of the election
+            [0x20](llGet "reverseElectionList" @0x0)
+
+            ;If the election to be removed is tail
+            (when (= @0x0 (singleGet "lastElection")) {
+
+                ;If the election to be removed is head
+                (when (= @0x20 "HEAD") {
+                    (llRmLink "electionList" "HEAD")
+                    (singleSet "lastElection" 0)
+                })
+
+                ;If the election to be removed is not head
+                (unless (= @0x20 "HEAD") {
+                    (llRmLink "electionList" @0x20)
+                    (singleSet "lastElection" @0x20)
+                })
+                (llRmLink "reverseElectionList" @0x0)
+            })
+
+            ;If the election to be removed is head
+            (when (= @0x20 "HEAD") {
+                [0x40](llGet "electionList" @0x0)
+                (llRmLink "electionList" @0x0)
+                (llRmLink "reverseElectionList" @0x0)
+                (llAddLink "electionList" "HEAD" @0x40)
+                (llAddLink "reverseElectionList" @0x40 "HEAD")
+            })
+
+            ;If the election to be removed is not head or tail
+            (unless (|| (= @0x0 (singleGet "lastElection")) (= @0x20 "HEAD")) {
+                [0x40](llGet "electionList" @0x0)
+                (llRmLink "electionList" @0x0)
+                (llRmLink "electionList" @0x20)
+                (llRmLink "reverseElectionList" @0x0)
+                (llRmLink "reverseElectionList" @0x40)
+                (llAddLink "electionList" @0x20 @0x40)
+                (llAddLink "reverseElectionList" @0x40 @0x20)
+            })
+
+            [0xA0](llGet "electionAddressToElectionName" @0x0)
+            (llRmLink "electionNameToElectionAddress" @0xA0)
+            (llRmLink "electionAddressToElectionName" @0x0)
+            (kvSet "lastModified" @0x0 0)
+
+            [0x0]1
+            (return 0x0 0x20)
+        })
+    } 0))
+}

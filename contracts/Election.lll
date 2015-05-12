@@ -48,7 +48,7 @@
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
     (def 'option () (calldataload 0x40)) ;The index of option voted
-    (def 'newoptionresult () (calldataload 0x60)) ;New result of the option
+    (def 'ballot () (calldataload 0x60)) ;New result of the option
 
     (def 'singleAttributeKey () (calldataload 0x20))
     (def 'singleAttributeValue () (calldataload 0x40))
@@ -460,16 +460,16 @@
         ; ----------------------------------------------------------------------
         ; Record a ballot.
         ; ----------------------------------------------------------------------
-        ; Calldata: "recordBallot" vtraddr option newoptionresult
+        ; Calldata: "recordBallot" (CALLER) option ballot
         ; Returns: 0 - fail | 1 - success
         ; ----------------------------------------------------------------------
         (when (&& (= (cmd) "recordBallot")) {
             ;Check if the caller is a registered voter
-            (when (= (llGet "reverseAnonymousVoterList" (vtraddr)) 0) (STOP))
+            (when (= (llGet "reverseAnonymousVoterList" (CALLER)) 0) (STOP))
             
-            (kvSet "ballots" (option) (newoptionresult))
+            (kvSet "ballots" (option) (+ (kvGet "ballots" (option)) (ballot)))
 
-            (kvSet "votingRecord" (vtraddr) (TIMESTAMP))
+            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
             
             [0x0]1
             (return 0x0 0x20)

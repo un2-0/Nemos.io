@@ -109,15 +109,15 @@
         ; Returns: 0 - fail | 1 - success
         ; ---------------------------------------------------------------------- 
         (when (= (cmd) "registerVoter") {
-            [0x20]"deregisterVoter"
-            [0x40](vtraddr)
-            (CALL (gass) (elecaddr) 0 0x20 0x40 0x60 0x20)
+            [0xA0]"deregisterVoter"
+            [0xC0](vtraddr)
+            (CALL (gass) (elecaddr) 0 0xA0 0x40 0x60 0x20)
 
             (unless (= @0x60 1) (STOP))
 
-            [0x20]"deregisterElection"
-            [0x40](elecaddr)
-            (CALL (gass) (vtraddr) 0 0x20 0x40 0x60 0x20)
+            [0xA0]"deregisterElection"
+            [0xC0](elecaddr)
+            (CALL (gass) (vtraddr) 0 0xA0 0x40 0x60 0x20)
 
             [0x0]1
             (return 0x0 0x20)

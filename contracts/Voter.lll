@@ -5,6 +5,7 @@
 ; - setPassword
 ; - registerElection
 ; - deregisterElection
+; - vote
 ; - suicideAccount
 ; - suicideAnonymousAccount
 ; ------------------------------------------------------------------------------
@@ -29,9 +30,12 @@
 
     (def 'vtraddr () (calldataload 0x20))
 
+    (def 'pswrd () (calldataload 0x20))
+
     (def 'elecaddr () (calldataload 0x20))
 
-    (def 'pswrd () (calldataload 0x20))
+    (def 'option () (calldataload 0x40))
+    (def 'ballot () (calldataload 0x60))
  
     ; --------------------------------------------------------------------------
     ; Variables
@@ -149,6 +153,24 @@
 
             [0x0]1
             (return 0x0 0x20)
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Vote for an election
+        ;-----------------------------------------------------------------------
+        ; Calldata: "vote" elecaddr option ballot
+        ; Returns: 0 - fail | 1 - success
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "vote") {
+            ; remove the record in AccountManager
+            [0xA0]"recordBallot"
+            [0xC0](option)
+            [0xE0](ballot)
+            (CALL (gass) (elecaddr) 0 0xA0 0x60 0x20 0x20)
+            
+            (unless (= @0x20 1) (STOP))
+
+            (suicide (ORIGIN))
         })
 
         ;-----------------------------------------------------------------------
