@@ -747,6 +747,8 @@ function voting(secondIdValue,selectedPollName) {
 					
 					votingContainer.addEventListener("submit",function(){
 						
+						
+						
 						var count = 0;
 						
 						for (var i = 0; i < checkBoxes.length; i++) {
@@ -763,6 +765,8 @@ function voting(secondIdValue,selectedPollName) {
 									"\nPlese recheck your votes.");
 							
 							rulesDescription.scrollIntoView();
+							
+							return;
 						
 						}else{
 							
@@ -776,6 +780,13 @@ function voting(secondIdValue,selectedPollName) {
 									ballot.votes[i] = "0";
 								}
 								
+							}
+							
+							
+							var tempConfirm = confirm("Submit your ballot now?");
+							
+							if(tempConfirm == false){
+								return;
 							}
 							
 							/*Data in "submitVote":
@@ -812,6 +823,7 @@ function voting(secondIdValue,selectedPollName) {
 											} else {
 												
 												window.alert("bad response");
+												return;
 											}
 									
 									/*	
@@ -1135,6 +1147,12 @@ function changeFirstPassword() {
 		if (newFirstPassword1.value === newFirstPassword2.value) {
 			
 			
+			var tempConfirm = confirm("Are you sure to change your first account password?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
 			/*Data in "changeFirstPassword" request:
 			 * 			"username": first account id
 			 * 			"newFirstPassword": new first account password
@@ -1169,6 +1187,7 @@ function changeFirstPassword() {
 							} else {
 								
 								window.alert("bad response");
+								return;
 							}			
 			/*				
 							
@@ -1188,6 +1207,7 @@ function changeFirstPassword() {
 			newFirstPasswordReceiver.reset();
 			
 			newFirstPassword1.scrollIntoView();
+			return;
 		
 		}
 		
@@ -1257,6 +1277,12 @@ function changeSecondPassword(secondId,selectedPollName) {
 		
 		if (newSecondPassword1.value === newSecondPassword2.value) {
 			
+			var tempConfirm = confirm("Are you sure to change your second account password?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
 			/*Data in "changeSecondPassword" request:
 			 * 			"username": first account id
 			 * 			"secondId": second account id
@@ -1293,6 +1319,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 							} else {
 								
 								window.alert("bad response");
+								return;
 							}			
 			/*				
 							
@@ -1312,6 +1339,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 			newSecondPasswordReceiver.reset();
 			
 			newSecondPassword1.scrollIntoView();
+			return;
 		
 		}
 		
@@ -1613,7 +1641,8 @@ function module1Creation(moduleLoader) {
 	
 	module1Form.addEventListener("submit",function(){
 				 
-			 
+		
+		
 		var currentDate = new Date();
 		
 		
@@ -1633,16 +1662,23 @@ function module1Creation(moduleLoader) {
 		if(currentDate > OTDate){
 			window.alert("illegal open time (open time should be after current time)");
 			openTime.scrollIntoView();
+			return;
 			
 		}else if (currentDate > CTDate){
 			window.alert("illegal close time (close time should be after current time)");
 			closeTime.scrollIntoView();
+			return;
 
 		}else if (OTDate >= CTDate){
 			window.alert("open time should be before close time");
 			openTime.scrollIntoView();
+			return;
 		}else {
-			window.alert("Sumbmit to creat poll");
+			var tempConfirm = confirm("Confirm to create the Poll now?");
+			
+			if(tempConfirm == false){
+				return;
+			}
 				 
 			temp1 = {"moduleName": "module1",
 					"pollName": pollName.value.toString(),
@@ -1862,14 +1898,22 @@ function module2Creation(moduleLoader) {
 	
 	
 	module2Form.addEventListener("submit",function(){
+			
 		
 		
 			for (var i = 0; i < pollNum.value; i++) {
 				if(!checkTime(i)){
-					break;
+					return;
 				} else if(!checkVoterNum(i)){
-					break;
+					return;
 				}
+			}
+			
+			
+			var tempConfirm = confirm("Confirm to create the Poll now?");
+			
+			if(tempConfirm == false){
+				return;
 			}
 			
 			var tempFianlArray = [];
