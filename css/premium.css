@@ -1,6 +1,19 @@
 /*Use of these features requires a premium license.*/
 /*See http://www.portnine.com/bootstrap-themes for details.*/
 /*After purchasing a premium license, the full source code will be available for download.*/
+
+#votingTable #resultTable #logTable{
+	border-collapse: collapse;
+	text-align: center;
+}
+
+#votingTable #resultTable #logTable table, td, th{
+	border: 1px solid black;
+	text-align: center;
+}
+
+
+
 h1.page {
 	text-align: center;
 	line-height: 1.5em

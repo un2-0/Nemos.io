@@ -664,6 +664,7 @@ function voting(secondIdValue,selectedPollName) {
 					
 					var votingTable = document.createElement("TABLE");
 					votingTable.id = "votingTable";
+					votingContainer.setAttribute("class","table table-bordered table-striped");
 					
 					var rulesDescription = document.createElement("H3");
 					rulesDescription.id ="rulesDescription";
@@ -930,6 +931,7 @@ function showResult(selectedPollName) {
 						
 						var resultTable = document.createElement("TABLE");
 						resultTable.id = "resultTable";
+						resultTable.setAttribute("class","table table-bordered table-striped");
 						
 						var resultsDescription = document.createElement("H3");
 						resultsDescription.id ="resultsDescription";
@@ -937,6 +939,7 @@ function showResult(selectedPollName) {
 						
 						var logTable = document.createElement("TABLE");
 						logTable.id = "logTable";
+						logTable.setAttribute("class","table table-bordered table-striped");
 						
 						var logDescription = document.createElement("H3");
 						logDescription.id ="logDescription";
