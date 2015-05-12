@@ -4,6 +4,9 @@ var temp2;
 var temp3;
 var temp4;
 
+var disablelingDiv;
+var loadingCaption;
+
 var pollsObjs = [];
 
 window.onload = apiInit;
@@ -11,12 +14,44 @@ window.onload = apiInit;
 
 function apiInit() {
 	contentContainer = document.getElementById("contentContainer");
+	
+	disablelingDiv = document.getElementById('disablingDiv');
+	
+	loadingCaption = document.getElementById('loadingCaption');
+	
+	
+	
+	//disablelingDiv.style.display='block';
+	//disablelingDiv.style.display='none';
 }
 
 function showDefaultContent() {
 	
 	contentContainer.innerHTML = '<div class="header"> 			<div class="stats"> 				<p class="stat"> 					<span class="label label-info">5</span> Invitations 				</p> 				<p class="stat"> 					<span class="label label-success">27</span> On-going Polls 				</p> 				<p class="stat"> 					<span class="label label-danger">15</span> Overdue/Expired Polls 				</p> 			</div>  			<h1 class="page-title">Dashboard</h1> 			<ul class="breadcrumb"> 				<li><a href="../../index.html">Home</a></li> 				<li class="active">Dashboard</li> 			</ul>  		</div> 		<div class="main-content" id="mainContentContainer"> 			<div class="panel panel-default"> 				<a href="#page-stats" class="panel-heading" data-toggle="collapse">Latest 					Statistics</a> 				<div id="page-stats" class="panel-collapse panel-body collapse in">  					<div class="row"> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="3000" data-displayPrevious="true" value="2500" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Related Poll list</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="4500" data-displayPrevious="true" value="3299" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Polls You can 									Participate in</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="2700" data-displayPrevious="true" value="1840" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Pending Polls</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="15000" data-displayPrevious="true" value="10067" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Completed Polls</h3> 							</div> 						</div> 					</div> 				</div> 			</div>  			<div class="row"> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<div class="panel-heading no-collapse"> 							Not Collapsible<span class="label label-warning"></span> 						</div> 						<table class="table table-bordered table-striped"> 							<thead> 								<tr> 									<th>First Name</th> 									<th>Last Name</th> 									<th>Username</th> 								</tr> 							</thead> 							<tbody> 								<tr> 									<td>Kun</td> 									<td>Liu</td> 									<td>kl333</td> 								</tr> 								<tr> 									<td></td> 									<td></td> 									<td></td> 								</tr>  							</tbody> 						</table> 					</div> 				</div> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<a href="#widget1container" class="panel-heading" 							data-toggle="collapse">Collapsible </a> 						<div id="widget1container" class="panel-body collapse in"> 							<h2>Test</h2> 						</div> 					</div> 				</div> 			</div>  			<div class="row"> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<a href="#widget2container" class="panel-heading" 							data-toggle="collapse">Collapsible </a> 						<div id="widget2container" class="panel-body collapse in"> 							<h2>Test</h2> 						</div> 					</div> 				</div> 			</div>  		</div>';
 }
+
+function loadingDisabling(status,content) {
+	
+	if(status == "on"){
+		
+		disablelingDiv.style.display='block';
+		
+		loadingCaption.innerHTML = content;
+		
+	}else if(status == "off"){
+		
+		disablelingDiv.style.display='none';
+		
+		loadingCaption.innerHTML = "";
+		
+	}else{
+		return;
+	}
+	
+}
+
+
+
 
 function LoginAs() {
 	
@@ -592,6 +627,9 @@ function getSecondIDPassword(selectedPollName) {
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	
+	//loadingDisabling("on", "loading the template ballot for you");
+	
+	
 	/*Happend when the voter has not get the initially random second account id and password
 	 * Data in "getVoterSecondIdPassword":
 	 * 
@@ -638,6 +676,7 @@ function voting(secondIdValue,selectedPollName) {
 	
 	sender.sendAsync("POST", baseUrl+ "/getVotingInfo", JSON.stringify(voterVotingInfo), function(res){ 
 
+		loadingDisabling("off", "");
 		
 		if (res.status == 200) {
 			
@@ -771,6 +810,15 @@ function voting(secondIdValue,selectedPollName) {
 						
 						}else{
 							
+							var tempConfirm = confirm("Submit your ballot now?");
+							
+							if(tempConfirm == false){
+								return;
+							}
+							
+							loadingDisabling("on", "Submitting your ballot, please be patient");
+							
+							
 							var ballot = {"secondId":secondIdValue,"selecedPollName":selectedPollName,"votes":[]};
 							
 							for (var i = 0; i < checkBoxes.length; i++) {
@@ -784,11 +832,6 @@ function voting(secondIdValue,selectedPollName) {
 							}
 							
 							
-							var tempConfirm = confirm("Submit your ballot now?");
-							
-							if(tempConfirm == false){
-								return;
-							}
 							
 							/*Data in "submitVote":
 							 * 			"secondId": the voter second account id
@@ -803,7 +846,9 @@ function voting(secondIdValue,selectedPollName) {
 							
 						/*
 							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
-
+								
+								loadingDisabling("off", "");
+								
 								if (res.status == 200) {
 											console.log(res);
 											var body = res.response;
@@ -812,6 +857,7 @@ function voting(secondIdValue,selectedPollName) {
 										
 											//test
 								*/			
+							
 											var body1 = {"result":"success"};
 											
 											if (body1.result == "success") {
@@ -1682,7 +1728,9 @@ function module1Creation(moduleLoader) {
 			if(tempConfirm == false){
 				return;
 			}
-				 
+			
+			loadingDisabling("on", "Creating your poll, please be patient");
+			
 			temp1 = {"moduleName": "module1",
 					"pollName": pollName.value.toString(),
 					"organizerName": organizerName.value.toString(),
@@ -1743,6 +1791,9 @@ function module1Creation(moduleLoader) {
 	 * 		
 	*/		
 			sender.sendAsync("POST", baseUrl+ "/module1CreatePoll", JSON.stringify(temp1), function(res){
+				
+				loadingDisabling("off", "");
+				
 				if (res.status == 200) {
 					console.log(res);
 					var body = res.response;	
@@ -1919,6 +1970,8 @@ function module2Creation(moduleLoader) {
 				return;
 			}
 			
+			loadingDisabling("on", "Creating your poll, please be patient");
+			
 			var tempFianlArray = [];
 			
 			for (var i = 0; i < pollNum.value; i++) {
@@ -2020,6 +2073,8 @@ function module2Creation(moduleLoader) {
 			
 				
 			sender.sendAsync("POST", baseUrl+ "/module2CreatePoll", JSON.stringify(pollsInfo), function(res){
+				
+				loadingDisabling("off","");
 				/*	
 				if (res.status == 200) {
 					console.log(res);

@@ -13,6 +13,41 @@
 }
 
 
+#disablingDiv
+{
+    /* Do not display it on entry */
+    display: none; 
+ 
+    /* Display it on the layer with index 1001.
+       Make sure this is the highest z-index value
+       used by layers on that page */
+    z-index:1001;
+     
+    /* make it cover the whole screen */
+    position: fixed; 
+    top: 0%; 
+    left: 0%; 
+    width: 100%; 
+    height: 100%; 
+ 
+ 
+    /* make it white but fully transparent */
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#pending {
+	
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%); 
+  
+	
+}
+
+
 
 h1.page {
 	text-align: center;
