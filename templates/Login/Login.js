@@ -50,24 +50,24 @@ function login(identity){
 	    
 	    
 	    
-	    /*
+
 	    sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
 		
 	    	if (res.status == 200) {
 		    	console.log(res);
 	    		var body = res.response;
 		    	body = JSON.parse(body);
-			*/
-	    		var body = {"result":"successAno","pollName":"ssddd"};
+
+	    		//var body = {"result":"successAno","pollName":"ssddd"};
 	    
 	    		
-		    	if (body.result == "success") {  		
+		    	if (body.result == "success" && identity !== "anoVoter") {  		
 		    		
 		    		sessionStorage.username = username.value;
 				
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-		    	}else if(body.result == "successAno"){
+		    	}else if(body.result == "success" && identity === "anoVoter"){
 		    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.pollName = body.pollName;
@@ -88,11 +88,11 @@ function login(identity){
 				
 		    		window.alert("bad response");
 		    	}
-	   /*         
+
 	        } else {
 		    	window.alert("failed to login");
 		    }
-    	});*/
+    	});
     }	
 	
 }

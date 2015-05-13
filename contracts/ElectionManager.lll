@@ -51,7 +51,7 @@
         ;       0xADDRESS - the address of the newly created contract
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createElection") {
-            (singleSet "buffer "(elecname)) ;Store the name of election in case of conflict
+            (singleSet "buffer" (elecname)) ;Store the name of election in case of conflict
             [0xA0](crtraddr) ;Store the address of user in case of conflict
             
             ;Get the address of accountManager

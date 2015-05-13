@@ -81,139 +81,9 @@ function SmartVoteAPI() {
 		txData[txHash] = txObj;
 		Println("Added tx data");
 	}
-/*
-	this.createPollAccount = function(plname) {
-		var txData = [];
-		Println("Creating poll in blockchain.");
-		txData.push("create");
-		txData.push(plname);
-		var hash = sendMsg(plfAddr, txData);
-		return hash;
-	}
 
-	this.initPoll = function(plname, opnum, description, opentime, closetime ,createtime, creatorusrname) {
-		var txData = [];
-		Println("Initing poll in blockchain.");
-		txData.push("set");
-		txData.push("0x" + opnum.toString(16));
-		txData.push(description);
-		txData.push(opentime);
-		txData.push(closetime);
-		txData.push(createtime);
-		txData.push(creatorusrname);
-		var hash = sendMsg(plname2Addr(plname), txData);
-		return hash;
-	}
-
-	this.setStatus = function(plname, status) {
-		var txData = [];
-		txData.push("setstatus");
-		txData.push("0x" + status.toString(16));
-		var hash = sendMsg(plname2Addr(plname), txData);
-		return hash;
-	}
-
-	this.checkStatus = function(plname) {
-		return parseInt(esl.single.Value(plname2Addr(plname), sutil.stringToHex("status")), 16);
-	}
-
-	this.getDescription = function(plname) {
-		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("description")));
-	}
-
-	this.getOpentime = function(plname) {
-		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("opened")));
-	}
-
-	this.getClosetime = function(plname) {
-		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("closed")));
-	}
-
-	this.getCreatetime = function(plname) {
-		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("created")));
-	}
-
-	this.getCreatorusrname = function(plname) {
-		return sutil.hexToString(esl.single.Value(plname2Addr(plname), sutil.stringToHex("creator")));
-	}
-
-	this.setOpnum = function(plname, opnum) {
-		var txData = [];
-		opnum = parseInt(opnum);
-		txData.push("setopnum");
-		txData.push("0x" + opnum.toString(16));
-		var hash = sendMsg(plname2Addr(plname), txData);
-		return hash;
-	}
-
-	this.getOpnum = function(plname) {
-		return esl.single.Value(plname2Addr(plname), sutil.stringToHex("opnum")).slice(2);
-	}
-
-	this.refreshPoll = function(plname) {
-		plAddr = plname2Addr(plname);
-		var opentime = esl.single.Value(plAddr, StringToHex("opentime"));
-		var closetime = esl.single.Value(plAddr, StringToHex("closetime"));
-		var status = esl.single.Value(plAddr, StringToHex("status"));
-		var crttime = Date();
-		if (crttime < closetime && crttime > opentime && status == 0) {
-			setStatus(plname, 1);
-		}
-		else if (status == 1){
-			setStatus(plname, 0);
-		}
-	}
-
-	this.vote = function(plname, opnum) {
-		var txData = [];
-		opnum = parseInt(opnum);
-		txData.push("vote");
-		txData.push("0x" + opnum.toString(16));
-		var hash = sendMsg(plname2Addr(plname), txData);
-		return hash;
-	}
-
-	this.showPolls = function() {
-		var plnum = esl.single.Value(plfAddr, sutil.stringToHex("plnum")).slice(2);
-		if (plnum == 0) {
-			Println("No poll in block chain.");
-			return 0;
-		}
-		var pllist = "";
-		for (var i = 1; i <= plnum; i++) {
-			pllist += sutil.hexToString(esl.kv.Value(plfAddr, sutil.stringToHex("pllist"), i)) + ";";
-		}
-		pllist = pllist.slice(0, pllist.length - 1);
-		Println("poll list:  " + pllist);
-		return pllist;
-	}
-
-	this.getStat = function(plname) {
-		plAddr = plname2Addr(plname);
-		var stat = "";
-		var opnum = this.getOpnum(plname);
-		for (var i = 1; i <= opnum; i++) {
-			stat += parseInt(esl.kv.Value(plAddr, sutil.stringToHex("ops"), i).slice(2)) + ";";
-		}
-		stat = stat.slice(0, stat.length - 1);
-		return stat;
-	}
-
-	function plname2Addr(plname) {
-		var pubAddr = esl.ll.Main(plfAddr, sutil.stringToHex("plnames"), sutil.stringToHex(plname));
-		return esl.kv.Value(plfAddr, sutil.stringToHex("polls"), pubAddr);
-	}
-*/
-
-    this.organizerExists = function(username) {
-        if (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0") {
-            return true;
-        };
-        return false;
-    }
-
-    this.voterExists = function(username) {
-        if (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0") {
+    this.userExists = function(identity, username) {
+        if (((identity === "organizer") && (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "voter") && (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "anonymousVoter") && (esl.ll.Main(amAddr, sutil.stringToHex("anonymousVoterNameToAnonymousVoterAddress"), sutil.stringToHex(username)) != "0x0"))) {
             return true;
         };
         return false;
@@ -226,17 +96,15 @@ function SmartVoteAPI() {
         return false;
     }
 
-    this.registerOrganizer = function(username) {
+    this.registerUser = function(identity, username) {
         var txData = [];
-        txData.push("createAdmin");
-        txData.push(username);
-        var hash = sendMsg(amAddr, txData);
-		return hash;
-    }
-
-    this.registerVoter = function(username) {
-        var txData = [];
-        txData.push("createVoter");
+        if (identity === "organizer") {
+            txData.push("createAdmin");
+        } else if (identity === "voter") {
+            txData.push("createVoter");
+        } else if (identity === "anonymousVoter") {
+            txData.push("createAnonymousVoter");
+        }
         txData.push(username);
         var hash = sendMsg(amAddr, txData);
 		return hash;
@@ -246,48 +114,31 @@ function SmartVoteAPI() {
         var txData = [];
         txData.push("registerElection");
         txData.push(electionNameToElectionAddress(pollName));
-        var hash = sendMsg(voterNameToVoterAddress(username), txData);
+        var hash = sendMsg(userNameToUserAddress("voter", username), txData);
 		return hash;
-
     }
 
-    this.setOrganizerPassword = function(username, password) {
+    this.setUserPassword = function(identity, username, password) {
         var txData = [];
         txData.push("setPassword");
-        txData.push(password);
-        var hash = sendMsg(adminNameToAdminAddress(username), txData);
+        txData.push(password);        
+        var hash = sendMsg(userNameToUserAddress(identity, username), txData);
         return hash;
     }
 
-    this.setVoterPassword = function(username, password) {
-        var txData = [];
-        txData.push("setPassword");
-        txData.push(password);
-        var hash = sendMsg(voterNameToVoterAddress(username), txData);
-        return hash;
-    }
-
-    this.checkOrganizerPassword = function(username, password) {
-        if (password == sutil.hexToString(esl.single.Value(adminNameToAdminAddress(username), sutil.stringToHex("password")))) {
-            return true;
-        }
-        return false;
-    }
-
-    this.checkVoterPassword = function(username, password) {
-        if (password == sutil.hexToString(esl.single.Value(voterNameToVoterAddress(username), sutil.stringToHex("password")))) {
+    this.checkUserPassword = function(identity, username, password) {
+        if (((identity === "organizer") && (password == sutil.hexToString(esl.single.Value(userNameToUserAddress(identity, username), sutil.stringToHex("password"))))) || ((identity === "voter") && (password == sutil.hexToString(esl.single.Value(userNameToUserAddress(identity, username), sutil.stringToHex("password"))))) || ((identity === "anonymousVoter") && (password == sutil.hexToString(esl.single.Value(userNameToUserAddress(identity, username), sutil.stringToHex("password")))))) {
             return true;
         }
         return false;
     }
 
     this.createElection = function(username, electionName) {
-        var adminAddr = adminNameToAdminAddress(username);
         var txData = [];
         txData.push("createElection");
-        txData.push(adminAddr);
+        txData.push(userNameToUserAddress("organizer", username));
         txData.push(electionName);
-        var hash = sendMsg(adminNameToAdminAddress(username), txData);
+        var hash = sendMsg(emAddr, txData);
         return hash;
     }
 
@@ -331,7 +182,7 @@ function SmartVoteAPI() {
     }
 
     function generateRandomPassword(passwordLength) {
-        var password = new Array(passwordLength + 1).join().replace(/(.|$)/g, function(){return ((Math.random()*36)|0).toString(36)[Math.random()<.5?"toString":"toUpperCase"]();});;
+        var password = new Array(passwordLength + 1).join().replace(/(.|$)/g, function(){return ((Math.random()*36)|0).toString(36)[Math.random()<.5?"toString":"toUpperCase"]();});
         return password;
     }
     
@@ -342,26 +193,26 @@ function SmartVoteAPI() {
         else {
             return padLeft("0" +indexStr, length); 
         }
-} 
+    } 
 
     function contractNameToAddress(contractName) {
 	    return esl.ll.Main(dougAddr, sutil.stringToHex("DOUG"), sutil.stringToHex(contractName));
 	}
 
-    function adminNameToAdminAddress(username) {
-        return esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username));
-    }
-
-    function voterNameToVoterAddress(username) {
-        return esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username));
-    }
-
-    function anonymousVoterNameToAnonymousVoterAddress(username) {
-        return esl.ll.Main(amAddr, sutil.stringToHex("anonymousVoterNameToAnonymousVoterAddress"), sutil.stringToHex(username));
+    function userNameToUserAddress(identity, username) {
+        var varStr = "";
+        if (identity === "organizer") {
+            varStr = "adminNameToAdminAddress";
+        } else if (identity === "voter") {
+            varStr = "voterNameToVoterAddress";
+        } else if (identity === "anonymousVoter") {
+            varStr = "anonymousVoterNameToAnonymousVoterAddress";
+        }
+        return esl.ll.Main(amAddr, sutil.stringToHex(varStr), sutil.stringToHex(username));
     }
 
     function electionNameToElectionAddress(electionName) {
-        return esl.ll.Main(emAddr, sutil.stringToHex(electionName), sutil.stringToHex(electionName));
+        return esl.ll.Main(emAddr, sutil.stringToHex("electionNameToElectionAddress"), sutil.stringToHex(electionName));
     }
 
 	this.init = function() {
@@ -402,5 +253,9 @@ function SmartVoteAPI() {
             return "0x0";
         }
         return hash;
+    }
+
+    this.test4 = function() {
+        return electionNameToElectionAddress("123123");
     }
 };

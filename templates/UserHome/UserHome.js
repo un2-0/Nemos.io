@@ -26,8 +26,8 @@ function loadInformation(){
 	
 	var temp = LoginAs();
 	
-	if(temp == "organiser"){
-		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organiser: "+ sessionStorage.username +"<i class='fa fa-caret-down'></i>";
+	if(temp == "organizer"){
+		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organizer: "+ sessionStorage.username +"<i class='fa fa-caret-down'></i>";
 		document.getElementById("anoPoll").style.display="none";
 	
 	}else if(temp == "voter"){
@@ -87,7 +87,7 @@ function changePassword(){
 	
 	var temp = LoginAs();
 	
-	if(temp == "organiser" || temp == "voter"){
+	if(temp == "organizer" || temp == "voter"){
 		changeFirstPassword();
 		
 	}else if(temp == "anoVoter"){

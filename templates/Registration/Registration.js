@@ -29,7 +29,7 @@ function receiveRegistrationData(){
 		
 		if (password1.value === password2.value) {
 			
-			/*Data in "organiserRegister" request:
+			/*Data in "organizerRegister" request:
 			 * 			"username": new first account id
 			 * 	
 			 * 			"Password": new account password
@@ -41,9 +41,9 @@ function receiveRegistrationData(){
 			 * */
 			
 			
-			var newOrganiser = {"username":username.value,"password":password1.value};
+			var newOrganizer = {"username":username.value,"password":password1.value};
 			
-			sender.sendAsync("POST", baseUrl+ "/organiserRegister", JSON.stringify(newOrganiser), function(res){ 
+			sender.sendAsync("POST", baseUrl+ "/organizerRegister", JSON.stringify(newOrganizer), function(res){ 
 
 				if (res.status == 200) {
 							console.log(res);
@@ -74,7 +74,7 @@ function receiveRegistrationData(){
 							}		
 							
 				} else {
-					window.alert("failed to create new organiser account");
+					window.alert("failed to create new organizer account");
 				}
 
 			});			

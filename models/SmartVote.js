@@ -99,14 +99,17 @@ function SmartVote() {
         var response = {};
         printQuery(query);
         var identity = query.identity;
-        if (identity === "organiser") {
-            response.result = checkOrganizer(query.username, query.password);
+        var username = query.username;
+        if (identity === "organizer") {
+            response.result = checkUser("organizer", username, query.password);
         } else if (identity === "voter") {
-            response.result = checkVoter(query.username, query.password);
+            response.result = checkUser("voter", username, query.password);
+        } else if (identity === "anoVoter"){
+            response.result = checkUser("anonymousVoter", username, query.password);
+            response.pollName = getAvailablePoll(username);
         } else {
             return network.getHttpResponse(400, {}, "Bad query.");
         }
-        Println(response.result);
         return network.getHttpResponseJSON(response);
     }
 
@@ -155,8 +158,7 @@ function SmartVote() {
         var rulesNum = parseInt(query.rulesNum, 10);
         var canOpts = query.canOpts;
         
-        var response = {};
-        response = createElection(query);
+        var response = createElection(query);
         registerVoters(pollName, response.publicKeys);
         return network.getHttpResponseJSON(response);
     }
@@ -184,12 +186,12 @@ function SmartVote() {
      *               result = "success" or "usernameExist"
      * }
      */
-    handlers.organiserRegister = function (query) {
+    handlers.organizerRegister = function (query) {
         printQuery(query);
         var organizerName = query.username;
         var password = query.password;
         var response = {};
-        response.result = registerOrganizer(organizerName, password);
+        response.result = registerUser("organizer", organizerName, password);
         return network.getHttpResponseJSON(response);
     }
 
@@ -241,11 +243,11 @@ function SmartVote() {
         var response = {};
         var username = query.username;
         var identity = query.identity;
-        if (identity === "organizer" && organizerExist(username)) {
+        if (identity === "organizer" && userExists(identity, username)) {
             // TODO
             // get all the elections that are created by the organizer
             // set up response
-        } else if (identity === "voter" && voterExist(username)) {
+        } else if (userExists(identity, username)) {
             // TODO
             // get all the elections that the voter can participate in
             // set up response
@@ -473,21 +475,9 @@ function SmartVote() {
 
     function registerVoters(pollName, publicKeys) {
         for (var i = 0; i < publicKeys.length; i++) {
-            registerVoter(publicKeys[i].id, publicKeys[i].password);
+            registerUser("voter", publicKeys[i].id, publicKeys[i].password);
             registerElection(publicKeys[i].id, pollName);
         }
-    }
-
-    function registerVoter(username, password) {
-        svApi.registerVoter(username);
-        if (COMMITTING) {
-            monk.Commit();
-        }
-        svApi.setVoterPassword(username, password);
-        if (COMMITTING) {
-            monk.Commit();
-        }
-        return "success";
     }
 
     function registerElection(username, pollName) {
@@ -511,42 +501,20 @@ function SmartVote() {
         return svApi.electionNameExists(electionName);
     }
     
-    function organizerExists(username) {
-        return svApi.organizerExists(username);
-    }
-    
-    function voterExists(username) {
-        return svApi.voterExists(username);
+    function userExists(identity, username) {
+        return svApi.userExists(identity, username);
     }
 
-    function registerOrganizer(username, password) {
-        if (organizerExists(username)) {
+    function registerUser(identity, username, password) {
+        if (userExists(identity, username)) {
             return "usernameExist";
         }
         else {
-            svApi.registerOrganizer(username);
+            svApi.registerUser(identity, username);
             if (COMMITTING) {
                 monk.Commit();
             }
-            svApi.setOrganizerPassword(username, password);
-            if (COMMITTING) {
-                monk.Commit();
-            }
-            return "success";
-        }        
-    }
-
-    function registerVoter(username, password) {
-        // TODO
-        if (voterExists(username)) {
-            return "usernameExist";
-        }
-        else {
-            svApi.registerVoter(username);
-            if (COMMITTING) {
-                monk.Commit();
-            }
-            svApi.setVoterPassword(username, password);
+            svApi.setUserPassword(identity, username, password);
             if (COMMITTING) {
                 monk.Commit();
             }
@@ -554,24 +522,12 @@ function SmartVote() {
         }        
     }
 	
-    function checkOrganizer(username, password) {
-        if (!organizerExists(username)) {
+    function checkUser(identity, username, password) {
+        if (!userExists(identity, username)) {
             return "userDoesntExist";
         }
         else {
-            if (svApi.checkOrganizerPassword(username, password)) {
-                return "success";
-            }
-            return "wrongPassWord";
-        }
-    }
-
-    function checkVoter(username, password) {
-        if (!voterExists(username)) {
-            return "userDoesntExist";
-        }
-        else {
-            if (svApi.checkVoterPassword(username, password)) {
+            if (svApi.checkUserPassword(identity, username, password)) {
                 return "success";
             }
             return "wrongPassWord";
@@ -650,11 +606,11 @@ function SmartVote() {
 	}
 
 	this.test1 = function() {
-		var plAddr = svApi.createElectionAccount("mySecondElection");
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		Println("9999999999999999999\n" + sutil.hexToString(svApi.test1("mySecondElection")));
+        svApi.createElection("usr1", "123123");
+            if (COMMITTING) {
+                monk.Commit();
+            }
+		Println(svApi.test4());
 	}
 
 	this.test2 = function() {

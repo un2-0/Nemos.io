@@ -25,8 +25,8 @@ function LoginAs() {
 			
 	}else{
 		
-		if(sessionStorage.identity == "organiser"){
-			return "organiser";
+		if(sessionStorage.identity == "organizer"){
+			return "organizer";
 			
 		} else if(sessionStorage.identity == "voter"){
 			return "voter";
@@ -349,7 +349,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 						
 						nextBtn.innerHTML = "participate in the poll";	
 						
-					}else if(sessionStorage.identity == "organiser"){
+					}else if(sessionStorage.identity == "organizer"){
 						
 						nextBtn.innerHTML = "please wait for the poll ends to see the result";
 						nextBtn.disabled = true;
@@ -428,7 +428,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 							}
 						
 							
-						}else if(sessionStorage.identity == "organiser"){
+						}else if(sessionStorage.identity == "organizer"){
 														
 						}else if(sessionStorage.identity == "anoVoter"){
 							voting(sessionStorage.username, selectedPollName);
@@ -1442,7 +1442,7 @@ function module1Creation(moduleLoader) {
 	
 	var subPollBtn = document.createElement("input");
 	 subPollBtn.setAttribute("type","submit");
-	 subPollBtn.value = "creat poll";
+	 subPollBtn.value = "create poll";
  
 	 
 	//---------------------------------------------------------------------------------------------- 
@@ -1642,7 +1642,7 @@ function module1Creation(moduleLoader) {
 			window.alert("open time should be before close time");
 			openTime.scrollIntoView();
 		}else {
-			window.alert("Sumbmit to creat poll");
+			window.alert("Sumbmit to create poll");
 				 
 			temp1 = {"moduleName": "module1",
 					"pollName": pollName.value.toString(),
@@ -1710,22 +1710,12 @@ function module1Creation(moduleLoader) {
 					
 					body = JSON.parse(body);
 					
-					 // local test
-					/*var	body = {"result":"success"
-							
-							,"publicKeys":[
-						                         {"id":"01", "password":"Doe"},
-						                         {"id":"02","password":"Smith"},
-						                         {"id":"03", "password":"Jones"}
-						                     ]};
-					*/
-					
 					if (body.result == "success") {
 						
 							contentContainer.innerHTML = "";
 							 
 							 for (var i = 0; i < body.publicKeys.length; i++) {
-								temp1 = document.createTextNode("voter"+i+"**** id: "+body.publicKeys[i].id+ " ******* password: "+body.publicKeys[i].password);
+								temp1 = document.createTextNode("voter"+i+"  id: "+body.publicKeys[i].id+ "  password: "+body.publicKeys[i].password);
 								contentContainer.appendChild(temp1);
 								contentContainer.appendChild(document.createElement("br"));
 								contentContainer.appendChild(document.createElement("br"));
@@ -1810,7 +1800,7 @@ function module2Creation(moduleLoader) {
 	
 	var subPollBtn = document.createElement("input");
 	 subPollBtn.setAttribute("type","submit");
-	 subPollBtn.value = "creat poll";
+	 subPollBtn.value = "create poll";
 	
 	var pollsContainer = document.createElement("fieldset");
 	pollsContainer.id = "pollsContainer";
