@@ -29,13 +29,9 @@ function receiveRegistrationData(){
 		
 		if (password1.value === password2.value) {
 			
-<<<<<<< HEAD
-			/*Data in "organizerRegister" request:
-=======
 			loadingDisabling("on", "Creating account for you");
 			
-			/*Data in "organiserRegister" request:
->>>>>>> 1b23327cfe875b2c0e2c6125ef0e5b33288db537
+			/*Data in "organizerRegister" request:
 			 * 			"username": new first account id
 			 * 	
 			 * 			"Password": new account password

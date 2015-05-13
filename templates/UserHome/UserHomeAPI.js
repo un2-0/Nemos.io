@@ -1690,10 +1690,8 @@ function module1Creation(moduleLoader) {
 			openTime.scrollIntoView();
 			return;
 		}else {
-<<<<<<< HEAD
 			window.alert("Sumbmit to create poll");
 				 
-=======
 			var tempConfirm = confirm("Confirm to create the Poll now?");
 			
 			if(tempConfirm == false){
@@ -1702,7 +1700,6 @@ function module1Creation(moduleLoader) {
 			
 			loadingDisabling("on", "Creating your poll, please be patient");
 			
->>>>>>> 1b23327cfe875b2c0e2c6125ef0e5b33288db537
 			temp1 = {"moduleName": "module1",
 					"pollName": pollName.value.toString(),
 					"organizerName": organizerName.value.toString(),
