@@ -73,3 +73,32 @@ function post(path, params, method) { // e.g. post('/contact/', {name: 'Johnny B
     document.body.appendChild(form);
     form.submit();
 }
+
+function loadingDisabling(status,content) {
+	
+	disablelingDiv = document.getElementById('disablingDiv');
+	
+	loadingCaption = document.getElementById('loadingCaption');
+	
+	//disablelingDiv.style.display='block';
+	//disablelingDiv.style.display='none';
+	
+	if(status == "on"){
+		
+		disablelingDiv.style.display='block';
+		
+		loadingCaption.innerHTML = content;
+		
+	}else if(status == "off"){
+		
+		disablelingDiv.style.display='none';
+		
+		loadingCaption.innerHTML = "";
+		
+	}else{
+		return;
+	}
+	
+}
+
+

@@ -10,13 +10,16 @@ window.onload = apiInit;
 
 
 function apiInit() {
-	contentContainer = document.getElementById("contentContainer");
+	contentContainer = document.getElementById("contentContainer");	
+	
 }
 
 function showDefaultContent() {
 	
 	contentContainer.innerHTML = '<div class="header"> 			<div class="stats"> 				<p class="stat"> 					<span class="label label-info">5</span> Invitations 				</p> 				<p class="stat"> 					<span class="label label-success">27</span> On-going Polls 				</p> 				<p class="stat"> 					<span class="label label-danger">15</span> Overdue/Expired Polls 				</p> 			</div>  			<h1 class="page-title">Dashboard</h1> 			<ul class="breadcrumb"> 				<li><a href="../../index.html">Home</a></li> 				<li class="active">Dashboard</li> 			</ul>  		</div> 		<div class="main-content" id="mainContentContainer"> 			<div class="panel panel-default"> 				<a href="#page-stats" class="panel-heading" data-toggle="collapse">Latest 					Statistics</a> 				<div id="page-stats" class="panel-collapse panel-body collapse in">  					<div class="row"> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="3000" data-displayPrevious="true" value="2500" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Related Poll list</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="4500" data-displayPrevious="true" value="3299" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Polls You can 									Participate in</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="2700" data-displayPrevious="true" value="1840" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Pending Polls</h3> 							</div> 						</div> 						<div class="col-md-3 col-sm-6"> 							<div class="knob-container"> 								<input class="knob" data-width="200" data-min="0" 									data-max="15000" data-displayPrevious="true" value="10067" 									data-fgColor="#92A3C2" data-readOnly=true;> 								<h3 class="text-muted text-center">Completed Polls</h3> 							</div> 						</div> 					</div> 				</div> 			</div>  			<div class="row"> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<div class="panel-heading no-collapse"> 							Not Collapsible<span class="label label-warning"></span> 						</div> 						<table class="table table-bordered table-striped"> 							<thead> 								<tr> 									<th>First Name</th> 									<th>Last Name</th> 									<th>Username</th> 								</tr> 							</thead> 							<tbody> 								<tr> 									<td>Kun</td> 									<td>Liu</td> 									<td>kl333</td> 								</tr> 								<tr> 									<td></td> 									<td></td> 									<td></td> 								</tr>  							</tbody> 						</table> 					</div> 				</div> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<a href="#widget1container" class="panel-heading" 							data-toggle="collapse">Collapsible </a> 						<div id="widget1container" class="panel-body collapse in"> 							<h2>Test</h2> 						</div> 					</div> 				</div> 			</div>  			<div class="row"> 				<div class="col-sm-6 col-md-6"> 					<div class="panel panel-default"> 						<a href="#widget2container" class="panel-heading" 							data-toggle="collapse">Collapsible </a> 						<div id="widget2container" class="panel-body collapse in"> 							<h2>Test</h2> 						</div> 					</div> 				</div> 			</div>  		</div>';
 }
+
+
 
 function LoginAs() {
 	
@@ -592,6 +595,9 @@ function getSecondIDPassword(selectedPollName) {
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	
+	loadingDisabling("on", "loading the template ballot for you");
+	
+	
 	/*Happend when the voter has not get the initially random second account id and password
 	 * Data in "getVoterSecondIdPassword":
 	 * 
@@ -638,6 +644,7 @@ function voting(secondIdValue,selectedPollName) {
 	
 	sender.sendAsync("POST", baseUrl+ "/getVotingInfo", JSON.stringify(voterVotingInfo), function(res){ 
 
+		loadingDisabling("off", "");
 		
 		if (res.status == 200) {
 			
@@ -664,6 +671,7 @@ function voting(secondIdValue,selectedPollName) {
 					
 					var votingTable = document.createElement("TABLE");
 					votingTable.id = "votingTable";
+					votingContainer.setAttribute("class","table table-bordered table-striped");
 					
 					var rulesDescription = document.createElement("H3");
 					rulesDescription.id ="rulesDescription";
@@ -747,6 +755,8 @@ function voting(secondIdValue,selectedPollName) {
 					
 					votingContainer.addEventListener("submit",function(){
 						
+						
+						
 						var count = 0;
 						
 						for (var i = 0; i < checkBoxes.length; i++) {
@@ -763,8 +773,19 @@ function voting(secondIdValue,selectedPollName) {
 									"\nPlese recheck your votes.");
 							
 							rulesDescription.scrollIntoView();
+							
+							return;
 						
 						}else{
+							
+							var tempConfirm = confirm("Submit your ballot now?");
+							
+							if(tempConfirm == false){
+								return;
+							}
+							
+							loadingDisabling("on", "Submitting your ballot, please be patient");
+							
 							
 							var ballot = {"secondId":secondIdValue,"selecedPollName":selectedPollName,"votes":[]};
 							
@@ -777,6 +798,8 @@ function voting(secondIdValue,selectedPollName) {
 								}
 								
 							}
+							
+							
 							
 							/*Data in "submitVote":
 							 * 			"secondId": the voter second account id
@@ -791,7 +814,9 @@ function voting(secondIdValue,selectedPollName) {
 							
 						/*
 							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
-
+								
+								loadingDisabling("off", "");
+								
 								if (res.status == 200) {
 											console.log(res);
 											var body = res.response;
@@ -800,6 +825,7 @@ function voting(secondIdValue,selectedPollName) {
 										
 											//test
 								*/			
+							
 											var body1 = {"result":"success"};
 											
 											if (body1.result == "success") {
@@ -812,6 +838,7 @@ function voting(secondIdValue,selectedPollName) {
 											} else {
 												
 												window.alert("bad response");
+												return;
 											}
 									
 									/*	
@@ -918,6 +945,7 @@ function showResult(selectedPollName) {
 						
 						var resultTable = document.createElement("TABLE");
 						resultTable.id = "resultTable";
+						resultTable.setAttribute("class","table table-bordered table-striped");
 						
 						var resultsDescription = document.createElement("H3");
 						resultsDescription.id ="resultsDescription";
@@ -925,6 +953,7 @@ function showResult(selectedPollName) {
 						
 						var logTable = document.createElement("TABLE");
 						logTable.id = "logTable";
+						logTable.setAttribute("class","table table-bordered table-striped");
 						
 						var logDescription = document.createElement("H3");
 						logDescription.id ="logDescription";
@@ -1135,6 +1164,12 @@ function changeFirstPassword() {
 		if (newFirstPassword1.value === newFirstPassword2.value) {
 			
 			
+			var tempConfirm = confirm("Are you sure to change your first account password?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
 			/*Data in "changeFirstPassword" request:
 			 * 			"username": first account id
 			 * 			"newFirstPassword": new first account password
@@ -1169,6 +1204,7 @@ function changeFirstPassword() {
 							} else {
 								
 								window.alert("bad response");
+								return;
 							}			
 			/*				
 							
@@ -1188,6 +1224,7 @@ function changeFirstPassword() {
 			newFirstPasswordReceiver.reset();
 			
 			newFirstPassword1.scrollIntoView();
+			return;
 		
 		}
 		
@@ -1257,6 +1294,12 @@ function changeSecondPassword(secondId,selectedPollName) {
 		
 		if (newSecondPassword1.value === newSecondPassword2.value) {
 			
+			var tempConfirm = confirm("Are you sure to change your second account password?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
 			/*Data in "changeSecondPassword" request:
 			 * 			"username": first account id
 			 * 			"secondId": second account id
@@ -1293,6 +1336,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 							} else {
 								
 								window.alert("bad response");
+								return;
 							}			
 			/*				
 							
@@ -1312,6 +1356,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 			newSecondPasswordReceiver.reset();
 			
 			newSecondPassword1.scrollIntoView();
+			return;
 		
 		}
 		
@@ -1331,7 +1376,6 @@ function module1Creation(moduleLoader) {
 	//window.alert("module 1 selected");
 	//moduleLoader.innerHTML = "module 1 load test";
 	
-	//loadBasicPollInformation(moduleLoader, "create");
 	
 	var module1Form = document.createElement("form");
 	module1Form.id = "module1Form";
@@ -1613,7 +1657,8 @@ function module1Creation(moduleLoader) {
 	
 	module1Form.addEventListener("submit",function(){
 				 
-			 
+		
+		
 		var currentDate = new Date();
 		
 		
@@ -1633,17 +1678,31 @@ function module1Creation(moduleLoader) {
 		if(currentDate > OTDate){
 			window.alert("illegal open time (open time should be after current time)");
 			openTime.scrollIntoView();
+			return;
 			
 		}else if (currentDate > CTDate){
 			window.alert("illegal close time (close time should be after current time)");
 			closeTime.scrollIntoView();
+			return;
 
 		}else if (OTDate >= CTDate){
 			window.alert("open time should be before close time");
 			openTime.scrollIntoView();
+			return;
 		}else {
+<<<<<<< HEAD
 			window.alert("Sumbmit to create poll");
 				 
+=======
+			var tempConfirm = confirm("Confirm to create the Poll now?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
+			loadingDisabling("on", "Creating your poll, please be patient");
+			
+>>>>>>> 1b23327cfe875b2c0e2c6125ef0e5b33288db537
 			temp1 = {"moduleName": "module1",
 					"pollName": pollName.value.toString(),
 					"organizerName": organizerName.value.toString(),
@@ -1704,6 +1763,9 @@ function module1Creation(moduleLoader) {
 	 * 		
 	*/		
 			sender.sendAsync("POST", baseUrl+ "/module1CreatePoll", JSON.stringify(temp1), function(res){
+				
+				loadingDisabling("off", "");
+				
 				if (res.status == 200) {
 					console.log(res);
 					var body = res.response;	
@@ -1852,15 +1914,25 @@ function module2Creation(moduleLoader) {
 	
 	
 	module2Form.addEventListener("submit",function(){
+			
 		
 		
 			for (var i = 0; i < pollNum.value; i++) {
 				if(!checkTime(i)){
-					break;
+					return;
 				} else if(!checkVoterNum(i)){
-					break;
+					return;
 				}
 			}
+			
+			
+			var tempConfirm = confirm("Confirm to create the Poll now?");
+			
+			if(tempConfirm == false){
+				return;
+			}
+			
+			loadingDisabling("on", "Creating your poll, please be patient");
 			
 			var tempFianlArray = [];
 			
@@ -1963,6 +2035,8 @@ function module2Creation(moduleLoader) {
 			
 				
 			sender.sendAsync("POST", baseUrl+ "/module2CreatePoll", JSON.stringify(pollsInfo), function(res){
+				
+				loadingDisabling("off","");
 				/*	
 				if (res.status == 200) {
 					console.log(res);

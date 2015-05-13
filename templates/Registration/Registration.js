@@ -29,7 +29,13 @@ function receiveRegistrationData(){
 		
 		if (password1.value === password2.value) {
 			
+<<<<<<< HEAD
 			/*Data in "organizerRegister" request:
+=======
+			loadingDisabling("on", "Creating account for you");
+			
+			/*Data in "organiserRegister" request:
+>>>>>>> 1b23327cfe875b2c0e2c6125ef0e5b33288db537
 			 * 			"username": new first account id
 			 * 	
 			 * 			"Password": new account password
@@ -45,6 +51,8 @@ function receiveRegistrationData(){
 			
 			sender.sendAsync("POST", baseUrl+ "/organizerRegister", JSON.stringify(newOrganizer), function(res){ 
 
+				loadingDisabling("off", "");
+				
 				if (res.status == 200) {
 							console.log(res);
 							var body = res.response;

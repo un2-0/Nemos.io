@@ -3,6 +3,8 @@ var notification;
 var	sender = new HttpAPI();
 var temp;
 
+
+
 baseUrl = "/apis/SmartVote";
 
 window.onload(init());
@@ -13,6 +15,7 @@ function init() {
 	contentContainer = document.getElementById("contentContainer");
 	
 	notification = document.createElement("h3");	
+
 	
 	loadInformation();
 	//window.alert(sessionStorage.username);
