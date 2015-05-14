@@ -80,36 +80,36 @@ function login(identity){
 		    	
 		    	}else if (body.result == "userDoesntExist") {
 		    		
-		    		sessionStorage.username = "";
-		    		sessionStorage.identity = "";
-		    		sessionStorage.pollName = "";
+		    		clearSession();
 		    		
 		    		window.alert("Sorry, the user name does not exist");
 		    		
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
-		    		sessionStorage.username = "";
-		    		sessionStorage.identity = "";
-		    		sessionStorage.pollName = "";
+		    		clearSession();
 		    		
 		    		window.alert("Sorry, your password is wrong");
 		    		
 				
 		    	} else {
-		    		sessionStorage.username = "";
-		    		sessionStorage.identity = "";
-		    		sessionStorage.pollName = "";
+		    		clearSession();
 		    		window.alert("bad response");
 		    	}
 
 	        } else {
-	        	sessionStorage.username = "";
-	    		sessionStorage.identity = "";
-	    		sessionStorage.pollName = "";
+	        	clearSession();
 		    	window.alert("failed to login");
 		    }
     	});
     }	
+	
+}
+
+function clearSession() {
+		
+	sessionStorage.username = "";
+	sessionStorage.identity = "";
+	sessionStorage.pollName = "";
 	
 }
