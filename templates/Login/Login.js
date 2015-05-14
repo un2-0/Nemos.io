@@ -24,8 +24,9 @@ function login(identity){
 	    //for test
 	    //Note that: browser in Eclipse doesnt support session storage,plz test in chrome
 	
-	    sessionStorage.username = username.value;
-	    sessionStorage.identity = identity;
+	//    sessionStorage.username = username.value;
+	//    sessionStorage.identity = identity;
+	    
 /*	
 	//for local test
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.username+"\nidentity insession: "+sessionStorage.identity);
@@ -64,36 +65,60 @@ function login(identity){
 		    	if (body.result == "success" && identity != "anonymousVoter") {  		
 
 		    		sessionStorage.username = username.value;
+<<<<<<< HEAD
 
+=======
+		    		sessionStorage.identity = identity;
+		    		sessionStorage.pollName = "";
+				
+>>>>>>> 871664f7dc933b6ee706b0773f47c6c533641240
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
 		    	}else if(body.result == "success" && identity === "anonymousVoter"){
 		    		
 		    		sessionStorage.username = username.value;
+<<<<<<< HEAD
 		    		sessionStorage.pollName = body.pollName[0];
                     window.alert(sessionStorage.pollName);
+=======
+		    		sessionStorage.identity = identity;
+		    		sessionStorage.pollName = body.pollName;
+>>>>>>> 871664f7dc933b6ee706b0773f47c6c533641240
 					
 		    		window.location.href = "templates/UserHome/UserHome.html";
 		    	
 		    	}else if (body.result == "userDoesntExist") {
-				
+		    		
+		    		clearSession();
+		    		
 		    		window.alert("Sorry, the user name does not exist");
 		    		
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
+		    		clearSession();
+		    		
 		    		window.alert("Sorry, your password is wrong");
 		    		
 				
 		    	} else {
-				
+		    		clearSession();
 		    		window.alert("bad response");
 		    	}
 
 	        } else {
+	        	clearSession();
 		    	window.alert("failed to login");
 		    }
     	});
     }	
+	
+}
+
+function clearSession() {
+		
+	sessionStorage.username = "";
+	sessionStorage.identity = "";
+	sessionStorage.pollName = "";
 	
 }
