@@ -7,6 +7,7 @@ var temp;
 
 baseUrl = "/apis/SmartVote";
 
+
 window.onload(init());
 
 
@@ -16,7 +17,6 @@ function init() {
 	
 	notification = document.createElement("h3");	
 
-	
 	loadInformation();
 	//window.alert(sessionStorage.username);
 }
@@ -28,8 +28,9 @@ function loadInformation(){
 	//window.alert(sessionStorage.username);
 	
 	var temp = LoginAs();
-	
+
 	if(temp == "organizer"){
+
 		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Organizer: "+ sessionStorage.username +"<i class='fa fa-caret-down'></i>";
 		document.getElementById("anoPoll").style.display="none";
 	
@@ -39,7 +40,7 @@ function loadInformation(){
 		document.getElementById("createPoll").style.display="none";
 		document.getElementById("anoPoll").style.display="none";
 		
-	}else if(temp == "anoVoter"){
+	}else if(temp == "anonymousVoter"){
 		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Anonymous Voter: "+sessionStorage.username +" <i class='fa fa-caret-down'></i>";
 		
 		document.getElementById("showPolls").style.display="none";
@@ -93,7 +94,7 @@ function changePassword(){
 	if(temp == "organizer" || temp == "voter"){
 		changeFirstPassword();
 		
-	}else if(temp == "anoVoter"){
+	}else if(temp == "anonymousVoter"){
 		
 		changeSecondPassword(sessionStorage.username,sessionStorage.pollName);
 		

@@ -85,7 +85,7 @@ function SmartVoteAPI() {
     this.userExists = function(identity, username) {
         if (((identity === "organizer") && (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "voter") && (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "anonymousVoter") && (esl.ll.Main(amAddr, sutil.stringToHex("anonymousVoterNameToAnonymousVoterAddress"), sutil.stringToHex(username)) != "0x0"))) {
             return true;
-        };
+        }
         return false;
     }
 
@@ -177,6 +177,27 @@ function SmartVoteAPI() {
         return publicKeys;
     }
 
+    this.getAvailablePolls = function(identity, username) {
+        if (identity === "organizer") {
+            var pollAddr = esl.ll.Main(emAddr, sutil.stringToHex("electionList"), sutil.stringToHex("HEAD"));
+            var pollNames = [];
+            while (pollAddr != "0x0") {
+                if (getElectionOwner("electionAddress", pollAddr, "username") === username) {
+                    pollNames.push(electionAddressToElectionName(pollAddr));
+                };
+                pollAddr = esl.ll.Main(emAddr, sutil.stringToHex("electionList"), pollAddr);
+            }
+        } else {
+            var pollAddr = esl.ll.Main(userNameToUserAddress(identity, username), sutil.stringToHex("electionList"), sutil.stringToHex("HEAD"));
+            var pollNames = [];
+            while (pollAddr != "0x0") {
+                pollNames.push(electionAddressToElectionName(pollAddr));
+                pollAddr = esl.ll.Main(userNameToUserAddress(identity, username), sutil.stringToHex("electionList"), pollAddr);
+            }
+        }
+        return pollNames;
+    }
+
     function generateIdPrefix() {
         return parseInt((new Date()).getTime(), 10).toString(36);
     }
@@ -211,8 +232,36 @@ function SmartVoteAPI() {
         return esl.ll.Main(amAddr, sutil.stringToHex(varStr), sutil.stringToHex(username));
     }
 
+    function userAddressToUserName(identity, userAddress) {
+        var varStr = "";
+        if (identity === "organizer") {
+            varStr = "adminAddressToAdminName";
+        } else if (identity === "voter") {
+            varStr = "voterAddressToVoterName";
+        } else if (identity === "anonymousVoter") {
+            varStr = "anonymousVoterAddressToAnonymousVoterName";
+        }
+        return sutil.hexToString(esl.ll.Main(amAddr, sutil.stringToHex(varStr), userAddress));
+    }
+
     function electionNameToElectionAddress(electionName) {
         return esl.ll.Main(emAddr, sutil.stringToHex("electionNameToElectionAddress"), sutil.stringToHex(electionName));
+    }
+
+    function electionAddressToElectionName(electionAddress) {
+        return sutil.hexToString(esl.ll.Main(emAddr, sutil.stringToHex("electionAddressToElectionName"), electionAddress));
+    }
+
+    function getElectionOwner(electionStrType, electionStr, userStrType) {
+        var owner = "";
+        if (electionStrType === "electionName") {
+            electionStr = electionNameToElectionAddress(electionStr);
+        }
+        owner = esl.single.Value(electionStr, sutil.stringToHex("owner"));
+        if (userStrType === "username") {
+            owner = userAddressToUserName("organizer", owner);
+        }
+        return owner;
     }
 
 	this.init = function() {

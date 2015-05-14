@@ -86,7 +86,7 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastAdmin") 0) {
-                (llAddLink (singleGet "lastAdmin") @0x0)
+                (llAddLink "adminList" (singleGet "lastAdmin") @0x0)
                 (llAddLink "reverseAdminList" @0x0 (singleGet "lastAdmin"))
             })
 
@@ -129,7 +129,7 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastVoter") 0) {
-                (llAddLink (singleGet "lastVoter") @0x0)
+                (llAddLink "voterList" (singleGet "lastVoter") @0x0)
                 (llAddLink "reverseVoterList" @0x0 (singleGet "lastVoter"))
             })
 
@@ -172,7 +172,7 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastAnonymousVoter") 0) {
-                (llAddLink (singleGet "lastAnonymousVoter") @0x0)
+                (llAddLink "anonymousVoterList" (singleGet "lastAnonymousVoter") @0x0)
                 (llAddLink "reverseAnonymousVoterList" @0x0 (singleGet "lastAnonymousVoter"))
             })
 
@@ -287,8 +287,7 @@
                 (llAddLink "reverseAdminList" @0x40 @0x20)
             })
 
-            [0xA0](llGet "adminAddressToAdminName" @0x0)
-            (llRmLink "adminNameToAdminAddress" @0xA0)
+            (llRmLink "adminNameToAdminAddress" (llGet "adminAddressToAdminName" @0x0))
             (llRmLink "adminAddressToAdminName" @0x0)
 
             [0x0]1
@@ -342,8 +341,7 @@
                 (llAddLink "reverseVoterList" @0x40 @0x20)
             })
 
-            [0xA0](llGet "voterAddressToVoterName" @0x0)
-            (llRmLink "voterNameToVoterAddress" @0xA0)
+            (llRmLink "voterNameToVoterAddress" (llGet "voterAddressToVoterName" @0x0))
             (llRmLink "voterAddressToVoterName" @0x0)
 
             [0x0]1
@@ -397,8 +395,7 @@
                 (llAddLink "reverseAnonymousVoterList" @0x40 @0x20)
             })
 
-            [0xA0](llGet "anonymousVoterAddressToAnonymousVoterName" @0x0)
-            (llRmLink "anonymousVoterNameToAnonymousVoterAddress" @0xA0)
+            (llRmLink "anonymousVoterNameToAnonymousVoterAddress" (llGet "anonymousVoterAddressToAnonymousVoterName" @0x0))
             (llRmLink "anonymousVoterAddressToAnonymousVoterName" @0x0)
 
             [0x0]1

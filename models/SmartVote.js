@@ -100,16 +100,12 @@ function SmartVote() {
         printQuery(query);
         var identity = query.identity;
         var username = query.username;
-        if (identity === "organizer") {
-            response.result = checkUser("organizer", username, query.password);
-        } else if (identity === "voter") {
-            response.result = checkUser("voter", username, query.password);
-        } else if (identity === "anoVoter"){
-            response.result = checkUser("anonymousVoter", username, query.password);
-            response.pollName = getAvailablePoll(username);
-        } else {
+        if (identity === "anonymousVoter"){
+            response.pollName = getAvailablePolls(identity, username);
+        } else if ((identity != "organizer") && (identity != "voter") && (identity != "anonymousVoter")) {
             return network.getHttpResponse(400, {}, "Bad query.");
         }
+        response.result = checkUser(identity, username, query.password);
         return network.getHttpResponseJSON(response);
     }
 
@@ -159,7 +155,9 @@ function SmartVote() {
         var canOpts = query.canOpts;
         
         var response = createElection(query);
-        registerVoters(pollName, response.publicKeys);
+        if (response.result !== "pollNameExist") {
+            registerVoters(pollName, response.publicKeys);
+        }
         return network.getHttpResponseJSON(response);
     }
     
@@ -235,7 +233,7 @@ function SmartVote() {
      * 
      * @response response = {
      *               "result": "success" or others
-     *               "electionslist": ["electionname1","electionname2","electionname3", ...]
+     *               "pollslist": ["electionname1","electionname2","electionname3", ...]
      *           }
      */
     handlers.showPollList = function (query) {
@@ -243,19 +241,14 @@ function SmartVote() {
         var response = {};
         var username = query.username;
         var identity = query.identity;
-        if (identity === "organizer" && userExists(identity, username)) {
-            // TODO
-            // get all the elections that are created by the organizer
-            // set up response
-        } else if (userExists(identity, username)) {
-            // TODO
-            // get all the elections that the voter can participate in
-            // set up response
+        if (userExists(identity, username)) {
+            response.result = "success";
+            response.pollslist = getAvailablePolls(identity, username);  
         } else {
             return network.getHttpResponse(400, {},
                     "Bad query");
         }
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -575,6 +568,10 @@ function SmartVote() {
 
     function setDescription(electionName, description) {
         return svApi.setDescription(electionName, description);
+    }
+
+    function getAvailablePolls(identity, username) {
+        return svApi.getAvailablePolls(identity, username);
     }
 
 	// functions talking with ipfs

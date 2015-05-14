@@ -33,6 +33,7 @@
     ; Variables
     ; --------------------------------------------------------------------------
     (singleInit "buffer" 0)
+    (singleInit "buffer2" 0)
     (singleInit "lastElection" 0)
     (kvInit "lastModified")
     (llInit "electionAddressToElectionName")
@@ -52,7 +53,7 @@
         ; ----------------------------------------------------------------------
         (when (= (cmd) "createElection") {
             (singleSet "buffer" (elecname)) ;Store the name of election in case of conflict
-            [0xA0](crtraddr) ;Store the address of user in case of conflict
+            (singleSet "buffer2" (crtraddr)) ;Store the address of user in case of conflict
             
             ;Get the address of accountManager
             [0x0]"checkName"
@@ -61,7 +62,7 @@
 
             ;Then check if the caller has permission to create election
             [0x0]"checkBlacklist"
-            [0x20]@0xA0
+            [0x20](singleGet "buffer2")
             (CALL (gass) @0x40 0 0x0 0x40 0x40 0x20)
 
             (unless (= @0x40 0) (STOP))
@@ -81,7 +82,7 @@
 
             ;If there is an election stored
             (unless (= (singleGet "lastElection") 0) {
-                (llAddLink (singleGet "lastElection") @0x0)
+                (llAddLink "electionList" (singleGet "lastElection") @0x0)
                 (llAddLink "reverseElectionList" @0x0 (singleGet "lastElection"))
             })
 
@@ -96,7 +97,7 @@
             (CALL (gass) DAPPDOUG 0 0x20 0x80 0x20 0x20)
 
             [0x20]"init"
-            [0x40]@0xA0
+            [0x40](singleGet "buffer2")
             (CALL (gass) @0x0 0 0x20 0x40 0x20 0x20)
 
             (kvSet "lastModified" @0x0 (TIMESTAMP))
@@ -151,8 +152,7 @@
                 (llAddLink "reverseElectionList" @0x40 @0x20)
             })
 
-            [0xA0](llGet "electionAddressToElectionName" @0x0)
-            (llRmLink "electionNameToElectionAddress" @0xA0)
+            (llRmLink "electionNameToElectionAddress" (llGet "electionAddressToElectionName" @0x0))
             (llRmLink "electionAddressToElectionName" @0x0)
             (kvSet "lastModified" @0x0 0)
 

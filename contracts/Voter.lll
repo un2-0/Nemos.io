@@ -91,7 +91,7 @@
 
             ;If there is an election stored
             (unless (= (singleGet "lastElection") 0) {
-                (llAddLink (singleGet "electionList" "lastElection") (elecaddr))
+                (llAddLink "electionList" (singleGet "lastElection") (elecaddr))
                 (llAddLink "reverseElectionList" (elecaddr) (singleGet "lastElection"))
             })
 

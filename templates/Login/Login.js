@@ -61,16 +61,17 @@ function login(identity){
 	    		//var body = {"result":"successAno","pollName":"ssddd"};
 	    
 	    		
-		    	if (body.result == "success" && identity !== "anoVoter") {  		
-		    		
+		    	if (body.result == "success" && identity != "anonymousVoter") {  		
+
 		    		sessionStorage.username = username.value;
-				
+
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-		    	}else if(body.result == "success" && identity === "anoVoter"){
+		    	}else if(body.result == "success" && identity === "anonymousVoter"){
 		    		
 		    		sessionStorage.username = username.value;
-		    		sessionStorage.pollName = body.pollName;
+		    		sessionStorage.pollName = body.pollName[0];
+                    window.alert(sessionStorage.pollName);
 					
 		    		window.location.href = "templates/UserHome/UserHome.html";
 		    	

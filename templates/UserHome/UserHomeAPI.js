@@ -22,19 +22,19 @@ function showDefaultContent() {
 
 
 function LoginAs() {
-	
+
 	if(sessionStorage.username == "" || sessionStorage.username == null || sessionStorage.identity == "" || sessionStorage.identity == null){
 		return false;
 			
 	}else{
-		
+
 		if(sessionStorage.identity == "organizer"){
 			return "organizer";
 			
 		} else if(sessionStorage.identity == "voter"){
 			return "voter";
-		}  else if(sessionStorage.identity == "anoVoter"){
-			return "anoVoter";
+		}  else if(sessionStorage.identity == "anonymousVoter"){
+			return "anonymousVoter";
 		}else{
 			return false;
 		}
@@ -128,7 +128,6 @@ function showPollList() {
 		 *
 		 * */
 		
-		/*
 		var username = {"identity":sessionStorage.identity,"username":sessionStorage.username};
 		
 		sender.sendAsync("POST", baseUrl+ "/showPollList", JSON.stringify(username), function(res){
@@ -137,14 +136,7 @@ function showPollList() {
 				console.log(res);
 				var body = res.response;	
 				
-				body = JSON.parse(body);*/
-			
-				 // local test
-				var	body = {"result":"success"
-						
-						,"pollslist":["aaaaa","bbbbbb","ccccc","dddddd","eeeeeee"]
-					                     };
-				
+				body = JSON.parse(body);
 				
 				if (body.result == "success") {
 					
@@ -192,14 +184,10 @@ function showPollList() {
 					window.alert("bad response");
 				}
 				
-		   /*     
 		    } else {
 				window.alert("failed to get polls list");
 			}
-			*/
-	/*		
 		});
-		*/
 		
 	} else {
 		contentContainer.appendChild(document.createTextNode("Not account logged in, fail to display polls list"));
@@ -348,7 +336,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 						}
 						
 							
-					}else if(sessionStorage.identity == "anoVoter"){
+					}else if(sessionStorage.identity == "anonymousVoter"){
 						
 						nextBtn.innerHTML = "participate in the poll";	
 						
@@ -433,7 +421,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 							
 						}else if(sessionStorage.identity == "organizer"){
 														
-						}else if(sessionStorage.identity == "anoVoter"){
+						}else if(sessionStorage.identity == "anonymousVoter"){
 							voting(sessionStorage.username, selectedPollName);
 						}
 						
@@ -1693,7 +1681,7 @@ function module1Creation(moduleLoader) {
 			window.alert("Sumbmit to create poll");
 				 
 			var tempConfirm = confirm("Confirm to create the Poll now?");
-			
+
 			if(tempConfirm == false){
 				return;
 			}

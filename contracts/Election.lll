@@ -87,8 +87,6 @@
     (llInit "anonymousVoterList")
     (llInit "reverseAnonymousVoterList")
 
-    (llInit "voterToAnonymousVoter")
-
     (llInit "legalAttributeKeys")
     (llAddLink "legalAttributeKeys" "owner" 1)
     (llAddLink "legalAttributeKeys" "hash" 1)
@@ -267,7 +265,7 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastVoter") 0) {
-                (llAddLink (singleGet "voterList" "lastVoter") (vtraddr))
+                (llAddLink "voterList" (singleGet "lastVoter") (vtraddr))
                 (llAddLink "reverseVoterList" (vtraddr) (singleGet "lastVoter"))
             })
 
@@ -357,7 +355,7 @@
 
             ;If there is a user stored
             (unless (= (singleGet "lastAnonymousVoter") 0) {
-                (llAddLink (singleGet "anonymousVoterList" "lastAnonymousVoter") (vtraddr))
+                (llAddLink "anonymousVoterList" (singleGet "lastAnonymousVoter") (vtraddr))
                 (llAddLink "reverseAnonymousVoterList" (vtraddr) (singleGet "lastAnonymousVoter"))
             })
 
@@ -420,38 +418,6 @@
                 (llAddLink "anonymousVoterList" @0x20 @0x40)
                 (llAddLink "reverseAnonymousVoterList" @0x40 @0x20)
             })
-
-            [0x0]1
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Add link between voter and anonymous voter.
-        ; ----------------------------------------------------------------------
-        ; Calldata: "addLinkBetweenAccount" vtraddr ansvtraddr
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "addLinkBetweenAccount") {
-            ;Check if the voter is already linked to an anonymous voter
-            (unless (= (llGet "voterToAnonymousVoter" (vrtaddr)) 0) (STOP))
-
-            (llAddLink "voterAnonymousVoter" (vtraddr) (ansvtraddr))
-
-            [0x0]1
-            (return 0x0 0x20)
-        })
-
-        ; ----------------------------------------------------------------------
-        ; Remove link between voter and anonymous voter.
-        ; ----------------------------------------------------------------------
-        ; Calldata: "rmLinkBetweenAccount" vtraddr
-        ; Returns: 0 - fail | 1 - success
-        ; ----------------------------------------------------------------------
-        (when (= (cmd) "addLinkBetweenAccount") {
-            ;Check if the voter is already linked to an anonymous voter
-            (when (= (llGet "voterToAnonymousVoter" (vrtaddr)) 0) (STOP))
-
-            (llRmLink "voterAnonymousVoter" (vtraddr))
 
             [0x0]1
             (return 0x0 0x20)
