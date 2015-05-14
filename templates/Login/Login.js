@@ -24,8 +24,9 @@ function login(identity){
 	    //for test
 	    //Note that: browser in Eclipse doesnt support session storage,plz test in chrome
 	
-	    sessionStorage.username = username.value;
-	    sessionStorage.identity = identity;
+	//    sessionStorage.username = username.value;
+	//    sessionStorage.identity = identity;
+	    
 /*	
 	//for local test
 	window.alert("userinfo.username:"+userinfo.username +"\nuserinfo.password: "+userinfo.password+"\nusername in session: "+ sessionStorage.username+"\nidentity insession: "+sessionStorage.identity);
@@ -64,32 +65,48 @@ function login(identity){
 		    	if (body.result == "success" && identity !== "anoVoter") {  		
 		    		
 		    		sessionStorage.username = username.value;
+		    		sessionStorage.identity = identity;
+		    		sessionStorage.pollName = "";
 				
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
 		    	}else if(body.result == "success" && identity === "anoVoter"){
 		    		
 		    		sessionStorage.username = username.value;
+		    		sessionStorage.identity = identity;
 		    		sessionStorage.pollName = body.pollName;
 					
 		    		window.location.href = "templates/UserHome/UserHome.html";
 		    	
 		    	}else if (body.result == "userDoesntExist") {
-				
+		    		
+		    		sessionStorage.username = "";
+		    		sessionStorage.identity = "";
+		    		sessionStorage.pollName = "";
+		    		
 		    		window.alert("Sorry, the user name does not exist");
 		    		
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
+		    		sessionStorage.username = "";
+		    		sessionStorage.identity = "";
+		    		sessionStorage.pollName = "";
+		    		
 		    		window.alert("Sorry, your password is wrong");
 		    		
 				
 		    	} else {
-				
+		    		sessionStorage.username = "";
+		    		sessionStorage.identity = "";
+		    		sessionStorage.pollName = "";
 		    		window.alert("bad response");
 		    	}
 
 	        } else {
+	        	sessionStorage.username = "";
+	    		sessionStorage.identity = "";
+	    		sessionStorage.pollName = "";
 		    	window.alert("failed to login");
 		    }
     	});

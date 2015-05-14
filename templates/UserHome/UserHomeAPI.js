@@ -595,7 +595,7 @@ function getSecondIDPassword(selectedPollName) {
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	
-	loadingDisabling("on", "loading the template ballot for you");
+	//loadingDisabling("on", "loading the template ballot for you");
 	
 	
 	/*Happend when the voter has not get the initially random second account id and password
