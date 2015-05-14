@@ -224,29 +224,17 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 		 * */
 		
 		
-		/*
+
 		sender.sendAsync("POST", baseUrl+ "/showPollBasicInfo", JSON.stringify(selectedPollNameJSON), function(res){
-			
+
 			if (res.status == 200) {
 				console.log(res);
 				var body = res.response;	
 				
-				body = JSON.parse(body);
-			*/
-				 // local test
-				var	body = {"result":"success"
-						
-						,"pollBasicInfo":{"pollName": selectedPollName, 
-							"organizerName": "bbb",
-							"openTime": new Date().getTime().toString(),
-							"closeTime": "2130841353650",
-							"pollDes": "cccc"}
-				};
-				
+				body = JSON.parse(body);				
 				
 			if (body.result == "success") {
 					
-				
 				var biContainer = document.createElement("div");
 				
 				var basicInfo = document.createElement("form");
@@ -303,7 +291,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 				labelDes.innerHTML = "Poll Description:  ";
 				labelDes.setAttribute("for", "pollDes");
 				
-				
+
 				var OTDate = new Date(openTime.value);
 				var CTDate = new Date(closeTime.value);
 				
@@ -433,13 +421,11 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 				});
 				
 				}
-		
+
 			}else{
 				
 				window.alert("bad response");
 				}
-			
-	/*	
 		
 	}else{
 	
@@ -447,7 +433,7 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 		
 	}
 	
-		});	*/
+		});
 }
 
 /**

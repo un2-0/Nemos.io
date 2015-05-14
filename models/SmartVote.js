@@ -210,19 +210,16 @@ function SmartVote() {
      * }
      */
     handlers.showPollBasicInfo = function (query) {
-        printQuery(query);
-        var electionName = query.selectedElectionName;
+        var electionName = query.selectedPollName;
         var response = {};
         if (!electionNameExists(electionName)) {
             response.result = "fail";
-            response.electionBasicInfo = null;
-            return network.getHttpResponseJSON(JSON.stringify(response));
+            response.pollBasicInfo = null;
+        } else {
+            response.result = "success";
+            response.pollBasicInfo = getPollBasicInfo(electionName);
         }
-        // TODO
-        response.result = "success";
-        response.electionBasicInfo = {};
-        response.electionBasicInfo.electionName = electionName;
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -572,6 +569,10 @@ function SmartVote() {
 
     function getAvailablePolls(identity, username) {
         return svApi.getAvailablePolls(identity, username);
+    }
+
+    function getPollBasicInfo(electionName) {
+        return svApi.getPollBasicInfo(electionName);
     }
 
 	// functions talking with ipfs

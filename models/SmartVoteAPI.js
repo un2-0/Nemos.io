@@ -198,6 +198,16 @@ function SmartVoteAPI() {
         return pollNames;
     }
 
+    this.getPollBasicInfo = function(electionName) {
+        var info = {};
+        info.pollName = electionName;
+        info.organizerName = getElectionOwner("electionName", electionName, "username");
+        info.openTime = getOpenTime(electionName);
+        info.closeTime = getCloseTime(electionName);
+        info.pollDes = getDescription(electionName);
+        return info;
+    }
+
     function generateIdPrefix() {
         return parseInt((new Date()).getTime(), 10).toString(36);
     }
@@ -263,6 +273,19 @@ function SmartVoteAPI() {
         }
         return owner;
     }
+
+    function getOpenTime(electionName) {
+        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("opened")));
+    }
+
+    function getCloseTime(electionName) {
+        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("closed")));
+    }
+
+    function getDescription(electionName) {
+        return esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"));
+    }
+
 
 	this.init = function() {
 		Println("Initializing SmartVote");
