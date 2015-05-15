@@ -62,7 +62,7 @@ function login(identity){
 	    		//var body = {"result":"success","pollName":"ssddd"};
 	    
 	    		
-		    	if (body.result == "success" && identity !== "anoVoter") {  		
+		    	if (body.result == "success" && identity !== "anonymousVoter") {  		
 		    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.identity = identity;
@@ -70,11 +70,11 @@ function login(identity){
 				
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-		    	}else if(body.result == "success" && identity === "anoVoter"){
+		    	}else if(body.result == "success" && identity === "anonymousVoter"){
 		    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.identity = identity;
-		    		sessionStorage.pollName = body.pollName;
+		    		sessionStorage.pollName = body.pollName[0];
 					
 		    		window.location.href = "templates/UserHome/UserHome.html";
 		    	
