@@ -1154,19 +1154,15 @@ function changeFirstPassword() {
 		
 			 * */
 			
-			/*
-			var newFirstPassword = {"username":sessionStorage.username,"newFirstPassword":newFirstPassword1.value};
+			var newPassword = {"username":sessionStorage.username,"newPassword":newFirstPassword1.value};
 			
-			sender.sendAsync("POST", baseUrl+ "/changeFirstPassword", JSON.stringify(newFirstPassword), function(res){ 
+			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 
 				if (res.status == 200) {
 							console.log(res);
 							var body = res.response;
 							
 							body = JSON.parse(body);
-				*/			
-							//test
-							var body = {"result":"success"};
 							
 							
 							if (body.result == "success") {
@@ -1180,16 +1176,13 @@ function changeFirstPassword() {
 								
 								window.alert("bad response");
 								return;
-							}			
-			/*				
+							}						
 							
 				} else {
 					window.alert("failed to change first account password");
 				}
 
 			});			
-							
-			*/				
 							
 							
 			
@@ -1286,19 +1279,15 @@ function changeSecondPassword(secondId,selectedPollName) {
 		
 			 * */
 			
-			/*
-			var newSecondPassword = {"username":sessionStorage.username,"secondId":secondId,"newSecondPassword":newSecondPassword1.value,"selectedPollName":selectedPollName};
+			var newPassword = {"username":secondId,"newPassword":newSecondPassword1.value};
 			
-			sender.sendAsync("POST", baseUrl+ "/changeSecondPassword", JSON.stringify(newSecondPassword), function(res){ 
+			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 
 				if (res.status == 200) {
 							console.log(res);
 							var body = res.response;
 							
 							body = JSON.parse(body);
-				*/			
-							//test
-							var body = {"result":"success"};
 							
 							
 							if (body.result == "success") {
@@ -1313,16 +1302,12 @@ function changeSecondPassword(secondId,selectedPollName) {
 								window.alert("bad response");
 								return;
 							}			
-			/*				
 							
 				} else {
 					window.alert("failed to change second account password");
 				}
 
 			});			
-							
-			*/				
-							
 							
 			
 		} else {

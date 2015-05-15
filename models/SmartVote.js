@@ -310,7 +310,6 @@ function SmartVote() {
         pair.id = generateSecondID(electionName);
         pair.password = generateSecondPassword(firstID, electionName);
         response.secondIDPassword = pair;
-
         return network.getHttpResponseJSON(JSON.stringify(response));
     }
     
@@ -362,11 +361,21 @@ function SmartVote() {
      *     "result": "success" or not
      * }
      */
-    handlers.changeFirstPassword = function (query) {
-        printQuery(query);
-        var fisrtUsername = query.username;
-        var newFirstPassword = query.newFirstPassword;
-        // TODO
+    handlers.changePassword = function (query) {
+        var username = query.username;
+        var newPassword = query.newPassword;
+        var response = {};
+        if (userExists("organizer", username)) {
+            response.result = changePassword("organizer", username, newPassword);
+        } else if (userExists("voter", username)) {
+            response.result = changePassword("voter", username, newPassword);
+        } else if (userExists("anonymousVoter", username)) {
+            response.result = changePassword("anonymousVoter", username, newPassword);
+        } else {
+            return network.getHttpResponse(400, {},
+                    "Bad query");
+        }
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -504,7 +513,7 @@ function SmartVote() {
             if (COMMITTING) {
                 monk.Commit();
             }
-            svApi.setUserPassword(identity, username, password);
+            setUserPassword(identity, username, password);
             if (COMMITTING) {
                 monk.Commit();
             }
@@ -545,14 +554,22 @@ function SmartVote() {
             if (COMMITTING) {
                 monk.Commit();
             }
-            //setDescription(pollName, query.pollDes);
-            //if (COMMITTING) {
-            //    monk.Commit();
-            //}
+            setDescription(pollName, query.pollDes);
+            if (COMMITTING) {
+                monk.Commit();
+            }
             response.result = "success";
             response.publicKeys = generatePublicKeys(query.voterNum);
         }
         return response;
+    }
+
+    function changePassword(identity, username, password) {
+        setUserPassword(identity, username, password);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return "success";
     }
 
     function setOpenTime(electionName, openTime) {
@@ -575,25 +592,9 @@ function SmartVote() {
         return svApi.getPollBasicInfo(electionName);
     }
 
-	// functions talking with ipfs
-	/**
-	 * Writes a file to the ipfs file system and returns the hash
-     * as a hex string.
-     * NOTE: The hash is stripped of its first two bytes, in order to 
-     * get a 32 byte value. The first byte is the hashing algorithm
-     * used (it's always 0x12), and the second is the length of the
-     * hash (it is always 0x20). See DappCore.ipfsHeader.
-     */
-    function writeFileToIpfs(data) {
-        var hashObj = ipfs.PushFileData(data);
-        if(hashObj.Error !== "") {
-            return "";
-        } else {
-            // This would be the 32 byte hash (omitting the initial "1220").
-            return "0x" + hashObj.Data.slice(6);
-        }
-    };
-
+    function setUserPassword(identity, username, password) {
+        return svApi.setUserPassword(identity, username, password);
+    }
 
 	this.test = function() {
 		var plAddr = svApi.createElectionAccount("myFirstElection");
@@ -650,14 +651,12 @@ function SmartVote() {
     }
 
     this.test6 = function() {
-        Println(svApi.generatePublicKeys("test", 10));
-/*
-String.fromCharCode(65)
-        for (var i = 0; i < currentTime; i++) {
-            currentNum = parseInt(currentTime.charAt(i), 10) % 36;
-            resNum
-        }*/
-        //return prefix;
+        var hash = writeFile("what are you guys doing? anythingelsetosayorthisisit?");
+        var hash2 = writeFile("what are you guys doing? anythingelsetosayorthisisit2222222222222222222222222222222222?");
+        Println(hash);
+        Println(hash2);
+        var d = readFile(hash);
+        Println("aaaaaa    " + d);
     }
 
 	this.init = function() {

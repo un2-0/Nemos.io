@@ -161,7 +161,13 @@ function SmartVoteAPI() {
     }
 
     this.setDescription = function(electionName, description) {
-        return ;
+        var txData = [];
+        var fileHash = writeFile(description);
+        txData.push("setSingleAttribute");
+        txData.push("hash");
+        txData.push(fileHash);
+        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        return hash;
     }
 
     this.generatePublicKeys = function(voterNum) {
@@ -283,7 +289,7 @@ function SmartVoteAPI() {
     }
 
     function getDescription(electionName) {
-        return esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"));
+        return getFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash")));
     }
 
 

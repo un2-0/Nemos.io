@@ -38,6 +38,7 @@ function writeFile(data) {
 // Takes the 32 byte hash. Prepends "1220" to create the full hash.
 function readFile(hash) {
 	var fullHash = "1220" + hash.slice(2);
+    Println(fullHash);
 	var fileObj = ipfs.GetFile(fullHash, false);
 
 	if (fileObj.Error !== "") {
