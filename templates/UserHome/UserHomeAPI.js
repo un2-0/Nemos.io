@@ -151,6 +151,7 @@ function showPollList() {
 						singlePoll.id = "singlePoll" + i;
 						
 						var singlePollLink = document.createElement("a");
+						singlePollLink.setAttribute("href","#");
 						singlePollLink.id = "singlePollLink" + i;
 						
 						singlePollLink.innerHTML = body.pollslist[i];

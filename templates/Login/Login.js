@@ -59,21 +59,20 @@ function login(identity){
 	    		var body = res.response;
 		    	body = JSON.parse(body);
 
-	    		//var body = {"result":"successAno","pollName":"ssddd"};
+	    		//var body = {"result":"success","pollName":"ssddd"};
 	    
 	    		
-		    	if (body.result == "success" && identity != "anonymousVoter") {  		
-
+		    	if (body.result == "success" && identity !== "anoVoter") {  		
+		    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.identity = identity;
 		    		sessionStorage.pollName = "";
-					
+				
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
-		    	}else if(body.result == "success" && identity === "anonymousVoter"){
+		    	}else if(body.result == "success" && identity === "anoVoter"){
 		    		
 		    		sessionStorage.username = username.value;
-		    		sessionStorage.pollName = body.pollName[0];
 		    		sessionStorage.identity = identity;
 		    		sessionStorage.pollName = body.pollName;
 					
