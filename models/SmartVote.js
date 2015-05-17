@@ -260,8 +260,10 @@ function SmartVote() {
     handlers.checkVoterSecondAccount = function (query) {
         printQuery(query);
         var username = query.username;
-        var electionName = query.electionName;
-        // TODO
+        var electionName = query.selectedPollName;
+        var response = {};
+        response.result = validateVoter(username, electionName);
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -299,18 +301,17 @@ function SmartVote() {
            "secondIDPassword": {"id": str,"password": str}
      * }
      */
-    handlers.getSecondIDPassword = function (query) {
+    handlers.getVoterSecondIdPassword = function (query) {
         printQuery(query);
-        var firstID = query.username;
-        var electionName = query.selectedElectionName;
-        
+        var username = query.username;
+        var electionName = query.selectedPollName;
         var response = {};
+
         response.result = "success";
-        var pair = {};
-        pair.id = generateSecondID(electionName);
-        pair.password = generateSecondPassword(firstID, electionName);
-        response.secondIDPassword = pair;
-        return network.getHttpResponseJSON(JSON.stringify(response));
+        response.secondIdPassword = generatePrivateKey(8);
+        registerAnonymousVoter(electionName, response.secondIdPassword);
+        deregisterElection(electionName, username, "voter");
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -376,27 +377,6 @@ function SmartVote() {
                     "Bad query");
         }
         return network.getHttpResponseJSON(response);
-    }
-    
-    /**
-     * Change the password of the second account of a voter.
-     * @param query = {
-     *     "username": <First Account Username>,
-     *     "secondId": <Second Account ID>,
-     *     "newSecondPassword": str,
-     *     "selectedPollName": str
-     * }
-     * @response response = {
-     *     "result": "success" or not
-     * }
-     */
-    handlers.changeSecondPassword = function (query) {
-        printQuery(query);
-        var firstUsername = query.username;
-        var secondUsername = query.secondId;
-        var newSecondPassword = query.newSecondPassword;
-        var pollName = query.selectedPollName;
-        // TODO
     }
 
     /**
@@ -467,35 +447,46 @@ function SmartVote() {
         });
     }
 
-    // functions in the middle
-    function generatePublicKeys(voterNum) {
-        return svApi.generatePublicKeys(voterNum);
+    function generatePublicKeys(voterNum, passwordLength) {
+        return svApi.generatePublicKeys(voterNum, passwordLength);
+    }
+
+    function generatePrivateKey(passwordLength) {
+        return svApi.generatePrivateKey(passwordLength);
     }
 
     function registerVoters(pollName, publicKeys) {
         for (var i = 0; i < publicKeys.length; i++) {
             registerUser("voter", publicKeys[i].id, publicKeys[i].password);
-            registerElection(publicKeys[i].id, pollName);
+            registerElection(pollName, publicKeys[i].id, "voter");
         }
     }
 
-    function registerElection(username, pollName) {
-        svApi.registerElection(username, pollName);
+    function registerAnonymousVoter(pollName, privateKey) {
+        registerUser("anonymousVoter", privateKey.id, privateKey.password);
+        registerElection(pollName, privateKey.id, "anonymousVoter");
+    }
+
+    function registerElection(pollName, username, target) {
+        svApi.registerElection(pollName, username, target);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        svApi.registerElection(pollName, username, target + "-poll");
         if (COMMITTING) {
             monk.Commit();
         }
         return "success";
     }
-    
-    function generateSecondID(electionName) {
-        // TODO
-    }
-    
-    function generateSecondPassword(firstID, electionName) {
-        // TODO
+
+    function deregisterElection(pollName, username, target) {
+        svApi.deregisterElection(pollName, username, target);
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return "success";
     }
 
-	// functions talking with the blockchain
     function electionNameExists(electionName) {
         return svApi.electionNameExists(electionName);
     }
@@ -559,7 +550,7 @@ function SmartVote() {
                 monk.Commit();
             }
             response.result = "success";
-            response.publicKeys = generatePublicKeys(query.voterNum);
+            response.publicKeys = generatePublicKeys(query.voterNum, 8);
         }
         return response;
     }
@@ -596,67 +587,8 @@ function SmartVote() {
         return svApi.setUserPassword(identity, username, password);
     }
 
-	this.test = function() {
-		var plAddr = svApi.createElectionAccount("myFirstElection");
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		Println("8888888888888888888\n" + sutil.hexToString(svApi.test1("myFirstElection")));
-	}
-
-	this.test1 = function() {
-        svApi.createElection("usr1", "123123");
-            if (COMMITTING) {
-                monk.Commit();
-            }
-		Println(svApi.test4());
-	}
-
-	this.test2 = function() {
-		var plname = "myFirstElection";
-		svApi.createElectionAccount(plname);
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		svApi.initElection(plname, 20, "2222", "3333", "444444" ,"55555555", "6666666666");
-		if (COMMITTING) {
-			monk.Commit();
-		}
-		println("ccccccccccccccccc" + svApi.test1(plname));
-	}
-
-	this.test3 = function() {
-		var n = 20;
-		var s = n.toString(16);
-		Println("aaaaaaaaaaaaaa" + n);
-		Println("vvvvvvvvvvvvvvvv" + s);
-	}
-
-    this.test4 = function() {
-        svApi.registerOrganizer("asd");
-        if (COMMITTING) {
-			monk.Commit();
-		}
-        svApi.setOrganizerPassword("asd", "123456");
-        if (COMMITTING) {
-			monk.Commit();
-		}
-        return ;
-    }
-
-    this.test5 = function() {
-        Println(svApi.organizerExists("asd"));
-        Println(svApi.organizerExists("admin"));
-        Println(svApi.organizerExists("asdssss"));
-    }
-
-    this.test6 = function() {
-        var hash = writeFile("what are you guys doing? anythingelsetosayorthisisit?");
-        var hash2 = writeFile("what are you guys doing? anythingelsetosayorthisisit2222222222222222222222222222222222?");
-        Println(hash);
-        Println(hash2);
-        var d = readFile(hash);
-        Println("aaaaaa    " + d);
+    function validateVoter(username, electionName) {
+        return svApi.validateVoter(username, electionName);
     }
 
 	this.init = function() {
@@ -669,14 +601,5 @@ function SmartVote() {
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
-//sv.test();
-//sv.test1();
-//sv.test3();
-//sv.testshowVotings();
-//sv.test2();
-//sv.test3();
-//sv.test4();
-//sv.test5();
-//sv.test6();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

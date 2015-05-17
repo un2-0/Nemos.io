@@ -83,7 +83,7 @@ function SmartVoteAPI() {
 	}
 
     this.userExists = function(identity, username) {
-        if (((identity === "organizer") && (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "voter") && (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "anonymousVoter") && (esl.ll.Main(amAddr, sutil.stringToHex("anonymousVoterNameToAnonymousVoterAddress"), sutil.stringToHex(username)) != "0x0"))) {
+        if (((identity === "organizer") && (esl.ll.Main(amAddr, sutil.stringToHex("adminNameToAdminAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "voter") && (esl.ll.Main(amAddr, sutil.stringToHex("voterNameToVoterAddress"), sutil.stringToHex(username)) != "0x0")) || ((identity === "anonymousVoter") && (esl.ll.Main(amAddr, sutil.stringToHex("anoNameToAnoAddress"), sutil.stringToHex(username)) != "0x0"))) {
             return true;
         }
         return false;
@@ -98,31 +98,67 @@ function SmartVoteAPI() {
 
     this.registerUser = function(identity, username) {
         var txData = [];
+        var hash;
+
         if (identity === "organizer") {
             txData.push("createAdmin");
         } else if (identity === "voter") {
             txData.push("createVoter");
         } else if (identity === "anonymousVoter") {
-            txData.push("createAnonymousVoter");
+            txData.push("createAno");
         }
         txData.push(username);
-        var hash = sendMsg(amAddr, txData);
+        hash = sendMsg(amAddr, txData);
 		return hash;
     }
 
-    this.registerElection = function(username, pollName) {
+    this.registerElection = function(pollName, username, target) {
         var txData = [];
-        txData.push("registerElection");
-        txData.push(electionNameToElectionAddress(pollName));
-        var hash = sendMsg(userNameToUserAddress("voter", username), txData);
+        var hash;
+
+        if ((target === "voter") || (target === "anonymousVoter")) {
+            txData.push("registerElection");
+            txData.push(electionNameToElectionAddress(pollName));
+            hash = sendMsg(userNameToUserAddress(target, username), txData);
+        } else if (target === "voter-poll") {
+            txData.push("registerVoter");
+            txData.push(userNameToUserAddress("voter", username));
+            hash = sendMsg(electionNameToElectionAddress(pollName), txData);
+        } else if (target === "anonymousVoter-poll") {
+            txData.push("registerAno");
+            txData.push(userNameToUserAddress("anonymousVoter", username));
+            hash = sendMsg(electionNameToElectionAddress(pollName), txData);
+        }
+		return hash;
+    }
+
+    this.deregisterElection = function(pollName, username, target) {
+        var txData = [];
+        var hash;
+
+        if ((target === "voter") || (target === "anonymousVoter")) {
+            txData.push("deregisterElection");
+            txData.push(electionNameToElectionAddress(pollName));
+            hash = sendMsg(userNameToUserAddress(target, username), txData);
+        } else if (target === "voter-poll") {
+            txData.push("deregisterVoter");
+            txData.push(userNameToUserAddress("voter", username));
+            hash = sendMsg(electionNameToElectionAddress(pollName), txData);
+        } else if (target === "anonymousVoter-poll") {
+            txData.push("deregisterAno");
+            txData.push(userNameToUserAddress("anonymousVoter", username));
+            hash = sendMsg(electionNameToElectionAddress(pollName), txData);
+        }
 		return hash;
     }
 
     this.setUserPassword = function(identity, username, password) {
         var txData = [];
+        var hash;
+
         txData.push("setPassword");
         txData.push(password);        
-        var hash = sendMsg(userNameToUserAddress(identity, username), txData);
+        hash = sendMsg(userNameToUserAddress(identity, username), txData);
         return hash;
     }
 
@@ -135,34 +171,41 @@ function SmartVoteAPI() {
 
     this.createElection = function(username, electionName) {
         var txData = [];
+        var hash;
+
         txData.push("createElection");
         txData.push(userNameToUserAddress("organizer", username));
         txData.push(electionName);
-        var hash = sendMsg(emAddr, txData);
+        hash = sendMsg(emAddr, txData);
         return hash;
     }
 
     this.setOpenTime = function(electionName, openTime) {
         var txData = [];
+        var hash;
+
         txData.push("setSingleAttribute");
         txData.push("opened");
         txData.push(openTime.toString());
-        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        hash = sendMsg(electionNameToElectionAddress(electionName), txData);
         return hash;
     }
 
     this.setCloseTime = function(electionName, closeTime) {
         var txData = [];
+        var hash;
+
         txData.push("setSingleAttribute");
         txData.push("closed");
         txData.push(closeTime.toString());
-        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        hash = sendMsg(electionNameToElectionAddress(electionName), txData);
         return hash;
     }
 
     this.setDescription = function(electionName, description) {
         var txData = [];
         var fileHash = writeFile(description);
+
         txData.push("setSingleAttribute");
         txData.push("hash");
         txData.push(fileHash);
@@ -170,23 +213,41 @@ function SmartVoteAPI() {
         return hash;
     }
 
-    this.generatePublicKeys = function(voterNum) {
+    this.generatePublicKeys = function(voterNum, passwordLength) {
         var id = "";
         var password = "";
         var publicKeys = [];
         var idPrefix = generateIdPrefix();
-        for (var i = 0; i < voterNum; i++) {
-            id = idPrefix + padLeft((i + 1).toString(), voterNum.toString().length);
-            password = generateRandomPassword(8);
-            publicKeys.push({"id":id, "password":password});
+        var i = 0;
+
+        while (publicKeys.length != voterNum) {
+            i++;
+            id = idPrefix + padLeft((i).toString(), voterNum.toString().length);
+            if (!this.userExists("voter", id)) {
+                password = generateRandomPassword(passwordLength);
+                publicKeys.push({"id":id, "password":password});
+            }
         }
         return publicKeys;
+    }
+
+    this.generatePrivateKey = function(passwordLength) {
+        var privateKey = {};
+
+        do {
+            privateKey.id = generateRandomId();
+        } while(this.userExists("anonymousVoter", privateKey.id));
+        Println(privateKey.id);
+        privateKey.password = generateRandomPassword(passwordLength);
+        Println(privateKey.password)
+        return privateKey;
     }
 
     this.getAvailablePolls = function(identity, username) {
         if (identity === "organizer") {
             var pollAddr = esl.ll.Main(emAddr, sutil.stringToHex("electionList"), sutil.stringToHex("HEAD"));
             var pollNames = [];
+
             while (pollAddr != "0x0") {
                 if (getElectionOwner("electionAddress", pollAddr, "username") === username) {
                     pollNames.push(electionAddressToElectionName(pollAddr));
@@ -196,6 +257,7 @@ function SmartVoteAPI() {
         } else {
             var pollAddr = esl.ll.Main(userNameToUserAddress(identity, username), sutil.stringToHex("electionList"), sutil.stringToHex("HEAD"));
             var pollNames = [];
+
             while (pollAddr != "0x0") {
                 pollNames.push(electionAddressToElectionName(pollAddr));
                 pollAddr = esl.ll.Main(userNameToUserAddress(identity, username), sutil.stringToHex("electionList"), pollAddr);
@@ -206,6 +268,7 @@ function SmartVoteAPI() {
 
     this.getPollBasicInfo = function(electionName) {
         var info = {};
+
         info.pollName = electionName;
         info.organizerName = getElectionOwner("electionName", electionName, "username");
         info.openTime = getOpenTime(electionName);
@@ -214,12 +277,26 @@ function SmartVoteAPI() {
         return info;
     }
 
+    this.validateVoter = function(username, electionName) {
+        if (esl.ll.Main(userNameToUserAddress("voter", username), sutil.stringToHex("reverseElectionList"), electionNameToElectionAddress(electionName)) != "0x0") {
+            return "secondPasswordNotSet";
+        }
+        else {
+            return "secondPasswordSet";
+        }
+    }
+
+    function generateRandomId() {
+        return (parseInt((Math.floor(Math.random() * 99)).toString() + ((new Date()).getTime()).toString(), 10)).toString(36);
+    }
+
     function generateIdPrefix() {
         return parseInt((new Date()).getTime(), 10).toString(36);
     }
 
     function generateRandomPassword(passwordLength) {
         var password = new Array(passwordLength + 1).join().replace(/(.|$)/g, function(){return ((Math.random()*36)|0).toString(36)[Math.random()<.5?"toString":"toUpperCase"]();});
+
         return password;
     }
     
@@ -238,24 +315,26 @@ function SmartVoteAPI() {
 
     function userNameToUserAddress(identity, username) {
         var varStr = "";
+
         if (identity === "organizer") {
             varStr = "adminNameToAdminAddress";
         } else if (identity === "voter") {
             varStr = "voterNameToVoterAddress";
         } else if (identity === "anonymousVoter") {
-            varStr = "anonymousVoterNameToAnonymousVoterAddress";
+            varStr = "anoNameToAnoAddress";
         }
         return esl.ll.Main(amAddr, sutil.stringToHex(varStr), sutil.stringToHex(username));
     }
 
     function userAddressToUserName(identity, userAddress) {
         var varStr = "";
+
         if (identity === "organizer") {
             varStr = "adminAddressToAdminName";
         } else if (identity === "voter") {
             varStr = "voterAddressToVoterName";
         } else if (identity === "anonymousVoter") {
-            varStr = "anonymousVoterAddressToAnonymousVoterName";
+            varStr = "anoAddressToAnoName";
         }
         return sutil.hexToString(esl.ll.Main(amAddr, sutil.stringToHex(varStr), userAddress));
     }
@@ -270,6 +349,7 @@ function SmartVoteAPI() {
 
     function getElectionOwner(electionStrType, electionStr, userStrType) {
         var owner = "";
+
         if (electionStrType === "electionName") {
             electionStr = electionNameToElectionAddress(electionStr);
         }
@@ -289,7 +369,7 @@ function SmartVoteAPI() {
     }
 
     function getDescription(electionName) {
-        return getFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash")));
+        return readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash")));
     }
 
 
@@ -305,35 +385,4 @@ function SmartVoteAPI() {
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
 	}
-
-	this.test1 = function(plname) {
-		Println("vvvvvvvvv");
-		return storageAt(plname2addr(plname), 0xCCCC);
-	}
-
-    this.test2 = function() {
-        var addr = esl.ll.Main(amAddr, sutil.stringToHex("adminList"), sutil.stringToHex("HEAD"));
-        return esl.single.Value(addr, sutil.stringToHex("accountManagerAddress"));
-    }
-
-    this.test3 = function() {
-        var str = '{"person":[name: "Bob", occupation: "Plumber"]}';
-        Println("bbbbhhhhhhhhhhhhhhc     " + str);
-        var bytes = [];
-        for (var i = 0; i < str.length; i++)
-        {
-            bytes.push(str.charCodeAt(i));
-        }
-        Println("bbbbbbbbbbbbbcc     " + str);
-        var hash = ipfs.PushFileData(str);
-        if (hash === "") {
-            Println("Error when adding file to ipfs.");
-            return "0x0";
-        }
-        return hash;
-    }
-
-    this.test4 = function() {
-        return electionNameToElectionAddress("123123");
-    }
 };

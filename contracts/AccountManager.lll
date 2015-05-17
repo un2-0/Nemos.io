@@ -3,13 +3,13 @@
 ; ------------------------------------------------------------------------------
 ; - createAdmin
 ; - createVoter
-; - createAnonymousVoter
+; - createAno
 ; - addToBlacklist
 ; - deleteFromBlacklist
 ; - checkBlacklist
 ; - destructAdmin
 ; - destructVoter
-; - destructAnonymousVoter
+; - destructAno
 ; ------------------------------------------------------------------------------
 
 {
@@ -54,11 +54,11 @@
     (llInit "voterList")
     (llInit "reverseVoterList")
 
-    (singleInit "lastAnonymousVoter")
-    (llInit "anonymousVoterAddressToAnonymousVoterName")
-    (llInit "anonymousVoterNameToAnonymousVoterAddress")
-    (llInit "anonymousVoterList")
-    (llInit "reverseAnonymousVoterList")
+    (singleInit "lastAno")
+    (llInit "anoAddressToAnoName")
+    (llInit "anoNameToAnoAddress")
+    (llInit "anoList")
+    (llInit "reverseAnoList")
 
     (llInit "blacklist")
 
@@ -152,10 +152,10 @@
         ; ----------------------------------------------------------------------
         ; Create a contract for a new anonymous voter.
         ; ----------------------------------------------------------------------
-        ; Calldata: "createAnonymousVoter" usrname
+        ; Calldata: "createAno" usrname
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "createAnonymousVoter") {
+        (when (= (cmd) "createAno") {
             (singleSet "buffer" (usrname)) ;Store the username in case of conflict
 
             ;Create the contract
@@ -165,20 +165,20 @@
             [[@0x0]]1
 
             ;If there is no user stored
-            (when (= (singleGet "lastAnonymousVoter") 0) {
-                (llAddLink "anonymousVoterList" "HEAD" @0x0)
-                (llAddLink "reverseAnonymousVoterList" @0x0 "HEAD")
+            (when (= (singleGet "lastAno") 0) {
+                (llAddLink "anoList" "HEAD" @0x0)
+                (llAddLink "reverseAnoList" @0x0 "HEAD")
             })
 
             ;If there is a user stored
-            (unless (= (singleGet "lastAnonymousVoter") 0) {
-                (llAddLink "anonymousVoterList" (singleGet "lastAnonymousVoter") @0x0)
-                (llAddLink "reverseAnonymousVoterList" @0x0 (singleGet "lastAnonymousVoter"))
+            (unless (= (singleGet "lastAno") 0) {
+                (llAddLink "anoList" (singleGet "lastAno") @0x0)
+                (llAddLink "reverseAnoList" @0x0 (singleGet "lastAno"))
             })
 
-            (singleSet "lastAnonymousVoter" @0x0)
-            (llAddLink "anonymousVoterAddressToAnonymousVoterName" @0x0 (singleGet "buffer"))
-            (llAddLink "anonymousVoterNameToAnonymousVoterAddress" (singleGet "buffer") @0x0)
+            (singleSet "lastAno" @0x0)
+            (llAddLink "anoAddressToAnoName" @0x0 (singleGet "buffer"))
+            (llAddLink "anoNameToAnoAddress" (singleGet "buffer") @0x0)
             
             [0x20]"setPerm"
             [0x40]"userAccount"
@@ -351,52 +351,52 @@
         ; ----------------------------------------------------------------------
         ; Destruct an anonymous voter.
         ; ----------------------------------------------------------------------
-        ; Calldata: "destructAnonymousVoter" (CALLER)
+        ; Calldata: "destructAno" (CALLER)
         ; Returns:  0 - fail | 1 - success
         ; ----------------------------------------------------------------------
-        (when (= (cmd) "destructAnonymousVoter") {
+        (when (= (cmd) "destructAno") {
             [0x0](CALLER) ;Address of the user
-            [0x20](llGet "reverseAnonymousVoterList" @0x0)
+            [0x20](llGet "reverseAnoList" @0x0)
 
             ;If the user to be removed is tail
-            (when (= @0x0 (singleGet "lastAnonymousVoter")) {
+            (when (= @0x0 (singleGet "lastAno")) {
 
                 ;If the user to be removed is head
                 (when (= @0x20 "HEAD") {
-                    (llRmLink "anonymousVoterList" "HEAD")
-                    (singleSet "lastAnonymousVoter" 0)
+                    (llRmLink "anoList" "HEAD")
+                    (singleSet "lastAno" 0)
                 })
 
                 ;If the user to be removed is not head
                 (unless (= @0x20 "HEAD") {
-                    (llRmLink "anonymousVoterList" @0x20)
-                    (singleSet "lastAnonymousVoter" @0x20)
+                    (llRmLink "anoList" @0x20)
+                    (singleSet "lastAno" @0x20)
                 })
-                (llRmLink "reverseAnonymousVoterList" @0x0)
+                (llRmLink "reverseAnoList" @0x0)
             })
 
             ;If the user to be removed is head
             (when (= @0x20 "HEAD") {
-                [0x40](llGet "anonymousVoterList" @0x0)
-                (llRmLink "anonymousVoterList" @0x0)
-                (llRmLink "reverseAnonymousVoterList" @0x0)
-                (llAddLink "anonymousVoterList" "HEAD" @0x40)
-                (llAddLink "reverseAnonymousVoterList" @0x40 "HEAD")
+                [0x40](llGet "anoList" @0x0)
+                (llRmLink "anoList" @0x0)
+                (llRmLink "reverseAnoList" @0x0)
+                (llAddLink "anoList" "HEAD" @0x40)
+                (llAddLink "reverseAnoList" @0x40 "HEAD")
             })
 
             ;If the user to be removed is not head or tail
-            (unless (|| (= @0x0 (singleGet "lastAnonymousVoter")) (= @0x20 "HEAD")) {
-                [0x40](llGet "anonymousVoterList" @0x0)
-                (llRmLink "anonymousVoterList" @0x0)
-                (llRmLink "anonymousVoterList" @0x20)
-                (llRmLink "reverseAnonymousVoterList" @0x0)
-                (llRmLink "reverseAnonymousVoterList" @0x40)
-                (llAddLink "anonymousVoterList" @0x20 @0x40)
-                (llAddLink "reverseAnonymousVoterList" @0x40 @0x20)
+            (unless (|| (= @0x0 (singleGet "lastAno")) (= @0x20 "HEAD")) {
+                [0x40](llGet "anoList" @0x0)
+                (llRmLink "anoList" @0x0)
+                (llRmLink "anoList" @0x20)
+                (llRmLink "reverseAnoList" @0x0)
+                (llRmLink "reverseAnoList" @0x40)
+                (llAddLink "anoList" @0x20 @0x40)
+                (llAddLink "reverseAnoList" @0x40 @0x20)
             })
 
-            (llRmLink "anonymousVoterNameToAnonymousVoterAddress" (llGet "anonymousVoterAddressToAnonymousVoterName" @0x0))
-            (llRmLink "anonymousVoterAddressToAnonymousVoterName" @0x0)
+            (llRmLink "anoNameToAnoAddress" (llGet "anoAddressToAnoName" @0x0))
+            (llRmLink "anoAddressToAnoName" @0x0)
 
             [0x0]1
             (return 0x0 0x20)
