@@ -528,6 +528,14 @@ function SmartVote() {
         var response = {};
         var organizerName = query.organizerName;
         var pollName = query.pollName;
+        var des = {};
+        des.moduleName = query.moduleName;
+        des.pollName = query.pollName;
+        des.pollDes = query.pollDes;
+        des.canoptNum = query.canoptNum;
+        des.rulesNum = query.rulesNum;
+        des.canOpts = query.canOpts;
+
         if (electionNameExists(pollName)) {
             response.result = "pollNameExist";
             response.publicKeys = null;
@@ -545,7 +553,7 @@ function SmartVote() {
             if (COMMITTING) {
                 monk.Commit();
             }
-            setDescription(pollName, query.pollDes);
+            setDescription(pollName, JSON.stringify(des));
             if (COMMITTING) {
                 monk.Commit();
             }

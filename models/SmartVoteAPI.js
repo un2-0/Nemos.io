@@ -369,7 +369,9 @@ function SmartVoteAPI() {
     }
 
     function getDescription(electionName) {
-        return readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash")));
+        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"))));
+
+        return des.pollDes;
     }
 
 
