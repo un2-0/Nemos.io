@@ -63,7 +63,8 @@
     ; --------------------------------------------------------------------------
     (singleInit "CREATED" (TIMESTAMP))
     (singleInit "electionName" 0)
-    (singleInit "hash" 0) ;Hash of description
+    (singleInit "desHash" 0) ;Hash of description
+    (singleInit "logHash" 0) ;Hash of log
     (singleInit "owner" 0)
     (singleInit "optionNumber" 0)
     (singleInit "opened" 0)
@@ -71,7 +72,6 @@
     (singleInit "electionManagerAddress" 0)
     (singleInit "prerequisiteElection" 0) ;Should be allowed to set multiple elections, but single for now
     (singleInit "followupElection" 0) ;Should be allowed to set multiple elections, but single for now
-    (singleInit "log") ;Hash of log
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
@@ -86,7 +86,8 @@
 
     (llInit "legalAttributeKeys")
     (llAddLink "legalAttributeKeys" "owner" 1)
-    (llAddLink "legalAttributeKeys" "hash" 1)
+    (llAddLink "legalAttributeKeys" "desHash" 1)
+    (llAddLink "legalAttributeKeys" "logHash" 1)
     (llAddLink "legalAttributeKeys" "opened" 1)
     (llAddLink "legalAttributeKeys" "closed" 1)
     (llAddLink "legalAttributeKeys" "status" 1)

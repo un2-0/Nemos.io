@@ -643,30 +643,11 @@ function SmartVote() {
 	this.init = function() {
 		svApi.init();
 	}
-
-    this.test1 = function() {
-        var electionLog = {};
-        var electionName = "pl1";
-        var usrname = "usr1";
-        electionLog.electionName = electionName;
-        electionLog.created = parseInt(esl.single.Value(svApi.electionNameToElectionAddress(electionName), sutil.stringToHex("CREATED")), 16).toString() + "000";
-        electionLog.lastModified = (new Date()).getTime();
-        electionLog.operationLog = [];
-        electionLog.votingLog = {};
-        electionLog.votingLog[usrname] = [];
-        electionLog.votingLog["usr2"] = [];
-        Println(electionLog.votingLog["usr2"]);   
-        if (electionLog.votingLog["usr3"] == undefined) {
-            Println(electionLog.votingLog["usr3"]);
-        }
-        Println(JSON.stringify(electionLog));
-    }
 }
 
 // Initialization
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
-//sv.test1();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

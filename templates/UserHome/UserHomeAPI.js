@@ -709,7 +709,6 @@ function voting(secondIdValue,selectedPollName) {
 	 * */
 	
 	
-	/*
 	var voterVotingInfo = {"secondId": secondIdValue,"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getVotingInfo", JSON.stringify(voterVotingInfo), function(res){ 
@@ -722,16 +721,6 @@ function voting(secondIdValue,selectedPollName) {
 					var body = res.response;
 					
 					body = JSON.parse(body);
-			*/	
-					
-					//test
-					var body = {
-							"result":"voterNotVoted",
-							"rulesNum": "1",
-							"candidates": [{"name":"1","canDes":"1"}
-							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}]
-							
-					};
 					
 					
 						
@@ -923,8 +912,7 @@ function voting(secondIdValue,selectedPollName) {
 						}
 						
 					});
-			        
-		/*	
+
 					
 					
 			    } else {
@@ -934,8 +922,6 @@ function voting(secondIdValue,selectedPollName) {
 				}
 			
 		});
-	
-		*/
 	
 	
 }

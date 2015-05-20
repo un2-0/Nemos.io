@@ -217,7 +217,7 @@ function SmartVoteAPI() {
         var fileHash = writeFile(description);
 
         txData.push("setSingleAttribute");
-        txData.push("hash");
+        txData.push("desHash");
         txData.push(fileHash);
         var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
         return hash;
@@ -228,16 +228,15 @@ function SmartVoteAPI() {
         var logAddress = createLog(electionName);
 
         txData.push("setSingleAttribute");
-        txData.push("log");
+        txData.push("logHash");
         txData.push(logAddress);
         var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
         return hash;
     }
 
     this.hasVoted = function(electionName, username) {
-        var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("log"));
+        var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("logHash"));
         var electionLog = JSON.parse(readFile(logAddress));
-
         if (electionLog.votingLog[username] == undefined) {
             return false;
         }
@@ -318,7 +317,7 @@ function SmartVoteAPI() {
     }
 
     this.getVotingInfo = function(electionName) {
-        var desHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"));
+        var desHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("desHash"));
         var des = JSON.parse(readFile(desHash));
         var votingInfo = {};
 
@@ -328,7 +327,7 @@ function SmartVoteAPI() {
     }
 
     this.getVotes = function(electionName, username) {
-        var logHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("log"));
+        var logHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("logHash"));
         var electionLog = JSON.parse(readFile(logHash));
         var optionNumber = parseInt(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("optionNumber")).slice(2), 10);
         var votes = [];
@@ -428,7 +427,7 @@ function SmartVoteAPI() {
     }
 
     function getDescription(electionName) {
-        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"))));
+        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("desHash"))));
 
         return des.pollDes;
     }
