@@ -26,7 +26,7 @@ function SmartVote() {
 	 *            }
 	 *        }
 	 */
-	this.handle = function (httpReq) {
+	this.handle = function(httpReq) {
 		Println("Receiving request...");
 
 		var urlObj = network.parseUrl(httpReq);
@@ -73,7 +73,7 @@ function SmartVote() {
 	}
 
 /*
-	handlers.getContractAddress = function (query) {
+	handlers.getContractAddress = function(query) {
 	    // create the response JSON object
 	    var response;
 	    if (query.contractName) {
@@ -95,7 +95,7 @@ function SmartVote() {
 	 *               result = "success" or "userDoesntExist" or "wrongPassWord"
 	 *           }
 	 */
-    handlers.login = function (query) {
+    handlers.login = function(query) {
         var response = {};
         printQuery(query);
         var identity = query.identity;
@@ -136,7 +136,7 @@ function SmartVote() {
      *           }
      */
     // TODO
-    handlers.module1CreatePoll = function (query) {
+    handlers.module1CreatePoll = function(query) {
         /*
          * Data structure in request "module1CreateElection":
          * a stringtified JSON object that contains:
@@ -170,7 +170,7 @@ function SmartVote() {
      * }
      */
     // TODO
-    handlers.module2CreatePoll = function (query) {
+    handlers.module2CreatePoll = function(query) {
          
     }
 
@@ -184,7 +184,7 @@ function SmartVote() {
      *               result = "success" or "usernameExist"
      * }
      */
-    handlers.organizerRegister = function (query) {
+    handlers.organizerRegister = function(query) {
         printQuery(query);
         var organizerName = query.username;
         var password = query.password;
@@ -209,7 +209,7 @@ function SmartVote() {
      *      }
      * }
      */
-    handlers.showPollBasicInfo = function (query) {
+    handlers.showPollBasicInfo = function(query) {
         var electionName = query.selectedPollName;
         var response = {};
         if (!electionNameExists(electionName)) {
@@ -233,7 +233,7 @@ function SmartVote() {
      *               "pollslist": ["electionname1","electionname2","electionname3", ...]
      *           }
      */
-    handlers.showPollList = function (query) {
+    handlers.showPollList = function(query) {
         printQuery(query);
         var response = {};
         var username = query.username;
@@ -257,7 +257,7 @@ function SmartVote() {
      *                           or "voterNotInList"
      *           }
      */
-    handlers.checkVoterSecondAccount = function (query) {
+    handlers.checkVoterSecondAccount = function(query) {
         printQuery(query);
         var username = query.username;
         var electionName = query.selectedPollName;
@@ -279,7 +279,7 @@ function SmartVote() {
      *                          "wrongPassWord"
      *           }
      */
-    handlers.checkVoterSecondIdPassword = function (query) {
+    handlers.checkVoterSecondIdPassword = function(query) {
         printQuery(query);
         var username = query.username;
         var secondId = query.secondId;
@@ -301,7 +301,7 @@ function SmartVote() {
            "secondIDPassword": {"id": str,"password": str}
      * }
      */
-    handlers.getVoterSecondIdPassword = function (query) {
+    handlers.getVoterSecondIdPassword = function(query) {
         printQuery(query);
         var username = query.username;
         var electionName = query.selectedPollName;
@@ -327,11 +327,24 @@ function SmartVote() {
      *                    {"name":"3","canDes":"3"}]
      * }
      */
-    handlers.getVotingInfo = function (query) {
+    handlers.getVotingInfo = function(query) {
         printQuery(query);
-        var secondID = query.secondId;
-        var electionName = query.selectedElectionName;
-        // TODO
+        var username = query.secondId;
+        var electionName = query.selectedPollName;
+        var response = {};
+
+        if (electionNameExists(electionName)) {
+            response = getVotingInfo(electionName);
+            if (hasVoted(electionName, username)) {
+                response.result = "voterVoted";
+                response.votes = getVotes(electionName, username);
+            } else {
+                response.result = "voterNotVoted";
+            }
+        } else {
+            response.result = "fail";
+        }
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -346,7 +359,7 @@ function SmartVote() {
      *             }, ...]
      * }
      */
-    handlers.showResult = function (query) {
+    handlers.showResult = function(query) {
         printQuery(query);
         var pollName = query.selectedPollName;
         // TODO
@@ -362,7 +375,7 @@ function SmartVote() {
      *     "result": "success" or not
      * }
      */
-    handlers.changePassword = function (query) {
+    handlers.changePassword = function(query) {
         var username = query.username;
         var newPassword = query.newPassword;
         var response = {};
@@ -388,7 +401,7 @@ function SmartVote() {
      *               hash = str
      *           }
      */
-    handlers.pushToIpfs = function (query) {
+    handlers.pushToIpfs = function(query) {
         printQuery(query);
         var response = {};
         var filedata = query.filedata;
@@ -420,7 +433,7 @@ function SmartVote() {
      *               filedata : a JSON str
      *           }
      */
-    handlers.getFromIpfs = function (query) {
+    handlers.getFromIpfs = function(query) {
         printQuery(query);
         var response = {};
         var fileObj = ipfs.GetFile(query.hash, false);
@@ -553,7 +566,15 @@ function SmartVote() {
             if (COMMITTING) {
                 monk.Commit();
             }
+            setOptions(pollName, query.canOpts.length);
+            if (COMMITTING) {
+                monk.Commit();
+            }
             setDescription(pollName, JSON.stringify(des));
+            if (COMMITTING) {
+                monk.Commit();
+            }
+            initLog(pollName);
             if (COMMITTING) {
                 monk.Commit();
             }
@@ -579,8 +600,16 @@ function SmartVote() {
         return svApi.setCloseTime(electionName, closeTime);
     }
 
+    function setOptions(electionName, optionNum) {
+        return svApi.setOptions(electionName, optionNum);
+    }
+
     function setDescription(electionName, description) {
         return svApi.setDescription(electionName, description);
+    }
+
+    function initLog(electionName) {
+        return svApi.initLog(electionName);
     }
 
     function getAvailablePolls(identity, username) {
@@ -599,15 +628,45 @@ function SmartVote() {
         return svApi.validateVoter(username, electionName);
     }
 
+    function hasVoted(electionName, username) {
+        return svApi.hasVoted(electionName, username);
+    }
+
+    function getVotingInfo(electionName) {
+        return svApi.getVotingInfo(electionName);
+    }
+
+    function getVotes(electionName, username) {
+        return svApi.getVotes(electionName, username);
+    }
+
 	this.init = function() {
 		svApi.init();
 	}
 
+    this.test1 = function() {
+        var electionLog = {};
+        var electionName = "pl1";
+        var usrname = "usr1";
+        electionLog.electionName = electionName;
+        electionLog.created = parseInt(esl.single.Value(svApi.electionNameToElectionAddress(electionName), sutil.stringToHex("CREATED")), 16).toString() + "000";
+        electionLog.lastModified = (new Date()).getTime();
+        electionLog.operationLog = [];
+        electionLog.votingLog = {};
+        electionLog.votingLog[usrname] = [];
+        electionLog.votingLog["usr2"] = [];
+        Println(electionLog.votingLog["usr2"]);   
+        if (electionLog.votingLog["usr3"] == undefined) {
+            Println(electionLog.votingLog["usr3"]);
+        }
+        Println(JSON.stringify(electionLog));
+    }
 }
 
 // Initialization
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
+//sv.test1();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

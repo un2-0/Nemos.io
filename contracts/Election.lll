@@ -28,11 +28,6 @@
     (include "./defs/stdkv.def")
 
     ; --------------------------------------------------------------------------
-    ; Constants
-    ; --------------------------------------------------------------------------
-    (def 'CREATED (TIMESTAMP))
-
-    ; --------------------------------------------------------------------------
     ; Parameters
     ; --------------------------------------------------------------------------
     (def 'cmd () (calldataload 0x0))
@@ -66,6 +61,7 @@
     ; --------------------------------------------------------------------------
     ; Variables
     ; --------------------------------------------------------------------------
+    (singleInit "CREATED" (TIMESTAMP))
     (singleInit "electionName" 0)
     (singleInit "hash" 0) ;Hash of description
     (singleInit "owner" 0)
@@ -75,6 +71,7 @@
     (singleInit "electionManagerAddress" 0)
     (singleInit "prerequisiteElection" 0) ;Should be allowed to set multiple elections, but single for now
     (singleInit "followupElection" 0) ;Should be allowed to set multiple elections, but single for now
+    (singleInit "log") ;Hash of log
     (kvInit "hasPermList")
     (kvInit "permList")
     (llInit "logs")
@@ -232,8 +229,8 @@
             (kvInit "ballots") ;Initialize ballot counting
             (kvInit "votingRecord") ;Initialize voting record
 
-            [0x0](optionnum)
-			(for {[0xE0]1} (<= @0xE0 @0x0) [0xE0](+ @0xE0 1)
+            (singleSet "optionNumber" (optionnum))
+			(for {[0xE0]1} (<= @0xE0 (singleGet "optionNumber")) [0xE0](+ @0xE0 1)
 				(kvSet "ballots" @0xE0 0)
 			)
 

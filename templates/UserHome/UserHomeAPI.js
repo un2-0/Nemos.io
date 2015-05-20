@@ -726,7 +726,7 @@ function voting(secondIdValue,selectedPollName) {
 					
 					//test
 					var body = {
-							"result":"voterNotvoted",
+							"result":"voterNotVoted",
 							"rulesNum": "1",
 							"candidates": [{"name":"1","canDes":"1"}
 							,{"name":"2","canDes":"2"},{"name":"3","canDes":"3"}]
@@ -1769,7 +1769,7 @@ function module1Creation(moduleLoader) {
 				
 			for (var i = 0; i < canoptNum.value; i++) {
 				
-				temp2 = {/*"id":document.getElementById("canID"+i).value.toString(),*/"name":document.getElementById("canOpt"+i).value.toString(), "description": document.getElementById("canDes"+i).value.toString()};
+				temp2 = {/*"id":document.getElementById("canID"+i).value.toString(),*/"name":document.getElementById("canOpt"+i).value.toString(), "canDes": document.getElementById("canDes"+i).value.toString()};
 				temp1.canOpts.push(temp2);
 	
 			}
@@ -1795,7 +1795,7 @@ function module1Creation(moduleLoader) {
 					"rulesNum" : a voter can vote for how many candidates/opions in one voting
 					"canOpts": [{candidate1 name:,candidate1 description},{,},{,},] --- an array that cantains 
 					all the detail information of all candidates/options in the poll. Each slot in the array includes
-					an object {name:?,description:?}
+					an object {name:?,canDes:?}
 	 * 
 	 *  Data structure of the response of the "module1CreatPoll":
 	 *  	an standard httpJSON response with body including:

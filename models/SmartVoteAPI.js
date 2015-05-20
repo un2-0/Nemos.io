@@ -202,6 +202,16 @@ function SmartVoteAPI() {
         return hash;
     }
 
+    this.setOptions = function(electionName, optionNum) {
+        var txData = [];
+
+        optionNum = parseInt(optionNum, 10);
+        txData.push("setOptions");
+        txData.push("0x" + optionNum.toString());
+        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        return hash;
+    }
+
     this.setDescription = function(electionName, description) {
         var txData = [];
         var fileHash = writeFile(description);
@@ -211,6 +221,27 @@ function SmartVoteAPI() {
         txData.push(fileHash);
         var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
         return hash;
+    }
+
+    this.initLog = function(electionName) {
+        var txData = [];
+        var logAddress = createLog(electionName);
+
+        txData.push("setSingleAttribute");
+        txData.push("log");
+        txData.push(logAddress);
+        var hash = sendMsg(electionNameToElectionAddress(electionName), txData);
+        return hash;
+    }
+
+    this.hasVoted = function(electionName, username) {
+        var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("log"));
+        var electionLog = JSON.parse(readFile(logAddress));
+
+        if (electionLog.votingLog[username] == undefined) {
+            return false;
+        }
+        return true;
     }
 
     this.generatePublicKeys = function(voterNum, passwordLength) {
@@ -284,6 +315,34 @@ function SmartVoteAPI() {
         else {
             return "secondPasswordSet";
         }
+    }
+
+    this.getVotingInfo = function(electionName) {
+        var desHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("hash"));
+        var des = JSON.parse(readFile(desHash));
+        var votingInfo = {};
+
+        votingInfo.rulesNum = des.rulesNum;
+        votingInfo.candidates = des.canOpts;
+        return votingInfo;
+    }
+
+    this.getVotes = function(electionName, username) {
+        var logHash = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("log"));
+        var electionLog = JSON.parse(readFile(logHash));
+        var optionNumber = parseInt(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("optionNumber")).slice(2), 10);
+        var votes = [];
+        var optionIndex = "";
+
+        for (var i = 0; i < optionNumber; i++) {
+            votes.push("0");
+        }
+
+        for (var i = 0; i < electionLog.voted[username].length; i++) {
+            optionIndex = electionLog.voted[username][i];
+            votes[parseInt(optionIndex, 10) - 1] = electionLog.votes[username][optionIndex];
+        }
+        return votes;
     }
 
     function generateRandomId() {
@@ -374,6 +433,28 @@ function SmartVoteAPI() {
         return des.pollDes;
     }
 
+    /* {"created":"1432107243000",
+        "electionName":"pl1",
+        "lastModified":1432108176583,
+        "operationLog":[{"timestamp":"1432108176585","username":"usr1","operation":"vote$|$1$|$1"},{"timestamp":"1432108176999","username":"usr1","operation":"undo$|$1$|$1"}],
+        "votingLog":{"usr1":[{"timestamp":"1432108176999","operation":"undo$|$1$|$1"}],"usr2":[{"timestamp":"1432108176999","operation":"undo$|$1$|$1"}]},
+        "voted":{"usr1":["1","2"]},
+        "votes":{"usr1":{"1":"2", "2":"3"}}}
+        Note: vote$|$1$|$2   =   vote 2 ballot for option 1
+              undo$|$1$|$2   =   withdraw 2 ballot for option 1
+    */
+    function createLog(electionName) {
+        var electionLog = {};
+
+        electionLog.electionName = electionName;
+        electionLog.created = parseInt(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("CREATED")), 16).toString() + "000";
+        electionLog.lastModified = (new Date()).getTime();
+        electionLog.operationLog = [];
+        electionLog.votingLog = {};
+        electionLog.voted = {};
+        electionLog.votes = {};
+        return writeFile(JSON.stringify(electionLog));
+    }
 
 	this.init = function() {
 		Println("Initializing SmartVote");
