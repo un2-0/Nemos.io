@@ -1728,7 +1728,7 @@ function module1Creation(moduleLoader) {
 		
 	
 		//window.alert("type of input datetime: "+typeof(openTime)+"\ntype of current date: "+typeof(currentDate));
-		window.alert("OT: " + new Date(Number(OTDate13String)) + "\nCT: " + new Date(Number(CTDate13String)) + "\nCuT: "+ currentDate);
+		//window.alert("OT: " + new Date(Number(OTDate13String)) + "\nCT: " + new Date(Number(CTDate13String)) + "\nCuT: "+ currentDate);
 
 		if(currentDate > OTDate){
 			window.alert("illegal open time (open time should be after current time)");
