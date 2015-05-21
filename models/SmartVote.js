@@ -688,6 +688,13 @@ function SmartVote() {
         return svApi.getVotes(electionName, username);
     }
 
+    function voteOps(voteOperation, electionName, username, optionIndex, ballot) {
+        var hash = svApi.vote(voteOperation, electionName, username, optionIndex, ballot);
+
+        commit();
+        return hash;
+    }
+
     function submitVotes(username, electionName, votes) {
         var electionLog = getLog(electionName);
         var ballot = 0;
@@ -697,9 +704,11 @@ function SmartVote() {
             for (var i = 0; i < votes.length; i++) {
                 if (votes[i] != "0") {
                     ballot = parseInt(votes[i], 10);
+                    vote("vote", electionName, username, ballot);
                 }
             }
         }
+        setLog(electionLog);
     }
 
     function commit() {

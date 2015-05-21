@@ -362,6 +362,23 @@ function SmartVoteAPI() {
         return votes;
     }
 
+    this.voteOps = function(voteOperation, electionName, username, optionIndex, ballot) {
+        var txData = [];
+
+        optionIndex = parseInt(optionIndex, 10);
+        ballot = parseInt(ballot, 10);
+        if (voteOperation === "vote") {
+            txData.push("vote");
+        } else if (voteOperation === "devote") {
+            txData.push("devote");
+        }
+        txData.push(electionNameToElectionAddress(electionName));
+        txData.push("0x" + optionIndex.toString(16));
+        txData.push("0x" + ballot.toString());
+        var hash = sendMsg(userNameToUserAddress("anonymousVoter", username), txData);
+        return hash;
+    }
+
     function generateRandomId() {
         return (parseInt((Math.floor(Math.random() * 99)).toString() + ((new Date()).getTime()).toString(), 10)).toString(36);
     }
