@@ -457,7 +457,7 @@ sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(chec
 						var secondIdPassword = document.createElement("H3");
 						secondIdPassword.id = "secondIdPassword";
 						
-						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIdPassword.id+ "*******Password: "+body.secondIdPassword.password;
+						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIdPassword.id+ "  Password: "+body.secondIdPassword.password;
 						
 						
 						var backToPollBasicInfo = document.createElement("BUTTON");
@@ -1256,7 +1256,7 @@ function changeFirstPassword() {
 		
 			 * */
 			
-			var newPassword = {"username":sessionStorage.username,"currentFirstPassword": currentFirstPassword.value,"newPassword":newFirstPassword1.value};
+			var newPassword = {"username":sessionStorage.username,"currentPassword": currentFirstPassword.value,"newPassword":newFirstPassword1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 
@@ -1415,7 +1415,7 @@ function changeSecondPassword(secondId,selectedPollName) {
 						"wrongPassword" if the current second password user entered is incorrect 
 			 * */
 			
-			var newPassword = {"username":secondId,"currentSecondPassword":currentSecondPassword.value,"newPassword":newSecondPassword1.value};
+			var newPassword = {"username":secondId,"currentPassword":currentSecondPassword.value,"newPassword":newSecondPassword1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 

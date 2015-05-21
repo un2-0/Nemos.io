@@ -100,6 +100,7 @@ function SmartVote() {
         printQuery(query);
         var identity = query.identity;
         var username = query.username;
+
         if (identity === "anonymousVoter"){
             response.pollName = getAvailablePolls(identity, username);
         } else if ((identity != "organizer") && (identity != "voter") && (identity != "anonymousVoter")) {
@@ -189,6 +190,7 @@ function SmartVote() {
         var organizerName = query.username;
         var password = query.password;
         var response = {};
+
         response.result = registerUser("organizer", organizerName, password);
         return network.getHttpResponseJSON(response);
     }
@@ -212,6 +214,7 @@ function SmartVote() {
     handlers.showPollBasicInfo = function(query) {
         var electionName = query.selectedPollName;
         var response = {};
+
         if (!electionNameExists(electionName)) {
             response.result = "fail";
             response.pollBasicInfo = null;
@@ -238,6 +241,7 @@ function SmartVote() {
         var response = {};
         var username = query.username;
         var identity = query.identity;
+
         if (userExists(identity, username)) {
             response.result = "success";
             response.pollslist = getAvailablePolls(identity, username);  
@@ -262,6 +266,7 @@ function SmartVote() {
         var username = query.username;
         var electionName = query.selectedPollName;
         var response = {};
+
         response.result = validateVoter(username, electionName);
         return network.getHttpResponseJSON(response);
     }
@@ -377,14 +382,25 @@ function SmartVote() {
      */
     handlers.changePassword = function(query) {
         var username = query.username;
+        var currentPassword = query.currentPassword
         var newPassword = query.newPassword;
         var response = {};
+
         if (userExists("organizer", username)) {
-            response.result = changePassword("organizer", username, newPassword);
+            response.result = checkUser("organizer", username, currentPassword);
+            if (response.result === "success") {
+                response.result = changePassword("organizer", username, newPassword);
+            }
         } else if (userExists("voter", username)) {
-            response.result = changePassword("voter", username, newPassword);
+            response.result = checkUser("voter", username, currentPassword);
+            if (response.result === "success") {
+                response.result = changePassword("voter", username, newPassword);
+            }
         } else if (userExists("anonymousVoter", username)) {
-            response.result = changePassword("anonymousVoter", username, newPassword);
+            response.result = checkUser("anonymousVoter", username, currentPassword);
+            if (response.result === "success") {
+                response.result = changePassword("anonymousVoter", username, newPassword);
+            }
         } else {
             return network.getHttpResponse(400, {},
                     "Bad query");
