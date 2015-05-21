@@ -234,6 +234,10 @@ function SmartVoteAPI() {
         return hash;
     }
 
+    this.setLog = function(newElectionLog) {
+        
+    }
+
     this.getLog = function(electionName) {
         var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("logHash"));
 

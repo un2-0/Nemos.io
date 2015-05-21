@@ -860,7 +860,7 @@ function voting(secondIdValue,selectedPollName) {
 							
 							
 							
-							/*Data in "submitVote":
+							/*Data in "submitVotes":
 							 * 			"secondId": the voter second account id
 							 * 			"selecedPollName": the poll name
 							 * 			"votes": array, value in each slot is either "1"(string) or "0"(string). which means the vote for candidate or not
@@ -872,7 +872,7 @@ function voting(secondIdValue,selectedPollName) {
 							 * */
 							
 
-							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
+							sender.sendAsync("POST", baseUrl+ "/submitVotes", JSON.stringify(ballot), function(res){ 
 								
 								loadingDisabling("off", "");
 								
