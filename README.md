@@ -29,3 +29,15 @@ TODO:
   package.json
 
 Finished:
+
+Dependencies:
+Ubuntu:
+  go version >= 1.3.3
+  vim
+  git
+  mercurial
+  libgmp3-dev
+  curl
+  go-ipfs
+  decerver
+  epm
