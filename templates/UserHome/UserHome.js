@@ -27,6 +27,10 @@ function loadInformation(){
 
 	//window.alert(sessionStorage.username);
 	
+	//sessionStorage.username = "a";
+	//sessionStorage.identity = "anonymousVoter";
+	
+	
 	var temp = LoginAs();
 
 	if(temp == "organizer"){

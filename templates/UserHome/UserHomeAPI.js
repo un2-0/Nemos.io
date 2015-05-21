@@ -1170,7 +1170,19 @@ function changeFirstPassword() {
 	
 	var newFirstPasswordContainerLabel = document.createElement("LEGEND");
 	newFirstPasswordContainerLabel.id = "newFirstPasswordContainerLabel";
-	newFirstPasswordContainerLabel.innerHTML = "Please enter new first password:";
+	newFirstPasswordContainerLabel.innerHTML = "Change your first password:";
+	
+	
+	var currentFirstPassword = document.createElement("INPUT");
+	currentFirstPassword.id = "currentFirstPassword";
+	currentFirstPassword.setAttribute("type", "password");
+	currentFirstPassword.required = true;
+	
+	var currentFirstPasswordLabel = document.createElement("LABEL");
+	currentFirstPasswordLabel.innerHTML = "Enter your current first password:";
+	currentFirstPasswordLabel.setAttribute("for", "currentFirstPassword");
+	
+	
 	
 	var newFirstPassword1 = document.createElement("INPUT");
 	newFirstPassword1.id = "newFirstPassword1";
@@ -1202,6 +1214,12 @@ function changeFirstPassword() {
 	
 	newFirstPasswordContainer.appendChild(newFirstPasswordContainerLabel);
 	
+	newFirstPasswordContainer.appendChild(currentFirstPasswordLabel);
+	newFirstPasswordContainer.appendChild(currentFirstPassword);
+	
+	newFirstPasswordContainer.appendChild(document.createElement("BR"));
+	newFirstPasswordContainer.appendChild(document.createElement("HR"));
+	
 	newFirstPasswordContainer.appendChild(newFirstPassword1Label);
 	newFirstPasswordContainer.appendChild(newFirstPassword1);
 	
@@ -1219,6 +1237,7 @@ function changeFirstPassword() {
 		
 		if (newFirstPassword1.value === newFirstPassword2.value) {
 			
+			if (currentFirstPassword.value !== newFirstPassword1.value) {
 			
 			var tempConfirm = confirm("Are you sure to change your first account password?");
 			
@@ -1228,14 +1247,16 @@ function changeFirstPassword() {
 			
 			/*Data in "changeFirstPassword" request:
 			 * 			"username": first account id
+			 * 			"currentFirstPassword": current first password
 			 * 			"newFirstPassword": new first account password
 			 * 			
 			 * Data in response:
-			 * 			"result": "success" or not
+			 * 			"result": "success" 
+			 * 					  "wrongPassword" if the current first password user entered is incorrect 
 		
 			 * */
 			
-			var newPassword = {"username":sessionStorage.username,"newPassword":newFirstPassword1.value};
+			var newPassword = {"username":sessionStorage.username,"currentFirstPassword": currentFirstPassword.value,"newPassword":newFirstPassword1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 
@@ -1253,7 +1274,13 @@ function changeFirstPassword() {
 								jumpToLogin();
 
 								
-							} else {
+							} else if (body.result == "wrongPassword") {
+								window.alert("The current first password you entered is incorrect");
+								
+								newFirstPasswordReceiver.reset();
+									
+								currentFirstPassword.scrollIntoView();
+							}else {
 								
 								window.alert("bad response");
 								return;
@@ -1265,7 +1292,15 @@ function changeFirstPassword() {
 
 			});			
 							
-							
+			}else{
+				
+				window.alert("The current password should not be same with new password");
+				
+				newFirstPasswordReceiver.reset();
+				
+				currentFirstPassword.scrollIntoView();
+				return;
+			}				
 			
 		} else {
 			window.alert("Two passwords do not match, please try again.");
@@ -1294,8 +1329,19 @@ function changeSecondPassword(secondId,selectedPollName) {
 	
 	var newSecondPasswordContainerLabel = document.createElement("LEGEND");
 	newSecondPasswordContainerLabel.id = "newSecondPasswordContainerLabel";
-	newSecondPasswordContainerLabel.innerHTML = "Please enter new second password:";
+	newSecondPasswordContainerLabel.innerHTML = "Change your second password:";
 	
+	
+	var currentSecondPassword = document.createElement("INPUT");
+	currentSecondPassword.id = "currentSecondPassword";
+	currentSecondPassword.setAttribute("type", "password");
+	currentSecondPassword.required = true;
+	
+	var currentSecondPasswordLabel = document.createElement("LABEL");
+	currentSecondPasswordLabel.innerHTML = "Enter your current second password:";
+	currentSecondPasswordLabel.setAttribute("for", "currentSecondPassword");
+	
+
 	var newSecondPassword1 = document.createElement("INPUT");
 	newSecondPassword1.id = "newSecondPassword1";
 	newSecondPassword1.setAttribute("type", "password");
@@ -1326,6 +1372,13 @@ function changeSecondPassword(secondId,selectedPollName) {
 	
 	newSecondPasswordContainer.appendChild(newSecondPasswordContainerLabel);
 	
+	newSecondPasswordContainer.appendChild(currentSecondPasswordLabel);
+	newSecondPasswordContainer.appendChild(currentSecondPassword);
+	
+	newSecondPasswordContainer.appendChild(document.createElement("BR"));
+	newSecondPasswordContainer.appendChild(document.createElement("HR"));
+	
+	
 	newSecondPasswordContainer.appendChild(newSecondPassword1Label);
 	newSecondPasswordContainer.appendChild(newSecondPassword1);
 	
@@ -1343,6 +1396,8 @@ function changeSecondPassword(secondId,selectedPollName) {
 		
 		if (newSecondPassword1.value === newSecondPassword2.value) {
 			
+			if(currentSecondPassword.value !== newSecondPassword1.value){
+			
 			var tempConfirm = confirm("Are you sure to change your second account password?");
 			
 			if(tempConfirm == false){
@@ -1357,10 +1412,10 @@ function changeSecondPassword(secondId,selectedPollName) {
 			 * 			
 			 * Data in response:
 			 * 			"result": "success" or not
-		
+						"wrongPassword" if the current second password user entered is incorrect 
 			 * */
 			
-			var newPassword = {"username":secondId,"newPassword":newSecondPassword1.value};
+			var newPassword = {"username":secondId,"currentSecondPassword":currentSecondPassword.value,"newPassword":newSecondPassword1.value};
 			
 			sender.sendAsync("POST", baseUrl+ "/changePassword", JSON.stringify(newPassword), function(res){ 
 
@@ -1378,7 +1433,14 @@ function changeSecondPassword(secondId,selectedPollName) {
 								loadBasicPollInformation(contentContainer,selectedPollName,true);
 
 								
-							} else {
+							}  else if (body.result == "wrongPassword") {
+								window.alert("The current second password you entered is incorrect");
+								
+								newSecondPasswordContainer.reset();
+									
+								currentSecondPassword.scrollIntoView();
+								
+							}else {
 								
 								window.alert("bad response");
 								return;
@@ -1389,7 +1451,14 @@ function changeSecondPassword(secondId,selectedPollName) {
 				}
 
 			});			
-							
+			} else {
+				window.alert("The current password should not be same with new password");
+				
+				newSecondPasswordReceiver.reset();
+				
+				currentSecondPassword.scrollIntoView();
+				return;
+			}			
 			
 		} else {
 			window.alert("Two passwords do not match, please try again.");
