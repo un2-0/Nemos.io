@@ -6,6 +6,7 @@
 ; - registerElection
 ; - deregisterElection
 ; - vote
+; - devote
 ; - suicideAccount
 ; - suicideAnonymousAccount
 ; ------------------------------------------------------------------------------
@@ -160,6 +161,24 @@
         (when (= (cmd) "vote") {
             ; remove the record in AccountManager
             [0xA0]"recordBallot"
+            [0xC0](option)
+            [0xE0](ballot)
+            (CALL (gass) (elecaddr) 0 0xA0 0x60 0x20 0x20)
+            
+            (unless (= @0x20 1) (STOP))
+
+            (suicide (ORIGIN))
+        })
+
+        ;-----------------------------------------------------------------------
+        ; Devote for an election
+        ;-----------------------------------------------------------------------
+        ; Calldata: "devote" elecaddr option ballot
+        ; Returns: 0 - fail | 1 - success
+        ;-----------------------------------------------------------------------
+        (when (= (cmd) "devote") {
+            ; remove the record in AccountManager
+            [0xA0]"withdrawBallot"
             [0xC0](option)
             [0xE0](ballot)
             (CALL (gass) (elecaddr) 0 0xA0 0x60 0x20 0x20)

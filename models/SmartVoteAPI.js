@@ -234,6 +234,12 @@ function SmartVoteAPI() {
         return hash;
     }
 
+    this.getLog = function(electionName) {
+        var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("logHash"));
+
+        return JSON.parse(readFile(logAddress));
+    }
+
     this.hasVoted = function(electionName, username) {
         var logAddress = esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("logHash"));
         var electionLog = JSON.parse(readFile(logAddress));
@@ -307,12 +313,20 @@ function SmartVoteAPI() {
         return info;
     }
 
-    this.validateVoter = function(username, electionName) {
-        if (esl.ll.Main(userNameToUserAddress("voter", username), sutil.stringToHex("reverseElectionList"), electionNameToElectionAddress(electionName)) != "0x0") {
-            return "secondPasswordNotSet";
-        }
-        else {
-            return "secondPasswordSet";
+    this.validateUser = function(identity, username, electionName) {
+        if (identity === "voter") {
+            if (esl.ll.Main(userNameToUserAddress("voter", username), sutil.stringToHex("reverseElectionList"), electionNameToElectionAddress(electionName)) != "0x0") {
+                return "secondPasswordNotSet";
+            }
+            else {
+                return "secondPasswordSet";
+            }
+        } else if (identity === "anonymousVoter") {
+            if (esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("reverseAnoList"), userNameToUserAddress("anonymousVoter", username)) != "0x0") {
+                return "validId";
+            } else {
+                return "invalidId";
+            }
         }
     }
 

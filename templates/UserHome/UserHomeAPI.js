@@ -871,7 +871,7 @@ function voting(secondIdValue,selectedPollName) {
 							 * 
 							 * */
 							
-						/*
+
 							sender.sendAsync("POST", baseUrl+ "/submitVote", JSON.stringify(ballot), function(res){ 
 								
 								loadingDisabling("off", "");
@@ -881,11 +881,6 @@ function voting(secondIdValue,selectedPollName) {
 											var body = res.response;
 											
 											body1 = JSON.parse(body);
-										
-											//test
-								*/			
-							
-											var body1 = {"result":"success"};
 											
 											if (body1.result == "success") {
 												
@@ -900,13 +895,12 @@ function voting(secondIdValue,selectedPollName) {
 												return;
 											}
 									
-									/*	
+	
 									    } else {
 											window.alert("failed to submit vote");
 										}
 
 								});
-							*/
 							
 							
 						}

@@ -136,14 +136,13 @@ function SmartVote() {
      *                             object with "id" and "password"
      *           }
      */
-    // TODO
     handlers.module1CreatePoll = function(query) {
         /*
          * Data structure in request "module1CreateElection":
          * a stringtified JSON object that contains:
          *  Data structure of the response of the "module1CreatElection":
                   */
-        printQuery(query); // TODO can be removed
+        printQuery(query); // can be removed
 
         var pollName = query.pollName;
         var organizerName = query.username;
@@ -267,7 +266,7 @@ function SmartVote() {
         var electionName = query.selectedPollName;
         var response = {};
 
-        response.result = validateVoter(username, electionName);
+        response.result = validateUser("voter", username, electionName);
         return network.getHttpResponseJSON(response);
     }
     
@@ -351,7 +350,38 @@ function SmartVote() {
         }
         return network.getHttpResponseJSON(response);
     }
-    
+
+    /**
+     * Submit votes for the user.
+     * @param query = {
+     *      "secondId": the voter second account id
+     *      "selecedPollName": the poll name
+     *      "votes": array, value in each slot is either "1"(string) or "0"(string). which means the vote for candidate or not
+     * }
+     * @response response = {
+     *     "result": "success" or "invalidId" or "submitFailure"
+     * }
+     */
+    handlers.submitVote = function(query) {
+        printQuery(query);
+        var username = query.secondId;
+        var electionName = query.selectedPollName;
+        var response = {};
+
+        if (validateUser("anonymousVoter", username, electionName) === "validId") {
+            if (submitVote(username, electionName, query.votes)) {
+                response.result = "success";
+            } else {
+                response.result = "submitFailure";
+            }
+        } else if (validateUser("anonymousVoter", username, electionName) === "invalidId") {
+                response.result = "invalidId";
+        } else {
+            return network.getHttpResponse(400, {}, "Bad query");
+        }
+        return network.getHttpResponseJSON(response);
+    }
+
     /**
      * Show the result of a poll.
      * @param query = {"selectedPollName" : str"}
@@ -402,8 +432,7 @@ function SmartVote() {
                 response.result = changePassword("anonymousVoter", username, newPassword);
             }
         } else {
-            return network.getHttpResponse(400, {},
-                    "Bad query");
+            return network.getHttpResponse(400, {}, "Bad query");
         }
         return network.getHttpResponseJSON(response);
     }
@@ -534,9 +563,6 @@ function SmartVote() {
                 monk.Commit();
             }
             setUserPassword(identity, username, password);
-            if (COMMITTING) {
-                monk.Commit();
-            }
             return "success";
         }        
     }
@@ -575,25 +601,10 @@ function SmartVote() {
                 monk.Commit();
             }
             setOpenTime(pollName, parseInt(query.openTime, 10));
-            if (COMMITTING) {
-                monk.Commit();
-            }
             setCloseTime(pollName, parseInt(query.closeTime, 10));
-            if (COMMITTING) {
-                monk.Commit();
-            }
             setOptions(pollName, query.canOpts.length);
-            if (COMMITTING) {
-                monk.Commit();
-            }
             setDescription(pollName, JSON.stringify(des));
-            if (COMMITTING) {
-                monk.Commit();
-            }
             initLog(pollName);
-            if (COMMITTING) {
-                monk.Commit();
-            }
             response.result = "success";
             response.publicKeys = generatePublicKeys(query.voterNum, 8);
         }
@@ -602,30 +613,65 @@ function SmartVote() {
 
     function changePassword(identity, username, password) {
         setUserPassword(identity, username, password);
-        if (COMMITTING) {
-            monk.Commit();
-        }
         return "success";
     }
 
     function setOpenTime(electionName, openTime) {
-        return svApi.setOpenTime(electionName, openTime);
+        var hash = svApi.setOpenTime(electionName, openTime);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
     }
 
     function setCloseTime(electionName, closeTime) {
-        return svApi.setCloseTime(electionName, closeTime);
+        var hash = svApi.setCloseTime(electionName, closeTime);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
     }
 
     function setOptions(electionName, optionNum) {
-        return svApi.setOptions(electionName, optionNum);
+        var hash = svApi.setOptions(electionName, optionNum);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
     }
 
     function setDescription(electionName, description) {
-        return svApi.setDescription(electionName, description);
+        var hash = svApi.setDescription(electionName, description);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
     }
 
     function initLog(electionName) {
-        return svApi.initLog(electionName);
+        var hash = svApi.initLog(electionName);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
+    }
+
+    function setLog(newElectionLog) {
+        var hash = svApi.setLog(newElectionLog);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
+    }
+
+    function getLog(electionName) {
+        return svApi.getLog(electionName);
     }
 
     function getAvailablePolls(identity, username) {
@@ -637,11 +683,16 @@ function SmartVote() {
     }
 
     function setUserPassword(identity, username, password) {
-        return svApi.setUserPassword(identity, username, password);
+        var hash = svApi.setUserPassword(identity, username, password);
+
+        if (COMMITTING) {
+            monk.Commit();
+        }
+        return hash;
     }
 
-    function validateVoter(username, electionName) {
-        return svApi.validateVoter(username, electionName);
+    function validateUser(identity, username, electionName) {
+        return svApi.validateUser(identity, username, electionName);
     }
 
     function hasVoted(electionName, username) {
@@ -654,6 +705,20 @@ function SmartVote() {
 
     function getVotes(electionName, username) {
         return svApi.getVotes(electionName, username);
+    }
+
+    function submitVote(username, electionName, votes) {
+        var electionLog = getLog(electionName);
+        var ballot = 0;
+
+        if (hasVoted(electionName, username)) {
+        } else {
+            for (var i = 0; i < votes.length; i++) {
+                if (votes[i] != "0") {
+                    ballot = parseInt(votes[i], 10);
+                }
+            }
+        }
     }
 
 	this.init = function() {

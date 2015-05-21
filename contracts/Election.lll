@@ -15,6 +15,7 @@
 ; - addLinkBetweenAccount
 ; - rmLinkBetweenAccount
 ; - recordBallot
+; - withdrawBallot
 ; - suicideElection
 ; ------------------------------------------------------------------------------
 
@@ -432,6 +433,24 @@
             (when (= (llGet "reverseAnoList" (CALLER)) 0) (STOP))
             
             (kvSet "ballots" (option) (+ (kvGet "ballots" (option)) (ballot)))
+
+            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
+            
+            [0x0]1
+            (return 0x0 0x20)
+        })
+
+        ; ----------------------------------------------------------------------
+        ; Withdraw a ballot.
+        ; ----------------------------------------------------------------------
+        ; Calldata: "withdrawBallot" (CALLER) option ballot
+        ; Returns: 0 - fail | 1 - success
+        ; ----------------------------------------------------------------------
+        (when (&& (= (cmd) "withdrawBallot")) {
+            ;Check if the caller is a registered voter
+            (when (= (llGet "reverseAnoList" (CALLER)) 0) (STOP))
+            
+            (kvSet "ballots" (option) (- (kvGet "ballots" (option)) (ballot)))
 
             (kvSet "votingRecord" (CALLER) (TIMESTAMP))
             
