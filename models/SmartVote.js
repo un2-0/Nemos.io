@@ -362,14 +362,14 @@ function SmartVote() {
      *     "result": "success" or "invalidId" or "submitFailure"
      * }
      */
-    handlers.submitVote = function(query) {
+    handlers.submitVotes = function(query) {
         printQuery(query);
         var username = query.secondId;
         var electionName = query.selectedPollName;
         var response = {};
 
         if (validateUser("anonymousVoter", username, electionName) === "validId") {
-            if (submitVote(username, electionName, query.votes)) {
+            if (submitVotes(username, electionName, query.votes)) {
                 response.result = "success";
             } else {
                 response.result = "submitFailure";
@@ -527,22 +527,17 @@ function SmartVote() {
 
     function registerElection(pollName, username, target) {
         svApi.registerElection(pollName, username, target);
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         svApi.registerElection(pollName, username, target + "-poll");
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return "success";
     }
 
     function deregisterElection(pollName, username, target) {
-        svApi.deregisterElection(pollName, username, target);
-        if (COMMITTING) {
-            monk.Commit();
-        }
-        return "success";
+        var hash = svApi.deregisterElection(pollName, username, target);
+
+        commit();
+        return hash;
     }
 
     function electionNameExists(electionName) {
@@ -619,54 +614,42 @@ function SmartVote() {
     function setOpenTime(electionName, openTime) {
         var hash = svApi.setOpenTime(electionName, openTime);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
     function setCloseTime(electionName, closeTime) {
         var hash = svApi.setCloseTime(electionName, closeTime);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
     function setOptions(electionName, optionNum) {
         var hash = svApi.setOptions(electionName, optionNum);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
     function setDescription(electionName, description) {
         var hash = svApi.setDescription(electionName, description);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
     function initLog(electionName) {
         var hash = svApi.initLog(electionName);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
     function setLog(newElectionLog) {
         var hash = svApi.setLog(newElectionLog);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
@@ -685,9 +668,7 @@ function SmartVote() {
     function setUserPassword(identity, username, password) {
         var hash = svApi.setUserPassword(identity, username, password);
 
-        if (COMMITTING) {
-            monk.Commit();
-        }
+        commit();
         return hash;
     }
 
@@ -707,7 +688,7 @@ function SmartVote() {
         return svApi.getVotes(electionName, username);
     }
 
-    function submitVote(username, electionName, votes) {
+    function submitVotes(username, electionName, votes) {
         var electionLog = getLog(electionName);
         var ballot = 0;
 
@@ -721,6 +702,11 @@ function SmartVote() {
         }
     }
 
+    function commit() {
+        if (COMMITTING) {
+            monk.Commit();
+        }
+    }
 	this.init = function() {
 		svApi.init();
 	}
