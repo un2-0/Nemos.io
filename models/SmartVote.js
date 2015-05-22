@@ -383,7 +383,7 @@ function SmartVote() {
     }
 
     /**
-     * Show the result of a poll.
+     * Get the result of a poll.
      * @param query = {"selectedPollName" : str"}
      * @response response = {
      *     "result": "success" or else
@@ -394,10 +394,19 @@ function SmartVote() {
      *             }, ...]
      * }
      */
-    handlers.showResult = function(query) {
+    handlers.getResult = function(query) {
         printQuery(query);
         var pollName = query.selectedPollName;
-        // TODO
+        var response = {};
+
+        Println(getCloseTime(pollName));
+        if ((new Date()).getTime() > getCloseTime(pollName)) {
+            response = getResult(pollName);
+            response.result = "success";
+        } else {
+            response.result = "fail";
+        }
+        return network.getHttpResponseJSON(response);
     }
     
     /**
@@ -593,7 +602,7 @@ function SmartVote() {
             commit();
             setOpenTime(pollName, parseInt(query.openTime, 10));
             setCloseTime(pollName, parseInt(query.closeTime, 10));
-            setOptions(pollName, query.canOpts.length);
+            setOptions(pollName, query.canOpts.length.toString());
             setDescription(pollName, JSON.stringify(des));
             initLog(pollName);
             response.result = "success";
@@ -724,6 +733,14 @@ function SmartVote() {
         return true;
     }
 
+    function getCloseTime(electionName) {
+        return svApi.getCloseTime(electionName);
+    }
+
+    function getResult(electionName) {
+        return svApi.getResult(electionName);
+    }
+
     function commit() {
         if (COMMITTING) {
             monk.Commit();
@@ -743,6 +760,5 @@ function SmartVote() {
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
-sv.test();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");

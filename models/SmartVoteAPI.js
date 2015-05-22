@@ -316,9 +316,9 @@ function SmartVoteAPI() {
 
         info.pollName = electionName;
         info.organizerName = getElectionOwner("electionName", electionName, "username");
-        info.openTime = getOpenTime(electionName);
-        info.closeTime = getCloseTime(electionName);
-        info.pollDes = getDescription(electionName);
+        info.openTime = this.getOpenTime(electionName);
+        info.closeTime = this.getCloseTime(electionName);
+        info.pollDes = this.getElectionDescription(electionName);
         return info;
     }
 
@@ -379,9 +379,61 @@ function SmartVoteAPI() {
         }
         txData.push(electionNameToElectionAddress(electionName));
         txData.push("0x" + optionIndex.toString(16));
-        txData.push("0x" + ballot.toString());
+        txData.push("0x" + ballot.toString(16));
         var hash = sendMsg(userNameToUserAddress("anonymousVoter", username), txData);
         return hash;
+    }
+
+    this.getOpenTime = function(electionName) {
+        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("opened")));
+    }
+
+    this.getCloseTime = function(electionName) {
+        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("closed")));
+    }
+
+    this.getElectionDescription = function(electionName) {
+        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("desHash"))));
+
+        return des.pollDes;
+    }
+
+    this.getDescription = function(electionName) {
+        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("desHash"))));
+
+        return des;
+    }
+
+    this.getResult = function(electionName) {
+        var electionResult = {};
+        var des = this.getDescription(electionName);
+        var electionLog = this.getLog(electionName);
+        var votes = [];
+        electionResult["candidates"] = []
+        electionResult["log"] = []
+
+        for (var i = 0; i < des.canOpts.length; i++) {
+            electionResult["candidates"].push({"name": des.canOpts[i].name, "canDes": des.canOpts[i].canDes, "votes": getOptionResult(electionName, (i + 1).toString())});
+        }
+
+        var crtAno;
+        var anoAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("anoList"), sutil.stringToHex("HEAD"));
+        while (anoAddr != "0x0") {
+            crtAno = userAddressToUserName("anonymousVoter", anoAddr);
+            votes = []
+            for (var i = 0; i < des.canOpts.length; i++) {
+                votes.push("0");
+            }
+            if (electionLog.voted[crtAno]) {
+                for (var i = 0; i < electionLog.voted[crtAno].length; i++) {
+                    votes[parseInt(electionLog.voted[crtAno][i], 10) - 1] = electionLog.votes[crtAno][electionLog.voted[crtAno][i]];
+                }
+            }
+            electionResult["log"].push({"id": crtAno, "votes": votes});
+            anoAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("anoList"), anoAddr);
+        }
+
+        return electionResult
     }
 
     function generateRandomId() {
@@ -458,20 +510,6 @@ function SmartVoteAPI() {
         return owner;
     }
 
-    function getOpenTime(electionName) {
-        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("opened")));
-    }
-
-    function getCloseTime(electionName) {
-        return sutil.hexToString(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("closed")));
-    }
-
-    function getDescription(electionName) {
-        var des = JSON.parse(readFile(esl.single.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("desHash"))));
-
-        return des.pollDes;
-    }
-
     /* {"created":"1432107243000",
         "electionName":"pl1",
         "lastModified":1432108176583,
@@ -495,6 +533,10 @@ function SmartVoteAPI() {
         return writeFile(JSON.stringify(electionLog));
     }
 
+    function getOptionResult(electionName, optionIndex) {
+        return parseInt(esl.kv.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("ballots"), parseInt(optionIndex, 10)), 16);
+    }
+
 	this.init = function() {
 		Println("Initializing SmartVote");
 		// Start subscribing to tx events.
@@ -507,8 +549,4 @@ function SmartVoteAPI() {
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
 	}
-
-    this.test = function() {
-        Println(sutil.hexToString(userNameToUserAddress("organizer", "usr3"), sutil.stringToHex("password")));
-    }
 };

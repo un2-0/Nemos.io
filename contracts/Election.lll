@@ -43,8 +43,8 @@
 
     (def 'optionnum () (calldataload 0x20)) ;Number of options
 
-    (def 'option () (calldataload 0x40)) ;The index of option voted
-    (def 'ballot () (calldataload 0x60)) ;New result of the option
+    (def 'option () (calldataload 0x20)) ;The index of option voted
+    (def 'ballot () (calldataload 0x40)) ;New result of the option
 
     (def 'singleAttributeKey () (calldataload 0x20))
     (def 'singleAttributeValue () (calldataload 0x40))
@@ -75,6 +75,7 @@
     (singleInit "followupElection" 0) ;Should be allowed to set multiple elections, but single for now
     (kvInit "hasPermList")
     (kvInit "permList")
+    (kvInit "ballots") ;Initialize ballot counting
     (llInit "logs")
 
     (singleInit "lastVoter")
@@ -228,13 +229,11 @@
         (when (= (cmd) "setOptions") {
             ;TODO Check if the caller has the permission to set
 
-            (kvInit "ballots") ;Initialize ballot counting
-            (kvInit "votingRecord") ;Initialize voting record
-
-            (singleSet "optionNumber" (optionnum))
 			(for {[0xE0]1} (<= @0xE0 (singleGet "optionNumber")) [0xE0](+ @0xE0 1)
 				(kvSet "ballots" @0xE0 0)
 			)
+
+            (singleSet "optionNumber" (optionnum))
 
             (when (= (singleGet "status") 1) (singleSet "status" 2))
             
@@ -432,9 +431,9 @@
             ;Check if the caller is a registered voter
             (when (= (llGet "reverseAnoList" (CALLER)) 0) (STOP))
             
-            (kvSet "ballots" (option) (+ (kvGet "ballots" (option)) (ballot)))
+            (unless (<= (option) (singleGet "optionNumber")) (STOP))
 
-            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
+            (kvSet "ballots" (option) (+ (kvGet "ballots" (option)) (ballot)))
             
             [0x0]1
             (return 0x0 0x20)
@@ -449,10 +448,10 @@
         (when (&& (= (cmd) "withdrawBallot")) {
             ;Check if the caller is a registered voter
             (when (= (llGet "reverseAnoList" (CALLER)) 0) (STOP))
-            
-            (kvSet "ballots" (option) (- (kvGet "ballots" (option)) (ballot)))
 
-            (kvSet "votingRecord" (CALLER) (TIMESTAMP))
+            (unless (<= (option) (singleGet "optionNumber")) (STOP))
+
+            (kvSet "ballots" (option) (- (kvGet "ballots" (option)) (ballot)))
             
             [0x0]1
             (return 0x0 0x20)

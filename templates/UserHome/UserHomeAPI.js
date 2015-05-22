@@ -888,7 +888,6 @@ function showResult(selectedPollName) {
 	 * 
 	 * */
 	
-	/*
 	var pollName = {"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getResult", JSON.stringify(pollName), function(res){ 
@@ -900,24 +899,7 @@ function showResult(selectedPollName) {
 					var body = res.response;
 					
 					body = JSON.parse(body);
-		*/			
 					
-					//test
-					var body = {"result": "success",
-							"candidates": [{"name":"a","canDes":"a","votes":"4"},
-							               {"name":"b","canDes":"b","votes":"2"},
-							               {"name":"c","canDes":"c","votes":"4"}],
-							"log": [{"id":"aaa","votes":["1","0","1"]},
-							        {"id":"bbb","votes":["0","1","1"]},
-							        {"id":"ccc","votes":["1","0","1"]},
-							        {"id":"ddd","votes":["1","1","0"]},
-							        {"id":"fff","votes":["1","0","1"]},
-							]
-							
-							
-					};
-	
-	
 	
 					if (body.result == "success") {
 						
@@ -1070,13 +1052,11 @@ function showResult(selectedPollName) {
 						
 						window.alert("bad response");
 					}
-		/*	        
 			    } else {
 					window.alert("failed to get poll result");
 				}
 
 		});
-*/
 }
 
 function changeFirstPassword() {
@@ -1722,7 +1702,6 @@ function module1Creation(moduleLoader) {
 			openTime.scrollIntoView();
 			return;
 		}else {
-			window.alert("Sumbmit to create poll");
 				 
 			var tempConfirm = confirm("Confirm to create the Poll now?");
 
@@ -1774,7 +1753,7 @@ function module1Creation(moduleLoader) {
 					all the detail information of all candidates/options in the poll. Each slot in the array includes
 					an object {name:?,canDes:?}
 	 * 
-	 *  Data structure of the response of the "module1CreatPoll":
+	 *  Data structure of the response of the "module1CreatePoll":
 	 *  	an standard httpJSON response with body including:
 	 *			"result": "success"(if all good)
 	 *  				  "pollNameExist" (the poll name is existed)
