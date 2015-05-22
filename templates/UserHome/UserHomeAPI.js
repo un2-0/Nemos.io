@@ -303,49 +303,17 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 				
 				if (CTDate > currentDate) {
 					
-					if(sessionStorage.identity == "voter"){
+					if(sessionStorage.identity == "voter"){                        
 						
-var checkInfo = {"username": sessionStorage.username,"selectedPollName": selectedPollName};
-
-	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
-	
-		if (res.status == 200) {
-			console.log(res);
-			var body = res.response;
-			
-			body = JSON.parse(body);
-
-			tempRes = body.result;
-
-                        if (tempRes == "secondPasswordSet") {
-							
-							nextBtn.innerHTML = "please wait for the poll ends to see the result";
-							nextBtn.disabled = true;
-							
-							
-						} else if (tempRes == "secondPasswordNotSet") {
-							
-							nextBtn.innerHTML = "go to get random second Id and password";
-							
-						} else {
-							
-							window.alert("bad response");
-						}
-
-	    } else {
-			window.alert("failed to login to the poll");
-		}
-});
-                        
-							
+						nextBtn.innerHTML = "get random second Account";
+						
 					}else if(sessionStorage.identity == "anonymousVoter"){
 						
 						nextBtn.innerHTML = "participate in the poll";	
 						
 					}else if(sessionStorage.identity == "organizer"){
 						
-						nextBtn.innerHTML = "please wait for the poll ends to see the result";
-						nextBtn.disabled = true;
+						nextBtn.innerHTML = "check assigned frist accounts' details of the poll";
 					}
 				
 				} else {
@@ -408,104 +376,19 @@ var checkInfo = {"username": sessionStorage.username,"selectedPollName": selecte
 					if (CTDate > currentDate) {
 						
 						if(sessionStorage.identity == "voter"){
-
-
-sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), function(res){
-
-		if (res.status == 200) {
-			console.log(res);
-			var body = res.response;
-			
-			body = JSON.parse(body);
-
-			tempRes = body.result;
-
-          					if (tempRes == "secondPasswordSet") {
-                            } else if (tempRes == "secondPasswordNotSet") {
+                      	
+                            window.alert("You can only get randome Second Account once!" +
+                            		"Please keep it saftly");
+                            
+                            loadingDisabling("on", "Creating randome Second Account for you, please be patient.");
+                            
+                            getSecondIdPassword(selectedPollName);
 							
-									/*Happend when the voter has not get the initially random second account id and password
-	 * Data in "getVoterSecondIdPassword":
-	 * 		"username": the first account id of the voter
- 	 * 		"selectedPollName": the poll name that user chose to look at
-	 * 
-	 * 
-	 *Data should be in response of the request: 
-	 *			"result": the result of the operation.
-	 *			"secondIdPassword": {"id": random second account id,"password": random second account password}
-	 * 
-	 * e.g body = {"result":"success",
-		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
-				   };
-	 * 
-	 * 
-	 * */
-	
-	var voterGetSecondIdPassword = {"username":sessionStorage.username,"selectedPollName":selectedPollName};
-	
-	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
-
-		if (res.status == 200) {
-					console.log(res);
-					var body = res.response;
-					
-					body = JSON.parse(body);
-					
-					if (body.result == "success") {
-						
-						contentContainer.innerHTML = "";
-						
-						var secondIdPassword = document.createElement("H3");
-						secondIdPassword.id = "secondIdPassword";
-						
-						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIdPassword.id+ "  Password: "+body.secondIdPassword.password;
-						
-						
-						var backToPollBasicInfo = document.createElement("BUTTON");
-						backToPollBasicInfo.id = "backToPollBasicInfo";
-						backToPollBasicInfo.innerHTML = "go back";
-						
-						
-						contentContainer.appendChild(secondIdPassword);
-						contentContainer.appendChild(document.createElement("BR"));
-						contentContainer.appendChild(backToPollBasicInfo);
-						
-						window.alert("Please keep your assigned ID and Password safely!" +
-								"\nWithout it, you can not participate in the poll!");
-						
-						
-						backToPollBasicInfo.addEventListener("click",function(){
 							
-							loadBasicPollInformation(contentContainer,selectedPollName,true);
-							
-						});
-						
-						
-					} else {
-						
-						window.alert("bad response");
-					}
-
-			    } else {
-					window.alert("failed to get voter second account Id & Password");
-				}
-
-		});
-
-	
-	
-							
-							}else {
-							
-								window.alert("bad response");
-							}
-
-
-	    } else {
-			window.alert("failed to login to the poll");
-		}
-});
 
 						}else if(sessionStorage.identity == "organizer"){
+							
+							checkFirstAccountList(selectedPollName);
 														
 						}else if(sessionStorage.identity == "anonymousVoter"){
 							voting(sessionStorage.username, selectedPollName);
@@ -534,12 +417,51 @@ sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(chec
 		});
 }
 
+
+function checkFirstAccountList(selectedPollName) {
+	
+	/*"publicKeys": An array that cantains all the public id and random password
+	 *  					  for each voters in the poll. Each slot in the poll should contain
+	 *  					  a JSON object with "id" and "password"
+	 *  
+	 *  					  [{"id":"01", "password":"Doe"},
+						      {"id":"02","password":"Smith"},
+						      {"id":"03", "password":"Jones"}]
+	
+	*/
+	
+	
+	contentContainer.innerHTML = "";
+	 
+	 for (var i = 0; i < body.publicKeys.length; i++) {
+		temp1 = document.createTextNode("voter"+i+"  id: "+body.publicKeys[i].id+ "  password: "+body.publicKeys[i].password);
+		contentContainer.appendChild(temp1);
+		contentContainer.appendChild(document.createElement("br"));
+		contentContainer.appendChild(document.createElement("br"));
+	}
+		
+	 contentContainer.appendChild(document.createElement("br"));
+	 
+	 var exit = document.createElement("button");
+	 exit.innerHTML = "exit";
+	 exit.addEventListener("click", function(){
+		 window.location.reload();
+	 })
+	 
+	 contentContainer.appendChild(exit);
+	
+}
+
+
+
+
 /**
  * Check if the voter has already get the second account.
  * If not, then generate a username-password pair as the second pair
  * @param selectedPollName
  */
-function checkVoterSecondAccount(selectedPollName) {
+
+//function checkVoterSecondAccount(selectedPollName) {
 	
 		/*Data in "checkVoterSecondAccount":
 		 * 		"username": the first account id of the voter
@@ -554,7 +476,7 @@ function checkVoterSecondAccount(selectedPollName) {
 	
 		 * */	
 	
-
+/*
 	var checkInfo = {"username": sessionStorage.username,"selectedPollName": selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(checkInfo), t = function(res){
@@ -579,10 +501,13 @@ function checkVoterSecondAccount(selectedPollName) {
     return t;
 
 }
+*/
 
 
-//function getSecondIDPassword(selectedPollName) {
-	
+
+
+function getSecondIdPassword(selectedPollName) {
+
 	/*Happend when the voter has not get the initially random second account id and password
 	 * Data in "getVoterSecondIdPassword":
 	 * 		"username": the first account id of the voter
@@ -599,12 +524,15 @@ function checkVoterSecondAccount(selectedPollName) {
 	 * 
 	 * 
 	 * */
-	/*
+	
 	
 	var voterGetSecondIdPassword = {"username":sessionStorage.username,"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
-
+		
+		
+		loadingDisabling("off", "");
+		
 		if (res.status == 200) {
 					console.log(res);
 					var body = res.response;
@@ -612,9 +540,9 @@ function checkVoterSecondAccount(selectedPollName) {
 					body = JSON.parse(body);
 	
 		//for local test
-		var	body = {"result":"success",
+	/*	var	body = {"result":"success",
 		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
-				   };
+				   };*/
 					
 					if (body.result == "success") {
 						
@@ -628,20 +556,21 @@ function checkVoterSecondAccount(selectedPollName) {
 						
 						var backToPollBasicInfo = document.createElement("BUTTON");
 						backToPollBasicInfo.id = "backToPollBasicInfo";
-						backToPollBasicInfo.innerHTML = "go back";
+						backToPollBasicInfo.innerHTML = "close";
 						
 						
 						contentContainer.appendChild(secondIdPassword);
 						contentContainer.appendChild(document.createElement("BR"));
 						contentContainer.appendChild(backToPollBasicInfo);
 						
-						window.alert("Please keep your assigned ID and Password safely!" +
-								"\nWithout it, you can not participate in the poll!");
 						
 						
 						backToPollBasicInfo.addEventListener("click",function(){
 							
-							loadBasicPollInformation(contentContainer,selectedPollName,true);
+							window.alert("Please keep your second Account ID and Password safely!" +
+							"\nWithout it, you can not participate in the poll!");
+							
+							window.location.reload();
 							
 						});
 						
@@ -657,10 +586,9 @@ function checkVoterSecondAccount(selectedPollName) {
 
 		});
 
-	
-	
-	
-}*/
+}
+
+
 
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
@@ -1850,18 +1778,7 @@ function module1Creation(moduleLoader) {
 	 *  	an standard httpJSON response with body including:
 	 *			"result": "success"(if all good)
 	 *  				  "pollNameExist" (the poll name is existed)
-	 *  	
-	 *  		"publicKeys": An array that cantains all the public id and random password
-	 *  					  for each voters in the poll. Each slot in the poll should contain
-	 *  					  a JSON object with "id" and "password"
-	 *  
-	 *  					  [{"id":"01", "password":"Doe"},
-						      {"id":"02","password":"Smith"},
-						      {"id":"03", "password":"Jones"}]
-						                     
-	 *  				  
-	 *  	
-	 * 		
+	
 	*/		
 			sender.sendAsync("POST", baseUrl+ "/module1CreatePoll", JSON.stringify(temp1), function(res){
 				
@@ -1874,29 +1791,10 @@ function module1Creation(moduleLoader) {
 					body = JSON.parse(body);
 					
 					if (body.result == "success") {
+	
+						window.alert("Successfully created Poll!");
 						
-							contentContainer.innerHTML = "";
-							 
-							 for (var i = 0; i < body.publicKeys.length; i++) {
-								temp1 = document.createTextNode("voter"+i+"  id: "+body.publicKeys[i].id+ "  password: "+body.publicKeys[i].password);
-								contentContainer.appendChild(temp1);
-								contentContainer.appendChild(document.createElement("br"));
-								contentContainer.appendChild(document.createElement("br"));
-							}
-								
-							 contentContainer.appendChild(document.createElement("br"));
-							 
-							 var exit = document.createElement("button");
-							 exit.innerHTML = "exit";
-							 exit.addEventListener("click", function(){
-								 window.location.reload();
-							 })
-							 
-							 contentContainer.appendChild(exit);
-					 
-					 
-					 
-					 
+						checkFirstAccountList(temp1.pollName);
 						
 					} else if (body.result == "pollNameExist") {
 						
