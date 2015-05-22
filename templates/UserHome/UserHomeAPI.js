@@ -422,77 +422,13 @@ sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(chec
 
           					if (tempRes == "secondPasswordSet") {
                             } else if (tempRes == "secondPasswordNotSet") {
-							
-									/*Happend when the voter has not get the initially random second account id and password
-	 * Data in "getVoterSecondIdPassword":
-	 * 		"username": the first account id of the voter
- 	 * 		"selectedPollName": the poll name that user chose to look at
-	 * 
-	 * 
-	 *Data should be in response of the request: 
-	 *			"result": the result of the operation.
-	 *			"secondIdPassword": {"id": random second account id,"password": random second account password}
-	 * 
-	 * e.g body = {"result":"success",
-		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
-				   };
-	 * 
-	 * 
-	 * */
-	
-	var voterGetSecondIdPassword = {"username":sessionStorage.username,"selectedPollName":selectedPollName};
-	
-	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
-
-		if (res.status == 200) {
-					console.log(res);
-					var body = res.response;
-					
-					body = JSON.parse(body);
-					
-					if (body.result == "success") {
-						
-						contentContainer.innerHTML = "";
-						
-						var secondIdPassword = document.createElement("H3");
-						secondIdPassword.id = "secondIdPassword";
-						
-						secondIdPassword.innerHTML = "Second Account Id: "+body.secondIdPassword.id+ "  Password: "+body.secondIdPassword.password;
-						
-						
-						var backToPollBasicInfo = document.createElement("BUTTON");
-						backToPollBasicInfo.id = "backToPollBasicInfo";
-						backToPollBasicInfo.innerHTML = "go back";
-						
-						
-						contentContainer.appendChild(secondIdPassword);
-						contentContainer.appendChild(document.createElement("BR"));
-						contentContainer.appendChild(backToPollBasicInfo);
-						
-						window.alert("Please keep your assigned ID and Password safely!" +
-								"\nWithout it, you can not participate in the poll!");
-						
-						
-						backToPollBasicInfo.addEventListener("click",function(){
-							
-							loadBasicPollInformation(contentContainer,selectedPollName,true);
-							
-						});
-						
-						
-					} else {
-						
-						window.alert("bad response");
-					}
-
-			    } else {
-					window.alert("failed to get voter second account Id & Password");
-				}
-
-		});
-
-	
-	
+                            	
+                            window.alert("You can only get randome Second Account once!" +
+                            		"Please keep it saftly");
+                            
+                            loadingDisabling("on", "Creating randome Second Account for you, please be patient.");
+                            
+                            getSecondIdPassword(selectedPollName);
 							
 							}else {
 							
@@ -533,6 +469,8 @@ sender.sendAsync("POST", baseUrl+"/checkVoterSecondAccount", JSON.stringify(chec
 	
 		});
 }
+
+
 
 /**
  * Check if the voter has already get the second account.
@@ -581,8 +519,8 @@ function checkVoterSecondAccount(selectedPollName) {
 }
 
 
-//function getSecondIDPassword(selectedPollName) {
-	
+function getSecondIdPassword(selectedPollName) {
+
 	/*Happend when the voter has not get the initially random second account id and password
 	 * Data in "getVoterSecondIdPassword":
 	 * 		"username": the first account id of the voter
@@ -599,12 +537,15 @@ function checkVoterSecondAccount(selectedPollName) {
 	 * 
 	 * 
 	 * */
-	/*
+	
 	
 	var voterGetSecondIdPassword = {"username":sessionStorage.username,"selectedPollName":selectedPollName};
 	
 	sender.sendAsync("POST", baseUrl+ "/getVoterSecondIdPassword", JSON.stringify(voterGetSecondIdPassword), function(res){ 
-
+		
+		
+		loadingDisabling("off", "");
+		
 		if (res.status == 200) {
 					console.log(res);
 					var body = res.response;
@@ -612,9 +553,9 @@ function checkVoterSecondAccount(selectedPollName) {
 					body = JSON.parse(body);
 	
 		//for local test
-		var	body = {"result":"success",
+	/*	var	body = {"result":"success",
 		            "secondIdPassword":{"id":"aaaaaaa","password":"bbbbbbb"}
-				   };
+				   };*/
 					
 					if (body.result == "success") {
 						
@@ -628,7 +569,7 @@ function checkVoterSecondAccount(selectedPollName) {
 						
 						var backToPollBasicInfo = document.createElement("BUTTON");
 						backToPollBasicInfo.id = "backToPollBasicInfo";
-						backToPollBasicInfo.innerHTML = "go back";
+						backToPollBasicInfo.innerHTML = "close";
 						
 						
 						contentContainer.appendChild(secondIdPassword);
@@ -641,7 +582,7 @@ function checkVoterSecondAccount(selectedPollName) {
 						
 						backToPollBasicInfo.addEventListener("click",function(){
 							
-							loadBasicPollInformation(contentContainer,selectedPollName,true);
+							window.location.reload();
 							
 						});
 						
@@ -657,10 +598,8 @@ function checkVoterSecondAccount(selectedPollName) {
 
 		});
 
-	
-	
-	
-}*/
+}
+
 
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
