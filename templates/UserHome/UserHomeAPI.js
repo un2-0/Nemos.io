@@ -846,7 +846,7 @@ function voting(secondIdValue,selectedPollName) {
 							loadingDisabling("on", "Submitting your ballot, please be patient");
 							
 							
-							var ballot = {"secondId":secondIdValue,"selecedPollName":selectedPollName,"votes":[]};
+							var ballot = {"secondId":secondIdValue,"selectedPollName":selectedPollName,"votes":[]};
 							
 							for (var i = 0; i < checkBoxes.length; i++) {
 								

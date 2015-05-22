@@ -235,7 +235,14 @@ function SmartVoteAPI() {
     }
 
     this.setLog = function(newElectionLog) {
-        
+        var txData = [];
+        var logAddress = writeFile(JSON.stringify(newElectionLog));
+
+        txData.push("setSingleAttribute");
+        txData.push("logHash");
+        txData.push(logAddress);
+        var hash = sendMsg(electionNameToElectionAddress(newElectionLog.electionName), txData);
+        return hash;
     }
 
     this.getLog = function(electionName) {
@@ -277,9 +284,7 @@ function SmartVoteAPI() {
         do {
             privateKey.id = generateRandomId();
         } while(this.userExists("anonymousVoter", privateKey.id));
-        Println(privateKey.id);
         privateKey.password = generateRandomPassword(passwordLength);
-        Println(privateKey.password)
         return privateKey;
     }
 
@@ -470,8 +475,8 @@ function SmartVoteAPI() {
     /* {"created":"1432107243000",
         "electionName":"pl1",
         "lastModified":1432108176583,
-        "operationLog":[{"timestamp":"1432108176585","username":"usr1","operation":"vote$|$1$|$1"},{"timestamp":"1432108176999","username":"usr1","operation":"undo$|$1$|$1"}],
-        "votingLog":{"usr1":[{"timestamp":"1432108176999","operation":"undo$|$1$|$1"}],"usr2":[{"timestamp":"1432108176999","operation":"undo$|$1$|$1"}]},
+        "operationLog":[{"timestamp":"1432108176585","username":"usr1","operation":"vote$|$1$|$1"},{"timestamp":"1432108176999","username":"usr1","operation":"devote$|$1$|$1"}],
+        "votingLog":{"usr1":[{"timestamp":"1432108176999","operation":"vote$|$1$|$1"}],"usr2":[{"timestamp":"1432108176999","operation":"devote$|$1$|$1"}]},
         "voted":{"usr1":["1","2"]},
         "votes":{"usr1":{"1":"2", "2":"3"}}}
         Note: vote$|$1$|$2   =   vote 2 ballot for option 1
@@ -502,4 +507,8 @@ function SmartVoteAPI() {
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
 	}
+
+    this.test = function() {
+        Println(sutil.hexToString(userNameToUserAddress("organizer", "usr3"), sutil.stringToHex("password")));
+    }
 };

@@ -554,9 +554,7 @@ function SmartVote() {
         }
         else {
             svApi.registerUser(identity, username);
-            if (COMMITTING) {
-                monk.Commit();
-            }
+            commit();
             setUserPassword(identity, username, password);
             return "success";
         }        
@@ -592,9 +590,7 @@ function SmartVote() {
         }
         else {
             svApi.createElection(organizerName, pollName);
-            if (COMMITTING) {
-                monk.Commit();
-            }
+            commit();
             setOpenTime(pollName, parseInt(query.openTime, 10));
             setCloseTime(pollName, parseInt(query.closeTime, 10));
             setOptions(pollName, query.canOpts.length);
@@ -689,26 +685,43 @@ function SmartVote() {
     }
 
     function voteOps(voteOperation, electionName, username, optionIndex, ballot) {
-        var hash = svApi.vote(voteOperation, electionName, username, optionIndex, ballot);
+        var hash = svApi.voteOps(voteOperation, electionName, username, optionIndex, ballot);
 
-        commit();
         return hash;
     }
 
     function submitVotes(username, electionName, votes) {
         var electionLog = getLog(electionName);
+        var optionIndex;
         var ballot = 0;
+        var timestamp = (new Date()).getTime();
 
         if (hasVoted(electionName, username)) {
+            for (var i = 0; i < electionLog.voted[username].length; i++) {
+                optionIndex = electionLog.voted[username][i];
+                ballot = electionLog.votes[username][optionIndex];
+                voteOps("devote", electionName, username, optionIndex, ballot);
+                electionLog.operationLog.push({"timestamp": timestamp, "username": username, "operation": "devote$|$" + optionIndex + "$|$" + ballot});
+                electionLog.votingLog[username].push({"timestamp": timestamp, "operation": "devote$|$" + optionIndex + "$|$" + ballot});
+            }
         } else {
-            for (var i = 0; i < votes.length; i++) {
-                if (votes[i] != "0") {
-                    ballot = parseInt(votes[i], 10);
-                    vote("vote", electionName, username, ballot);
-                }
+            electionLog.votingLog[username] = [];
+        }
+        electionLog.voted[username] = [];
+        electionLog.votes[username] = {};
+        for (var i = 1; i <= votes.length; i++) {
+            if (votes[i - 1] != "0") {
+                ballot = votes[i - 1];
+                voteOps("vote", electionName, username, i.toString(), ballot);
+                electionLog.operationLog.push({"timestamp": timestamp, "username": username, "operation": "vote$|$" + i.toString() + "$|$" + ballot});
+                electionLog.votingLog[username].push({"timestamp": timestamp, "operation": "vote$|$" + i.toString() + "$|$" + ballot});
+                electionLog.voted[username].push(i.toString());
+                electionLog.votes[username][i.toString()] = ballot;
             }
         }
+        electionLog.lastModified = (new Date()).getTime();
         setLog(electionLog);
+        return true;
     }
 
     function commit() {
@@ -716,14 +729,20 @@ function SmartVote() {
             monk.Commit();
         }
     }
+
 	this.init = function() {
 		svApi.init();
 	}
+
+    this.test = function() {
+        svApi.test();
+    }
 }
 
 // Initialization
 var sv = new SmartVote();
 Println("Starting SmartVote");
 sv.init();
+sv.test();
 network.registerIncomingHttpCallback(sv.handle);
 Println("SmartVote Initialized");
