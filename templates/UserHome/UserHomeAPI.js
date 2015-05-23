@@ -420,35 +420,198 @@ function loadBasicPollInformation(container,selectedPollName,seeResult) {
 
 function checkFirstAccountList(selectedPollName) {
 	
-	/*"publicKeys": An array that cantains all the public id and random password
+	/*Data should be included in response of request "checkFirstAccountList"
+	 * 
+	 * "publicKeys": An array that cantains all the public id and random password
 	 *  					  for each voters in the poll. Each slot in the poll should contain
-	 *  					  a JSON object with "id" and "password"
+	 *  					  a JSON object with "id", "password" and "status" 
+	 *  															("status" shows that if the randome first account has been distributed or not)
+	 *  															("1" -> distributed; "0" -> not distributed)						
 	 *  
-	 *  					  [{"id":"01", "password":"Doe"},
-						      {"id":"02","password":"Smith"},
-						      {"id":"03", "password":"Jones"}]
+	 *  					  [{"id":"01", "password":"Doe","status":"1"},
+						      {"id":"02","password":"Smith","status":"0"},
+						      {"id":"03", "password":"Jones","status":"1"}]
 	
 	*/
 	
 	
 	contentContainer.innerHTML = "";
-	 
-	 for (var i = 0; i < body.publicKeys.length; i++) {
-		temp1 = document.createTextNode("voter"+i+"  id: "+body.publicKeys[i].id+ "  password: "+body.publicKeys[i].password);
-		contentContainer.appendChild(temp1);
-		contentContainer.appendChild(document.createElement("br"));
-		contentContainer.appendChild(document.createElement("br"));
-	}
+	
+	var pollName = {"selectedPollName":selectedPollName};
+	
+	sender.sendAsync("POST", baseUrl+ "/checkFirstAccountList", JSON.stringify(pollName), function(res){ 
+
 		
-	 contentContainer.appendChild(document.createElement("br"));
+		if (res.status == 200) {
+			
+					console.log(res);
+					var body = res.response;
+					
+					body = JSON.parse(body);
+	
+					var FirstAccountListContainer = document.createElement("FORM");
+					FirstAccountListContainer.id ="FirstAccountListContainer";
+					FirstAccountListContainer.setAttribute("onsubmit","return false;");
+					
+					var FirstAccountListTable = document.createElement("TABLE");
+					FirstAccountListTable.id = "FirstAccountListTable";
+					FirstAccountListTable.setAttribute("class","table table-bordered table-striped");
+					
+					var description = document.createElement("H3");
+					description.id ="description";
+					description.innerHTML = "Assigned random first accounts list.";
+					
+					
+					var submitBtn = document.createElement("INPUT");
+					submitBtn.setAttribute("type","submit");
+					submitBtn.value = "submit accounts distribution";
+					
+					contentContainer.appendChild(FirstAccountListContainer);
+					
+					FirstAccountListContainer.appendChild(description);
+					FirstAccountListContainer.appendChild(document.createElement("BR"));
+					
+					FirstAccountListContainer.appendChild(FirstAccountListTable);
+					FirstAccountListContainer.appendChild(document.createElement("BR"));
+					FirstAccountListContainer.appendChild(submitBtn);
+					
+					var rowZero = document.createElement("TR");
+					rowZero.id = "rowZero";
+					
+					var tableHead1 = document.createElement("TH");
+					tableHead1.innerHTML = "Id";
+					
+					var tableHead2 = document.createElement("TH");
+					tableHead2.innerHTML = "Password";
+					
+					var tableHead3 = document.createElement("TH");
+					tableHead3.innerHTML = "Destribution status";
+					
+					FirstAccountListTable.appendChild(rowZero);
+					
+					rowZero.appendChild(tableHead1);
+					rowZero.appendChild(tableHead2);
+					rowZero.appendChild(tableHead3);
+					
+					var checkBoxes = [];
+					
+					for (var i = 0; i < body.publicKeys.length; i++) {
+						
+							
+							var tempTR = document.createElement("TR");
+							
+							var id = document.createElement("TD");
+							id.innerHTML = body.publicKeys[i].id;
+							
+							var password = document.createElement("TD");
+							password.innerHTML = body.publicKeys[i].password;
+							
+							var status = document.createElement("TD");
+							
+							var tempCB = document.createElement("INPUT");
+							tempCB.setAttribute("type","checkbox");
+							tempCB.id = "id"+i+"Status";
+							tempCB.value = body.publicKeys[i].id;
+							
+							
+							FirstAccountListTable.appendChild(tempTR);
+							tempTR.appendChild(id);
+							tempTR.appendChild(password);
+							tempTR.appendChild(status);
+							
+							status.appendChild(tempCB);
+							
+							checkBoxes[i] = tempCB;
+												
+					}
 	 
-	 var exit = document.createElement("button");
-	 exit.innerHTML = "exit";
-	 exit.addEventListener("click", function(){
-		 window.location.reload();
-	 })
-	 
-	 contentContainer.appendChild(exit);
+	
+						for (var i = 0; i < checkBoxes.length; i++) {
+							
+							if(body.publicKeys[i].status == "1"){
+								checkBoxes[i].checked = true;
+								checkBoxes[i].disabled = true;
+							}
+							
+						}
+						
+						
+					
+					FirstAccountListContainer.addEventListener("submit",function(){
+						
+						var tempConfirm = confirm("Save first accounts distribution now?");
+							
+							if(tempConfirm == false){
+								return;
+							}
+							
+							loadingDisabling("on", "Saving first accounts distribution, please be patient");
+							
+							
+							var accountDistribution = {"selectedPollName":selectedPollName,"status":[]};
+							
+							for (var i = 0; i < checkBoxes.length; i++) {
+								
+								if(checkBoxes[i].checked == true){
+									accountDistribution.status[i] = "1";
+								}else {
+									accountDistribution.status[i] = "0";
+								}
+								
+							}
+		
+						});
+
+					/*Data in "submitFirstAccontDistribtion":
+					 * 			"selecedPollName": the poll name
+					 * 			"votes": array, value in each slot is either "1"(string) or "0"(string). which means the account has been distributed or not
+					 * 
+					 * Data in response:
+					 * 
+					 * 			"result": "success" (if all good) or some other string (bad response -- submition failed)
+					 * 
+					 * */
+					
+
+					sender.sendAsync("POST", baseUrl+ "/submitFirstAccontDistribtion", JSON.stringify(accountDistribution), function(res){ 
+						
+						loadingDisabling("off", "");
+						
+						if (res.status == 200) {
+									console.log(res);
+									var body = res.response;
+									
+									body1 = JSON.parse(body);
+									
+									if (body1.result == "success") {
+										
+										window.alert("The first account distribution has been successfully submited.");
+
+										window.location.reload();
+										
+									} else {
+										
+										window.alert("bad response");
+										return;
+									}
+							
+
+							    } else {
+									window.alert("failed to save accounts distribution");
+								}
+
+						});
+					
+					
+					
+				    } else {
+				    	
+						window.alert("failed to get first accounts list");
+						window.location.reload();
+					}
+				
+			});
+				
 	
 }
 
@@ -658,7 +821,7 @@ function voting(secondIdValue,selectedPollName) {
 					
 					var votingTable = document.createElement("TABLE");
 					votingTable.id = "votingTable";
-					votingContainer.setAttribute("class","table table-bordered table-striped");
+					votingTable.setAttribute("class","table table-bordered table-striped");
 					
 					var rulesDescription = document.createElement("H3");
 					rulesDescription.id ="rulesDescription";

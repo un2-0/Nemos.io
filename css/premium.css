@@ -2,12 +2,12 @@
 /*See http://www.portnine.com/bootstrap-themes for details.*/
 /*After purchasing a premium license, the full source code will be available for download.*/
 
-#votingTable #resultTable #logTable{
+#votingTable #resultTable #logTable #FirstAccountListTable{
 	border-collapse: collapse;
 	text-align: center;
 }
 
-#votingTable #resultTable #logTable table, td, th{
+#votingTable #resultTable #FirstAccountListTable #logTable table, td, th{
 	border: 1px solid black;
 	text-align: center;
 }
