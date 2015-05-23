@@ -564,7 +564,7 @@ function checkFirstAccountList(selectedPollName) {
 
 					/*Data in "submitFirstAccontDistribtion":
 					 * 			"selecedPollName": the poll name
-					 * 			"votes": array, value in each slot is either "1"(string) or "0"(string). which means the account has been distributed or not
+					 * 			"status": array, value in each slot is either "1"(string) or "0"(string). which means the account has been distributed or not
 					 * 
 					 * Data in response:
 					 * 
