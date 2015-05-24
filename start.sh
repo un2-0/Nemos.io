@@ -18,7 +18,7 @@ local_host=${LOCAL_HOST:=0.0.0.0}
 local_port=${LOCAL_PORT:=30303}
 max_peers=${MAX_PEERS:=10}
 log_level=${LOG_LEVEL:=3}
-root_contract=${ROOT_CONTRACT:="0x74cebddf61a9733dd3a214c5997d91897cf838cd"}
+root_contract=${ROOT_CONTRACT:="0xef7277485fbc6de469b5a6dee9e29181353782b2"}
 
 echo ""
 echo ""
