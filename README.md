@@ -52,3 +52,4 @@ Ubuntu:
   
   epm
   
+  jq
