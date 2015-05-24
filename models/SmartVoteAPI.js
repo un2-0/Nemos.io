@@ -112,6 +112,40 @@ function SmartVoteAPI() {
 		return hash;
     }
 
+    this.getVoters = function(electionName) {
+        var voters = [];
+        var userAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("voterList"), sutil.stringToHex("HEAD"));
+        var username;
+        var password;
+        var distributed;
+
+        while (userAddr != "0x0") {
+            username = userAddressToUserName("voter", userAddr);
+            password = sutil.hexToString(esl.single.Value(userAddr, sutil.stringToHex("password")));
+            distributed = parseInt(esl.kv.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("distributed"), userAddr), 10).toString();
+            voters.push({"id": username, "password": password, "status": distributed});
+            userAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("voterList"), sutil.stringToHex(userAddr));
+        }
+        return voters;
+    }
+
+    this.setDistributionStatus = function(electionName, username, distributed) {
+        if (esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("reverseVoterList"), sutil.stringToHex(username)) != "0x0") {
+            var txData = [];
+            var hash;
+
+            distributed = parseInt(distributed, 10);
+            txData.push("setKvAttribute");
+            txData.push("distributed");
+            txData.push(userNameToUserAddress(username));
+            txData.push("0x" + distributed.toString(16));
+            hash = sendMsg(electionNameToEletionAddress(electionName), txData);
+    		return hash;
+        } else {
+            return "Invalid Voter"
+        }
+    }
+
     this.registerElection = function(pollName, username, target) {
         var txData = [];
         var hash;

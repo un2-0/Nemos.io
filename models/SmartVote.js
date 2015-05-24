@@ -127,13 +127,6 @@ function SmartVote() {
      *        }
      * @response response = {
      *               "result": "success" or "electionNameExist"
-     *               "publicKeys": [{"id":"01", "password":"Doe"},
-     *                             {"id":"02", "password":"Smith"},
-     *                             {"id":"03", "password":"Jones"}]
-     *                             An array that contains all the public id and
-     *                             random password for each voters in the election.
-     *                             Each slot in the election should contain a JSON
-     *                             object with "id" and "password"
      *           }
      */
     handlers.module1CreatePoll = function(query) {
@@ -172,6 +165,29 @@ function SmartVote() {
     // TODO
     handlers.module2CreatePoll = function(query) {
          
+    }
+
+    /**
+     * Check voter accounts for the selected poll.
+     * @param query = { 
+     *     "selectedPollName"
+     * }
+     * @response response = {
+     *     "publicKeys": [{"id":"01", "password":"Doe", "status":"0"},
+     *                             {"id":"02", "password":"Smith", "status":"1"},
+     *                             {"id":"03", "password":"Jones", "status":"0"}]
+     *                             An array that contains all the public id and
+     *                             random password for each voters in the election.
+     *                             Each slot in the election should contain a JSON
+     *                             object with "id" and "password"
+     * }
+     */
+    // TODO
+    handlers.checkFirstAccountList = function(query) {
+        var response = {};
+
+        response.publicKeys = getVoters(query.selectedPollName);
+        return network.getHttpResponseJSON(response);
     }
 
     /**
@@ -522,11 +538,16 @@ function SmartVote() {
         return svApi.generatePrivateKey(passwordLength);
     }
 
-    function registerVoters(pollName, publicKeys) {
+    function registerVoters(electionName, publicKeys) {
         for (var i = 0; i < publicKeys.length; i++) {
             registerUser("voter", publicKeys[i].id, publicKeys[i].password);
-            registerElection(pollName, publicKeys[i].id, "voter");
+            setDistributionStatus(electionName, publicKeys[i].id, "0");
+            registerElection(electionName, publicKeys[i].id, "voter");
         }
+    }
+
+    function getVoters(electionName) {
+        return svApi.getVoters(electionName);
     }
 
     function registerAnonymousVoter(pollName, privateKey) {
@@ -568,6 +589,10 @@ function SmartVote() {
             return "success";
         }        
     }
+
+    function setDistributionStatus(electionName, username, distributed) {
+        return svApi.setDistributionStatus(electionName, username, distributed);
+    }
 	
     function checkUser(identity, username, password) {
         if (!userExists(identity, username)) {
@@ -595,7 +620,6 @@ function SmartVote() {
 
         if (electionNameExists(pollName)) {
             response.result = "pollNameExist";
-            response.publicKeys = null;
         }
         else {
             svApi.createElection(organizerName, pollName);

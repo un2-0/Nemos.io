@@ -81,6 +81,7 @@
     (singleInit "lastVoter")
     (llInit "voterList")
     (llInit "reverseVoterList")
+    (kvInit "distributed")
 
     (singleInit "lastAno")
     (llInit "anoList")
@@ -95,6 +96,7 @@
     (llAddLink "legalAttributeKeys" "status" 1)
     (llAddLink "legalAttributeKeys" "hasPermList" 1)
     (llAddLink "legalAttributeKeys" "permList" 1)
+    (llAddLink "legalAttributeKeys" "distributed" 1)
 
     (singleInit "status" 0)
     ; status:

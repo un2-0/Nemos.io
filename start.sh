@@ -18,7 +18,7 @@ local_host=${LOCAL_HOST:=0.0.0.0}
 local_port=${LOCAL_PORT:=30303}
 max_peers=${MAX_PEERS:=10}
 log_level=${LOG_LEVEL:=3}
-root_contract=${ROOT_CONTRACT:="0xef7277485fbc6de469b5a6dee9e29181353782b2"}
+root_contract=${ROOT_CONTRACT:="0x7133748d6b9370a2a29d6498b9c6024c5aefdd1d"}
 
 echo ""
 echo ""
@@ -70,7 +70,7 @@ echo "peer_server_address: $remote_host:$remote_port"
 
 cp package.json /tmp/
 
-jq '.module_dependencies[0].data |= . + {peer_server_address: "'$remote_host:$remote_port'", blockchain_id: "'$blockchain_id'", root_contract: "'$root_contract'"}' /tmp/package.json \
+jq '.module_dependencies[0].data = {peer_server_address: "'$remote_host:$remote_port'", blockchain_id: "'$blockchain_id'", root_contract: "'$root_contract'"}' /tmp/package.json \
   > package.json
 
 echo ""
