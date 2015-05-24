@@ -2,18 +2,18 @@
 
 !{DOUG
 deploy:
-	"./contracts/SmartVoteDOUG.lll" => {{DOUG}}
+	"./SmartVoteDOUG.lll" => {{DOUG}}
 !}DOUG
 
 !{EM
 modify-deploy:
-	"./contracts/ElectionManager.lll" => {{EM}}
+	"./ElectionManager.lll" => {{EM}}
 	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
 !}EM
 
 !{AM
 modify-deploy:
-	"./contracts/AccountManager.lll" => {{AM}}
+	"./AccountManager.lll" => {{AM}}
 	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
 !}AM
 

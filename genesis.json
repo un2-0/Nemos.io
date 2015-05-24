@@ -1,0 +1,27 @@
+{
+	"address": "0000000000THISISDOUG",
+	"pdx": "",
+	"doug": "",
+	"unique": false,
+	"private-key": "",
+	"model": "",
+	"no-gendoug": true,
+	"consensus": "",
+	"difficulty": 7,
+	"public:mine": 0,
+	"public:create": 0,
+	"public:tx": 0,
+	"maxgastx": "",
+	"tapow": 0,
+	"blocktime": 0,
+	"vm": null,
+	"accounts": [
+		{
+			"address": "0xbbbd0256041f7aed3ce278c56ee61492de96d001",
+			"name": "",
+			"balance": "1000000000000000000000000000000000000",
+			"permissions": null,
+			"stake": 0
+		}
+	]
+}
