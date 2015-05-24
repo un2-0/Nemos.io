@@ -27,7 +27,7 @@ echo ""
 echo ""
 echo "Setting Connection."
 cd contracts
-epm --log 5 deploy
+epm --log 5 deploy SmartVote.pdx
 
 # Now we need to tell the DApp about our chain and then we’re ready to VRoom.
 blockchain_id=$(epm plop chainid)
