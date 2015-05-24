@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+if [ -z "$GOROOT" ] && [ -z "$GOPATH" ]
+then
+echo ""
+echo ""
+echo "Setting go path."
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+fi
+
 echo ""
 echo ""
 echo "Your environment good human ->"
@@ -112,3 +122,6 @@ echo ""
 echo ""
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote &
 decerver
+
+sleep 30
+sensible-browser http://localhost:3000/SmartVote

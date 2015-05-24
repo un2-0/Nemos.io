@@ -1,39 +1,39 @@
 {
+  "homepage": "",
+  "author": {
+    "name": "SmartVote Team",
+    "url": "https://e-mov.org"
+  },
   "repository": {
-    "url": "git://github.com/SmartVote.git",
-    "type": "git"
+    "type": "git",
+    "url": "git://github.com/SmartVote.git"
   },
   "bugs": {
     "url": "https://github.com/SmartVote/issues"
   },
   "licenses": [
     {
-      "url": "https://github.com/SmartVote/LICENSE.txt",
-      "type": "CUSTOM"
+      "type": "CUSTOM",
+      "url": "https://github.com/SmartVote/LICENSE.txt"
     }
   ],
   "module_dependencies": [
     {
+      "name": "monk",
+      "version": "0.0.1",
       "data": {
         "root_contract": "0x0d7ea56e379123ca3ba2ab5e887c62c5898f9cc4",
         "blockchain_id": "f858469a00e80e4f5eb536501eb7d98c7e1cc432",
         "peer_server_address": "150.203.235.209:30303"
-      },
-      "version": "0.0.1",
-      "name": "monk"
+      }
     },
     {
-      "version": "0.0.1",
-      "name": "ipfs"
+      "name": "ipfs",
+      "version": "0.0.1"
     }
   ],
   "id": "SmartVote",
   "name": "SmartVote",
   "version": "0.0.1",
-  "app_icon": "",
-  "author": {
-    "url": "https://e-mov.org",
-    "name": "SmartVote Team"
-  },
-  "homepage": ""
+  "app_icon": ""
 }
