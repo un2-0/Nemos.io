@@ -18,7 +18,19 @@ local_host=${LOCAL_HOST:=0.0.0.0}
 local_port=${LOCAL_PORT:=30303}
 max_peers=${MAX_PEERS:=10}
 log_level=${LOG_LEVEL:=3}
-root_contract=${ROOT_CONTRACT:="0x7133748d6b9370a2a29d6498b9c6024c5aefdd1d"}
+root_contract=${ROOT_CONTRACT:="0x0d7ea56e379123ca3ba2ab5e887c62c5898f9cc4"}
+read -p "(Previous root contract: $root_contract) Root contract: " tmp_root_contract
+if [ -z "$tmp_root_contract" ]
+then
+echo ""
+echo ""
+echo "Using previous root contract: $root_contract."
+else
+echo ""
+echo ""
+echo "Using new root contract: $tmp_root_contract."
+root_contract=$tmp_root_contract
+fi
 
 echo ""
 echo ""
@@ -57,7 +69,7 @@ echo "Catching up the Chain... This may take a minute ->"
 echo ""
 echo ""
 epm --log 3 run &
-sleep 90
+sleep 9
 kill -SIGTERM $(epm plop pid)
 
 blockchain_id=$(epm plop chainid)

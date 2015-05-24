@@ -296,7 +296,7 @@ function SmartVote() {
      *        }
      * @response response = {
      *               "result" : "success" or "userDoesntExist" or
-     *                          "wrongPassWord"
+     *                          "wrongPassword"
      *           }
      */
     handlers.checkVoterSecondIdPassword = function(query) {
@@ -602,7 +602,7 @@ function SmartVote() {
             if (svApi.checkUserPassword(identity, username, password)) {
                 return "success";
             }
-            return "wrongPassWord";
+            return "wrongPassword";
         }
     }
 

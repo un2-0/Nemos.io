@@ -15,9 +15,9 @@
   "module_dependencies": [
     {
       "data": {
-        "root_contract": "0x7133748d6b9370a2a29d6498b9c6024c5aefdd1d",
+        "root_contract": "0x0d7ea56e379123ca3ba2ab5e887c62c5898f9cc4",
         "blockchain_id": "f858469a00e80e4f5eb536501eb7d98c7e1cc432",
-        "peer_server_address": "111.111.111.111:9999"
+        "peer_server_address": "150.203.235.209:30303"
       },
       "version": "0.0.1",
       "name": "monk"
