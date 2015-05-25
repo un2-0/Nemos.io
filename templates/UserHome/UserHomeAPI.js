@@ -1577,8 +1577,9 @@ function module1Creation(moduleLoader) {
 	openTime.id = "openTime";
 	openTime.setAttribute("type", "datetime-local");
 	openTime.required = true;
+	
 	var labelOT = document.createElement("label");
-	labelOT.innerHTML = "Open Time:  ";
+	labelOT.innerHTML = "Open Time (e.g. 2014-11-16T15:25:33):  ";
 	labelOT.setAttribute("for", "openTime");
 
 	
@@ -1586,8 +1587,9 @@ function module1Creation(moduleLoader) {
 	closeTime.id = "closeTime";
 	closeTime.setAttribute("type", "datetime-local");
 	closeTime.required = true;
+	
 	var labelCT = document.createElement("label");
-	labelCT.innerHTML = "Close Time:  ";
+	labelCT.innerHTML = "Close Time (e.g. 2015-12-17T15:25:33):  ";
 	labelCT.setAttribute("for", "closeTime");
 
 	
@@ -2293,7 +2295,7 @@ function module2AddPolls(j,pollsContainer) {
 	openTime.setAttribute("type", "datetime-local");
 	openTime.required = true;
 	var labelOT = document.createElement("label");
-	labelOT.innerHTML = "Open Time:  ";
+	labelOT.innerHTML = "Open Time (e.g. 2014-11-16T15:25:33):  ";
 	labelOT.setAttribute("for", "openTime" + j);
 
 	
@@ -2302,7 +2304,7 @@ function module2AddPolls(j,pollsContainer) {
 	closeTime.setAttribute("type", "datetime-local");
 	closeTime.required = true;
 	var labelCT = document.createElement("label");
-	labelCT.innerHTML = "Close Time:  ";
+	labelCT.innerHTML = "Close Time (e.g. 2015-11-16T15:25:33):  ";
 	labelCT.setAttribute("for", "closeTime" + j);
 
 	
