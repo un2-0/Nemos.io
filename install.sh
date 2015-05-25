@@ -4,9 +4,15 @@ ARCH=${ARCH:=amd64}
 tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 sleep 30
 
+if [ -z "$GOROOT" ] && [ -z "$GOPATH" ]
+then
+echo ""
+echo ""
+echo "Setting go path."
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+fi
 
 sudo apt-get install jq git mercurial libgmp3-dev curl vim
 
