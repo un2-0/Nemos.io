@@ -11,6 +11,9 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 fi
 
+chmod +x ./startipfs.sh
+chmod +x ./startbrowser.sh
+
 echo ""
 echo ""
 echo "Your environment good human ->"
@@ -120,5 +123,7 @@ echo ""
 echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
-sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & ipfs daemon --writable & 
-decerver & sleep 30 & sensible-browser http://localhost:3000/SmartVote
+
+gnome-terminal -e ./startipfs.sh
+sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+decerver & gnome-terminal -e ./startbrowser.sh
