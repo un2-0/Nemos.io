@@ -1,4 +1,8 @@
 {
+  "name": "SmartVote",
+  "id": "SmartVote",
+  "app_icon": "",
+  "version": "0.0.1",
   "homepage": "",
   "author": {
     "name": "SmartVote Team",
@@ -31,9 +35,5 @@
       "name": "ipfs",
       "version": "0.0.1"
     }
-  ],
-  "id": "SmartVote",
-  "name": "SmartVote",
-  "version": "0.0.1",
-  "app_icon": ""
+  ]
 }
