@@ -121,7 +121,4 @@ echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote &
-decerver
-
-sleep 30
-sensible-browser http://localhost:3000/SmartVote
+decerver & sleep 30 & sensible-browser http://localhost:3000/SmartVote
