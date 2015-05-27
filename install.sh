@@ -82,8 +82,7 @@ cd ~/.decerver/dapps/SmartVote
 echo ""
 echo ""
 echo "Initing ipfs..."
-chmod -x ./initipfs.sh
-gnome-terminal -e ./initipfs.sh
+ipfs init
 
 echo ""
 echo ""
