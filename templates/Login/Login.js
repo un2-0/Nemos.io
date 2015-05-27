@@ -1,7 +1,20 @@
 var	sender = new HttpAPI();
 baseUrl = "/apis/SmartVote";
 
+window.onload(init());
+
+
+function init() {
+	
+	clearSession();
+	
+}
+
+
+
 function login(identity){
+	
+	clearSession();
 	
 	var loginForm = document.getElementById("loginForm");
 	var username = document.getElementById("username");
@@ -53,7 +66,9 @@ function login(identity){
 	    
 
 	    sender.sendAsync("POST", baseUrl+ "/login", JSON.stringify(userinfo), function(res){ 
-		
+	    	
+	    	clearSession();
+	    	
 	    	if (res.status == 200) {
 		    	console.log(res);
 	    		var body = res.response;
@@ -63,7 +78,7 @@ function login(identity){
 	    
 	    		
 		    	if (body.result == "success" && identity !== "anonymousVoter") {  		
-		    		
+		    				    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.identity = identity;
 		    		sessionStorage.pollName = "";
@@ -71,7 +86,7 @@ function login(identity){
 		    		window.location.href = "templates/UserHome/UserHome.html";
 				
 		    	}else if(body.result == "success" && identity === "anonymousVoter"){
-		    		
+		    				    		
 		    		sessionStorage.username = username.value;
 		    		sessionStorage.identity = identity;
 		    		sessionStorage.pollName = body.pollName[0];
@@ -80,25 +95,21 @@ function login(identity){
 		    	
 		    	}else if (body.result == "userDoesntExist") {
 		    		
-		    		clearSession();
-		    		
 		    		window.alert("Sorry, the user name does not exist");
 		    		
 		    		
 		    	} else if (body.result == "wrongPassWord"){
 		    		
-		    		clearSession();
-		    		
 		    		window.alert("Sorry, your password is wrong");
 		    		
 				
 		    	} else {
-		    		clearSession();
+
 		    		window.alert("bad response");
 		    	}
 
 	        } else {
-	        	clearSession();
+
 		    	window.alert("failed to login");
 		    }
     	});
