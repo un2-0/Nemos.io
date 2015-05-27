@@ -56,6 +56,9 @@ epm config key_session:$key_session\
   local_port:$local_port \
   max_peers:$max_peers
 
+sudo chmod -X ./startipfs.sh
+sudo chmod -X ./startbrowser.sh
+  
 echo ""
 echo ""
 echo "Setting the Key File"
@@ -122,5 +125,7 @@ echo ""
 echo ""
 
 gnome-terminal -e ./startipfs.sh
+gnome-terminal -e ./startbrowser.sh
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
-decerver & sleep 10 && xdg-open http://localhost:3000/SmartVote
+decerver
+pkill decerver
