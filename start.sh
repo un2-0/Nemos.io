@@ -126,4 +126,4 @@ echo ""
 
 gnome-terminal -e ./startipfs.sh
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
-decerver & gnome-terminal -e ./startbrowser.sh
+decerver & sleep 10 && xdg-open http://localhost:3000/SmartVote
