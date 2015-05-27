@@ -69,11 +69,11 @@ echo ""
 echo ""
 echo "Downloading SmartVote..."
 cd ~/
-if [ ! -d ".decerver" ]
+if [ ! -d ".eris" ]
 then
-mkdir .decerver
+mkdir .eris
 fi
-cd .decerver
+cd .eris
 if [ ! -d "dapps" ]
 then
 mkdir dapps
@@ -83,8 +83,7 @@ if [ ! -d "SmartVote" ]
 then
 git clone http://github.com/e-movement/smartvote SmartVote
 fi
-
-cd ~/.decerver/dapps/SmartVote
+cd SmartVote
 
 echo ""
 echo ""
@@ -96,4 +95,5 @@ echo ""
 echo "Start up SmartVote..."
 chmod -x ./start.sh
 chmod -x ./startipfs.sh
+chmod -x ./startbrowser.sh
 sudo sh ./start.sh
