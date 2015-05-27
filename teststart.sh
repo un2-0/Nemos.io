@@ -18,7 +18,7 @@ set -e
 echo ""
 echo ""
 echo "Making a Chain."
-cd ~/.decerver/dapps/SmartVote
+cd ~/.eris/dapps/SmartVote
 epm new --checkout --name SmartVote --no-edit
 epm config log_level:${LOG_LEVEL:=3}
 echo "The chain has been made."

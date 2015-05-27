@@ -8,13 +8,13 @@ deploy:
 !{EM
 modify-deploy:
 	"./ElectionManager.lll" => {{EM}}
-	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
+	"(def 'DAPPDOUG 0xdaffe)" => "(def 'DAPPDOUG {{DOUG}})"
 !}EM
 
 !{AM
 modify-deploy:
 	"./AccountManager.lll" => {{AM}}
-	(def 'DAPPDOUG 0xdaffe) => (def 'DAPPDOUG {{DOUG}})
+	"(def 'DAPPDOUG 0xdaffe)" => "(def 'DAPPDOUG {{DOUG}})"
 !}AM
 
 !{setup

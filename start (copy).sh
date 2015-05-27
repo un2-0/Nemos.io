@@ -28,7 +28,7 @@ local_host=${LOCAL_HOST:=0.0.0.0}
 local_port=${LOCAL_PORT:=30303}
 max_peers=${MAX_PEERS:=10}
 log_level=${LOG_LEVEL:=3}
-root_contract=${ROOT_CONTRACT:="0x0d7ea56e379123ca3ba2ab5e887c62c5898f9cc4"}
+root_contract=${ROOT_CONTRACT:="0xf93c7979032c6f1119547de25d20ac6b7606245f"}
 read -p "(Previous root contract: $root_contract) Root contract: " tmp_root_contract
 if [ -z "$tmp_root_contract" ]
 then
@@ -83,7 +83,7 @@ echo ""
 echo ""
 epm --log 3 run &
 sleep 90
-kill $(epm plop pid)
+kill -SIGTERM $(epm plop pid)
 
 blockchain_id=$(epm plop chainid)
 echo ""
@@ -124,6 +124,17 @@ echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
 
+<<<<<<< HEAD:start.sh
 gnome-terminal -e ./startipfs.sh & gnome-terminal -e ./startbrowser.sh & sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+=======
+<<<<<<< HEAD
+sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+exec decerver & gnome-terminal -e ./startbrowser.sh & gnome-terminal -e ./startipfs.sh
+=======
+gnome-terminal -e ./startipfs.sh
+gnome-terminal -e ./startbrowser.sh
+sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+>>>>>>> origin/master:start (copy).sh
 decerver
 pkill decerver
+>>>>>>> 2e8f57ae7a603c631b0a6d6ea01c06053445a70d
