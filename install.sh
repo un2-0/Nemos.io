@@ -69,12 +69,6 @@ go get github.com/ipfs/go-ipfs/cmd/ipfs
 
 echo ""
 echo ""
-echo "Initing ipfs..."
-chmod -x ./initipfs.sh
-gnome-terminal -e ./initipfs.sh
-
-echo ""
-echo ""
 echo "Downloading SmartVote..."
 cd ~/
 mkdir .decerver
@@ -83,10 +77,17 @@ mkdir dapps
 cd dapps
 git clone http://github.com/e-movement/smartvote SmartVote
 
+cd ~/.decerver/dapps/SmartVote
+
+echo ""
+echo ""
+echo "Initing ipfs..."
+chmod -x ./initipfs.sh
+gnome-terminal -e ./initipfs.sh
+
 echo ""
 echo ""
 echo "Start up SmartVote..."
-cd ~/.decerver/dapps/SmartVote
 chmod -x ./start.sh
 chmod -x ./startipfs.sh
 chmod -x ./startbrowser.sh
