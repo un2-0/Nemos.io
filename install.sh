@@ -12,12 +12,14 @@ OS=${OS:=linux}
 ARCH=${ARCH:=amd64}
 GOPKG=${GOPKG:=go$VERSION.$OS-$ARCH.tar.gz}
 read -p "(Default go package setting: $GOPKG) Go package name: " tmp_go
+if [ ! -z "$tmp_go" ]
 then
 echo ""
 echo ""
 GOPKG=$tmp_go
 fi
 
+if [ ! -f "$GOPKG" ]
 then
 echo ""
 echo ""
