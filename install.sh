@@ -69,6 +69,12 @@ go get github.com/ipfs/go-ipfs/cmd/ipfs
 
 echo ""
 echo ""
+echo "Initing ipfs..."
+chmod -x ./initipfs.sh
+gnome-terminal -e ./initipfs.sh
+
+echo ""
+echo ""
 echo "Downloading SmartVote..."
 cd ~/
 mkdir .decerver
