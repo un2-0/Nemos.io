@@ -96,5 +96,4 @@ echo ""
 echo "Start up SmartVote..."
 chmod -x ./start.sh
 chmod -x ./startipfs.sh
-chmod -x ./startbrowser.sh
 sudo sh ./start.sh

@@ -11,9 +11,6 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 fi
 
-chmod +x ./startipfs.sh
-chmod +x ./startbrowser.sh
-
 echo ""
 echo ""
 echo "Your environment good human ->"
