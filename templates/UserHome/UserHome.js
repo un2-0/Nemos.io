@@ -111,12 +111,13 @@ function changePassword(){
 
 
 function jumpToLogin() {
-	
-	window.location.href = "../../index.html";
-	
 	sessionStorage.username = "";
 	sessionStorage.identity = "";
 	sessionStorage.pollName = "";
+	
+	window.location.href = "../../index.html";
+	
+	
 	
 }
 
