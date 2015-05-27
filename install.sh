@@ -32,7 +32,7 @@ fi
 
 echo ""
 echo ""
-echo "Unzipping $GOPKG..."
+echo "Installing $GOPKG..."
 tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 sleep 30
 
