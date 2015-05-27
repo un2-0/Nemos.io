@@ -11,9 +11,6 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 fi
 
-chmod +x ./startipfs.sh
-chmod +x ./startbrowser.sh
-
 echo ""
 echo ""
 echo "Your environment good human ->"
@@ -59,6 +56,9 @@ epm config key_session:$key_session\
   local_port:$local_port \
   max_peers:$max_peers
 
+chmod -X ./startipfs.sh
+chmod -X ./startbrowser.sh
+  
 echo ""
 echo ""
 echo "Setting the Key File"
@@ -124,5 +124,13 @@ echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
 
+<<<<<<< HEAD
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
 exec decerver & gnome-terminal -e ./startbrowser.sh & gnome-terminal -e ./startipfs.sh
+=======
+gnome-terminal -e ./startipfs.sh
+gnome-terminal -e ./startbrowser.sh
+sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+decerver
+pkill decerver
+>>>>>>> 2e8f57ae7a603c631b0a6d6ea01c06053445a70d
