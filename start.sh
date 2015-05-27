@@ -123,18 +123,5 @@ echo ""
 echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
-
-<<<<<<< HEAD:start.sh
-gnome-terminal -e ./startipfs.sh & gnome-terminal -e ./startbrowser.sh & sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
-=======
-<<<<<<< HEAD
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
 exec decerver & gnome-terminal -e ./startbrowser.sh & gnome-terminal -e ./startipfs.sh
-=======
-gnome-terminal -e ./startipfs.sh
-gnome-terminal -e ./startbrowser.sh
-sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
->>>>>>> origin/master:start (copy).sh
-decerver
-pkill decerver
->>>>>>> 2e8f57ae7a603c631b0a6d6ea01c06053445a70d
