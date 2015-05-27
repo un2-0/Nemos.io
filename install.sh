@@ -1,4 +1,9 @@
 #This installation script is for Ubuntu.
+#Please use 
+#
+#	sudo sh ./install.sh
+#
+#to start the installation.
 #!/bin/bash
 set -e
 
@@ -19,7 +24,7 @@ echo "Unzipping $tmp_go..."
 GOPKG=$tmp_go
 fi
 
-wget "https://storage.googleapis.com/golang/$GOPKG"
+sudo wget "https://storage.googleapis.com/golang/$GOPKG"
 
 tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 sleep 30
