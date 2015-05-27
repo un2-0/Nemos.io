@@ -56,8 +56,8 @@ epm config key_session:$key_session\
   local_port:$local_port \
   max_peers:$max_peers
 
-chmod -X ./startipfs.sh
-chmod -X ./startbrowser.sh
+sudo chmod u+x ./startipfs.sh
+sudo chmod u+x ./startbrowser.sh
   
 echo ""
 echo ""
@@ -124,8 +124,6 @@ echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
 
-gnome-terminal -e ./startipfs.sh
-gnome-terminal -e ./startbrowser.sh
-sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
+gnome-terminal -e ./startipfs.sh & gnome-terminal -e ./startbrowser.sh & sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
 decerver
 pkill decerver

@@ -93,7 +93,7 @@ ipfs init
 echo ""
 echo ""
 echo "Start up SmartVote..."
-chmod -x ./start.sh
-chmod -x ./startipfs.sh
-chmod -x ./startbrowser.sh
+sudo chmod u+x ./start.sh
+sudo chmod u+x ./startipfs.sh
+sudo chmod u+x ./startbrowser.sh
 sudo sh ./start.sh
