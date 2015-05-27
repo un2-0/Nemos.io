@@ -52,4 +52,4 @@ cd ~/.decerver/dapps/SmartVote
 chmod -x ./start.sh
 chmod -x ./startipfs.sh
 chmod -x ./startbrowser.sh
-sudo sh./start.sh
+sudo sh ./start.sh

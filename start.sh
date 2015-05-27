@@ -83,7 +83,7 @@ echo ""
 echo ""
 epm --log 3 run &
 sleep 90
-kill -SIGTERM $(epm plop pid)
+kill $(epm plop pid)
 
 blockchain_id=$(epm plop chainid)
 echo ""
