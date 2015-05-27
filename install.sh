@@ -1,3 +1,4 @@
+#This installation script is for Ubuntu.
 #!/bin/bash
 set -e
 
@@ -5,7 +6,7 @@ VERSION=${VERSION:=1.4.2}
 OS=${OS:=linux}
 ARCH=${ARCH:=amd64}
 GOPKG=${GOPKG:=go$VERSION.$OS-$ARCH.tar.gz}
-read -p "(Current go package setting: $GOPKG) Go package name: " tmp_go
+read -p "(Default go package setting: $GOPKG) Go package name: " tmp_go
 if [ -z "$tmp_go" ]
 then
 echo ""
