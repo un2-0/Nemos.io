@@ -69,11 +69,20 @@ echo ""
 echo ""
 echo "Downloading SmartVote..."
 cd ~/
+if [ ! -d ".decerver" ]
+then
 mkdir .decerver
+fi
 cd .decerver
+if [ ! -d "dapps" ]
+then
 mkdir dapps
+fi
 cd dapps
+if [ ! -d "SmartVote" ]
+then
 git clone http://github.com/e-movement/smartvote SmartVote
+fi
 
 cd ~/.decerver/dapps/SmartVote
 
