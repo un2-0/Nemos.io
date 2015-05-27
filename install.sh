@@ -14,18 +14,25 @@ GOPKG=${GOPKG:=go$VERSION.$OS-$ARCH.tar.gz}
 read -p "(Default go package setting: $GOPKG) Go package name: " tmp_go
 if [ -z "$tmp_go" ]
 then
-echo ""
-echo ""
-echo "Unzipping $GOPKG..."
 else
 echo ""
 echo ""
-echo "Unzipping $tmp_go..."
 GOPKG=$tmp_go
 fi
 
+if [ -f "$GOPKG" ]
+then
+else
+echo ""
+echo ""
+echo "Downloading $GOPKG..."
 sudo wget "https://storage.googleapis.com/golang/$GOPKG"
+fi
 
+
+echo ""
+echo ""
+echo "Unzipping $GOPKG..."
 tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 sleep 30
 
