@@ -22,7 +22,7 @@ printenv
 echo ""
 echo ""
 echo "Setting Defaults to start the DApp."
-remote_host=${REMOTE_HOST:=150.203.235.209}
+remote_host=${REMOTE_HOST:=150.203.235.14}
 fetch_port=${FETCH_PORT:=50505}
 remote_port=${REMOTE_PORT:=30303}
 key_session="$(strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 10 | tr -d '\n' ; echo)"
