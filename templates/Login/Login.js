@@ -1,7 +1,7 @@
 var	sender = new HttpAPI();
 baseUrl = "/apis/SmartVote";
 
-window.onload(init());
+window.onload = init;
 
 
 function init() {
