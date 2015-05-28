@@ -49,18 +49,18 @@ echo ""
 echo "Installing dependencies..."
 sudo apt-get install jq git mercurial libgmp3-dev curl vim
 
-cd ~/
-sudo chmod -R 777 go
 echo ""
 echo ""
 echo "Installing decerver..."
 go get github.com/eris-ltd/decerver/cmd/decerver
 go install github.com/eris-ltd/decerver/cmd/decerver
+cd ~/
+sudo chmod -R 777 go
 
 echo ""
 echo ""
 echo "Installing Eris package manager..."
-go get github.com/eris-ltd/epm-go
+#go get github.com/eris-ltd/epm-go
 cd $GOPATH/src/github.com/eris-ltd/epm-go
 make
 
@@ -68,13 +68,12 @@ echo ""
 echo ""
 echo "Installing ipfs..."
 go get github.com/ipfs/go-ipfs/cmd/ipfs
-cd ~/
-sudo chmod -R 777 .ipfs
 
 echo ""
 echo ""
 echo "Downloading SmartVote..."
 cd ~/
+sudo chmod -R 777 ipfs
 
 if [ ! -d ".eris" ]
 then
@@ -97,6 +96,7 @@ echo ""
 echo ""
 echo "Initing ipfs..."
 ipfs init
+sleep 10 & sudo chmod -R 777 $HOME/.ipfs
 
 echo ""
 echo ""
@@ -104,4 +104,4 @@ echo "Start up SmartVote..."
 sudo chmod u+x ./start.sh
 sudo chmod u+x ./startipfs.sh
 sudo chmod u+x ./startbrowser.sh
-sudo sh ./start.sh
+./start.sh

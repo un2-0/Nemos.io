@@ -124,4 +124,5 @@ echo "Starting up! (Wheeeeeee says the marmot)"
 echo ""
 echo ""
 sleep 5 && curl http://localhost:3000/admin/switch/SmartVote & 
-exec decerver & gnome-terminal -e ./startbrowser.sh & gnome-terminal -e ./startipfs.sh
+exec decerver && sleep 5 &
+gnome-terminal -e ./startbrowser.sh & gnome-terminal -e ./startipfs.sh
