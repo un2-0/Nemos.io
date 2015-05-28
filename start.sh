@@ -55,9 +55,6 @@ epm config key_session:$key_session\
   local_host:$local_host \
   local_port:$local_port \
   max_peers:$max_peers
-
-sudo chmod u+x ./startipfs.sh
-sudo chmod u+x ./startbrowser.sh
   
 echo ""
 echo ""
