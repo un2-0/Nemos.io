@@ -14,17 +14,17 @@ test:
   pre:
     - docker pull eris/ipfs
     - docker pull eris/decerver
-    - docker-compose -f spec/docker-compose.yml build
+    - "cd spec && docker-compose build"
     - docker-compose build
 
   override:
     # test in isolation
     # start with the test fig. wait for contracts to be compiled and deployed.
-    - "docker-compose -f spec/docker-compose.yml up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd1_output.log & sleep 60 && go run spec/main.go":
+    - "cd spec && docker-compose up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd1_output.log & sleep 60 && go run spec/main.go":
         timeout: 900
-    - docker-compose -f spec/docker-compose.yml kill
+    - "cd spec && docker-compose kill"
     # test against main testnet
-    - "docker-compose up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd2_output.log & sleep 75 && export TESTNET=true && go run spec/main.go":
+    - "docker-compose up --no-color --no-recreate > $CIRCLE_ARTIFACTS/test_rnd2_output.log & sleep 120 && export TESTNET=true && go run spec/main.go":
         timeout: 900
     - docker-compose kill
 

@@ -1,0 +1,51 @@
+{
+  "lll": {
+    "url": "http://compilers.eris.industries:8090/compile",
+    "path": "/root/cpp-ethereum/build/lllc/lllc",
+    "net": true,
+    "extensions": [
+      "lll",
+      "def"
+    ],
+    "regexes": [
+      "\\(include \"(.+?)\"\\)"
+    ],
+    "replaces": [
+      [
+        "(include \"",
+        ".lll\")"
+      ]
+    ],
+    "cmd": [
+      "/root/cpp-ethereum/build/lllc/lllc",
+      "_"
+    ]
+  },
+  "se": {
+    "url": "http://compilers.eris.industries:8090/compile",
+    "path": "/usr/local/bin/serpent",
+    "net": true,
+    "extensions": [
+      "se"
+    ],
+    "regexes": [
+      "create\\(\"(.+?)\"\\)",
+      "create\\('(.+?)'\\)"
+    ],
+    "replaces": [
+      [
+        "create(\"",
+        ".se\")"
+      ],
+      [
+        "create('",
+        ".se')"
+      ]
+    ],
+    "cmd": [
+      "/usr/local/bin/serpent",
+      "compile",
+      "_"
+    ]
+  }
+}

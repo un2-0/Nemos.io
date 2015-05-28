@@ -4,11 +4,10 @@ SmartVote:
   ports:
     - "3000:3000"
     - "3005:3005"
-    - "15254:15254"
+    - "30303:30303"
 
   environment:
-    - LOG_LEVEL=3
-    - CONTAINER=true
+    - CONTAINERS=true
 
   links:
     - ipfs
@@ -17,7 +16,7 @@ ipfs:
   image: eris/ipfs
 
   volumes:
-    - ~/.decerver/filesystems/ipfs:/root/.go-ipfs:rw
+    - ~/.eris/filesystems/ipfs:/root/.ipfs:rw
 
   ports:
     - "4001:4001"

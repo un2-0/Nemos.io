@@ -38,7 +38,7 @@ echo "root_contract ($root_contract)."
 cd ..
 mv package.json /tmp/
 
-jq '.module_dependencies[0].data = {peer_server_address: "111.111.111.111:9999", blockchain_id: "'$blockchain_id'", root_contract: "'$root_contract'"}' /tmp/package.json \
+jq '.module_dependencies[0].data |= . + {peer_server_address: "111.111.111.111:9999", blockchain_id: "'$blockchain_id'", root_contract: "'$root_contract'"}' /tmp/package.json \
   > package.json
 
 # put the SmartVote DApp in focus

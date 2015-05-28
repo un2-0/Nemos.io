@@ -1,22 +1,25 @@
-SmartVotee:
-  build: .
+2gather:
+  build: ..
 
   ports:
     - "3000:3000"
     - "3005:3005"
-    - "30303:30303"
+    - "15254:15254"
 
   environment:
+    - LOG_LEVEL=3
     - CONTAINERS=true
 
   links:
     - ipfs
 
+  command: /home/eris/.eris/dapps/SmartVote/spec/teststart.sh
+
 ipfs:
   image: eris/ipfs
 
   volumes:
-    - ~/.eris/filesystems/ipfs:/root/.ipfs:rw
+    - ~/.eris/filesystems/ipfs:/root/ipfs:rw
 
   ports:
     - "4001:4001"
