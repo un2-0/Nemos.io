@@ -73,8 +73,6 @@ echo ""
 echo ""
 echo "Downloading SmartVote..."
 cd ~/
-sudo chmod -R 777 ipfs
-
 if [ ! -d ".eris" ]
 then
 mkdir .eris
