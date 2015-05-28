@@ -104,4 +104,7 @@ echo "Start up SmartVote..."
 sudo chmod u+x ./start.sh
 sudo chmod u+x ./startipfs.sh
 sudo chmod u+x ./startbrowser.sh
-./start.sh
+
+echo ""
+echo ""
+echo "SmartVote installation Done."
