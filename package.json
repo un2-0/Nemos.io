@@ -1,4 +1,8 @@
 {
+  "name": "SmartVote",
+  "id": "SmartVote",
+  "app_icon": "",
+  "version": "0.9.0",
   "homepage": "",
   "author": {
     "name": "SmartVote Team",
@@ -20,20 +24,15 @@
   "module_dependencies": [
     {
       "name": "monk",
-      "version": "0.9.0",
+      "version": "0.9.0d",
       "data": {
-        "root_contract": "0xf93c7979032c6f1119547de25d20ac6b7606245f",
+        "peer_server_address": "111.111.111.111:9999",
         "blockchain_id": "3810fe31a67626a2ccf78750cfa148588eca27ab",
-        "peer_server_address": "111.111.111.111:9999"
+        "root_contract": "0xf93c7979032c6f1119547de25d20ac6b7606245f"
       }
-    },
-    {
-      "name": "ipfs",
-      "version": "0.0.1"
-    }
-  ],
-  "id": "SmartVote",
-  "name": "SmartVote",
-  "version": "0.9.0",
-  "app_icon": ""
+    }, {
+      "name" : "ipfs",
+      "version" : "0.0.1"
+	}
+  ]
 }
