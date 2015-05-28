@@ -49,6 +49,8 @@ echo ""
 echo "Installing dependencies..."
 sudo apt-get install jq git mercurial libgmp3-dev curl vim
 
+cd ~/
+sudo chmod -R 777 go
 echo ""
 echo ""
 echo "Installing decerver..."
@@ -66,15 +68,19 @@ echo ""
 echo ""
 echo "Installing ipfs..."
 go get github.com/ipfs/go-ipfs/cmd/ipfs
+cd ~/
+sudo chmod -R 777 .ipfs
 
 echo ""
 echo ""
 echo "Downloading SmartVote..."
 cd ~/
+
 if [ ! -d ".eris" ]
 then
 mkdir .eris
 fi
+sudo chmod -R 777 .eris
 cd .eris
 if [ ! -d "dapps" ]
 then
@@ -86,7 +92,7 @@ then
 git clone http://github.com/e-movement/smartvote SmartVote
 fi
 cd SmartVote
-
+sudo chmod 777 package.json
 echo ""
 echo ""
 echo "Initing ipfs..."
