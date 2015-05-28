@@ -96,14 +96,12 @@ echo ""
 echo ""
 echo "Initing ipfs..."
 ipfs init
-sleep 10 & sudo chmod -R 777 $HOME/.ipfs
+sleep 10 & sudo chmod -R 777 ~/.ipfs
 
-echo ""
-echo ""
-echo "Start up SmartVote..."
 sudo chmod u+x ./start.sh
 sudo chmod u+x ./startipfs.sh
 sudo chmod u+x ./startbrowser.sh
+sudo chmod -R 777 ~/.eris/dapps/SmartVote
 
 echo ""
 echo ""
