@@ -53,6 +53,7 @@ function loadInformation(){
 	}else{
 		document.getElementById("welcomer").innerHTML = "<span class='glyphicon glyphicon-user padding-right-small' style='position: relative; top: 3px;'></span>"+"Not login" +" <i class='fa fa-caret-down'></i>";
 		
+		document.getElementById("showContracts").style.display="none";
 		document.getElementById("changeFirstPassword").style.display="none";
 		document.getElementById("showPolls").style.display="none";
 		document.getElementById("createPoll").style.display="none";
