@@ -32,6 +32,6 @@ deployment:
   hub:
     branch: master
     commands:
-      - docker build -t E-Movement/SmartVote:latest .
+      - docker build -t e_movement/smartvote:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push E-Movement/SmartVote:latest
+      - docker push e_movement/smartvote:latest

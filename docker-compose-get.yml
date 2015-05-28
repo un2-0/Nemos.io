@@ -1,5 +1,5 @@
-SmartVote:
-  image: E-Movement/SmartVote
+smartvote:
+  image: e_movement
 
   ports:
     - "3000:3000"
