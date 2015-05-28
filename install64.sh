@@ -58,7 +58,9 @@ go install github.com/eris-ltd/decerver/cmd/decerver
 echo ""
 echo ""
 echo "Installing Eris package manager..."
-go get github.com/eris-ltd/epm-go/cmd/epm
+go get github.com/eris-ltd/epm-go
+cd $GOPATH/src/github.com/eris-ltd/epm-go
+make
 
 echo ""
 echo ""
