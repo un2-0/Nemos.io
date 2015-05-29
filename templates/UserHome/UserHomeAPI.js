@@ -756,7 +756,7 @@ function getSecondIdPassword(selectedPollName) {
 function voting(secondIdValue,selectedPollName) {
 	contentContainer.innerHTML = "";
 	
-	//loadingDisabling("on", "loading the template ballot for you");
+	loadingDisabling("on", "loading the template ballot for you");
 	
 	
 	/*Happend when the voter has not get the initially random second account id and password
@@ -804,7 +804,7 @@ function voting(secondIdValue,selectedPollName) {
 	
 	sender.sendAsync("POST", baseUrl+ "/getVotingInfo", JSON.stringify(voterVotingInfo), function(res){ 
 
-		loadingDisabling("off", "");
+	loadingDisabling("off", "");
 		
 		if (res.status == 200) {
 			

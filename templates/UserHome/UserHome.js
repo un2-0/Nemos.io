@@ -27,8 +27,8 @@ function loadInformation(){
 
 	//window.alert(sessionStorage.username);
 	
-	//sessionStorage.username = "a";
-	//sessionStorage.identity = "voter";
+//	sessionStorage.username = "a";
+//	sessionStorage.identity = "organizer";
 	
 	
 	var temp = LoginAs();
