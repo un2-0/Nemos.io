@@ -49,8 +49,10 @@ When the DApp is running, open [http://localhost:3000/SmartVote/](http://localho
 
 ## FAQ
 
-1.What can I do if displaying "Ref already exists"?
+1.What can I do if displaying "Ref SmartVote already exists"?
 Use "epm rm SmartVote" to delete the current blockchain.
+2.What can I do if displaying "resource temporarily unavailable"?
+Use "(sudo) pkill decerver" to terminate the process.
 
 ## License
 
