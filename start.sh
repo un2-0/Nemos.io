@@ -29,6 +29,9 @@ local_port=${LOCAL_PORT:=30303}
 max_peers=${MAX_PEERS:=10}
 log_level=${LOG_LEVEL:=3}
 root_contract=${ROOT_CONTRACT:="0xf93c7979032c6f1119547de25d20ac6b7606245f"}
+
+echo ""
+echo ""
 read -p "(Previous root contract: $root_contract) Root contract: " tmp_root_contract
 if [ -z "$tmp_root_contract" ]
 then
@@ -42,6 +45,8 @@ echo "Using new root contract: $tmp_root_contract."
 root_contract=$tmp_root_contract
 fi
 
+echo ""
+echo ""
 read -p "(Previous remote host: $remote_host) Remote host: " tmp_remote_host
 if [ -z "$tmp_remote_host" ]
 then
