@@ -13,7 +13,7 @@
   links:
     - ipfs
 
-  command: /home/eris/.eris/dapps/SmartVote/spec/teststart.sh
+  command: /home/eris/.eris/dapps/SmartVote/spec/newBC.sh
 
 ipfs:
   image: eris/ipfs
