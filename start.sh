@@ -19,7 +19,7 @@ printenv
 echo ""
 echo ""
 echo "Setting Defaults to start the DApp."
-remote_host=${REMOTE_HOST:=150.203.235.14}
+remote_host=${REMOTE_HOST:=150.203.235.184}
 fetch_port=${FETCH_PORT:=50505}
 remote_port=${REMOTE_PORT:=30303}
 key_session="$(strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 10 | tr -d '\n' ; echo)"
@@ -40,6 +40,19 @@ echo ""
 echo ""
 echo "Using new root contract: $tmp_root_contract."
 root_contract=$tmp_root_contract
+fi
+
+read -p "(Previous remote host: $remote_host) Remote host: " tmp_remote_host
+if [ -z "$tmp_remote_host" ]
+then
+echo ""
+echo ""
+echo "Using previous root contract: $remote_host."
+else
+echo ""
+echo ""
+echo "Using new root contract: $tmp_remote_host."
+remote_host=$tmp_remote_host
 fi
 
 echo ""
