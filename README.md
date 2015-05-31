@@ -47,6 +47,11 @@ where [newBC](https://github.com/E-Movement/SmartVote/blob/master/spec/newBC.sh)
 
 When the DApp is running, open [http://localhost:3000/SmartVote/](http://localhost:3000/SmartVote/) in a browser.
 
+## FAQ
+
+1.What can I do if displaying "Ref already exists"?
+Use "epm rm SmartVote" to delete the current blockchain.
+
 ## License
 
 GPL. See LICENSE.txt file.
