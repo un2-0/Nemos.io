@@ -62,6 +62,7 @@ echo ""
 echo "Installing Eris package manager..."
 #go get github.com/eris-ltd/epm-go
 cd $GOPATH/src/github.com/eris-ltd/epm-go
+make binary
 make thelonious
 
 echo ""
