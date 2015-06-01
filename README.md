@@ -50,10 +50,15 @@ When the DApp is running, open [http://localhost:3000/SmartVote/](http://localho
 ## FAQ
 
 1.What can I do if displaying "Ref SmartVote already exists"?
+
 Use "epm rm SmartVote" to delete the current blockchain.
+
 2.What can I do if displaying "resource temporarily unavailable"?
+
 Use "(sudo) pkill decerver" to terminate the process.
+
 2.Why does it say "epm not found" or "decerver not found"?
+
 Because GOROOT, GOPATH and PATH will not be saved in bash automatically, every time the terminal is lauched and decerver or epm need to be run in terminal, you need to do the path setting and if you use the default setting for Go, which is as the following:
 
 ```bash
