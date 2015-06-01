@@ -43,7 +43,7 @@ Creating a new blockchain:
 ./newBC.sh
 ```
 
-where [newBC](https://github.com/E-Movement/SmartVote/blob/master/spec/newBC.sh) is in the folder $HOME/.eris/dapps/SmartVote/spec
+where [newBC.sh](https://github.com/E-Movement/SmartVote/blob/master/spec/newBC.sh) is in the folder $HOME/.eris/dapps/SmartVote/spec .
 
 When the DApp is running, open [http://localhost:3000/SmartVote/](http://localhost:3000/SmartVote/) in a browser.
 
