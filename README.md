@@ -59,7 +59,7 @@ Use "(sudo) pkill decerver" to terminate the process.
 
 3.Why does it say "epm not found" or "decerver not found"?
 
-Because GOROOT, GOPATH and PATH will not be saved in bash automatically, every time the terminal is lauched and decerver or epm need to be run in terminal, you need to do the path setting and if you use the default setting for Go, which is as the following:
+Because GOROOT, GOPATH and PATH will not be saved in bash automatically, every time the terminal is lauched and decerver or epm needs to be run in terminal, you need to do the path setting and if you use the default setting for Go, which is as the following:
 
 ```bash
 export GOROOT=/usr/local/go
