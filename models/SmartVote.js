@@ -776,7 +776,7 @@ function SmartVote() {
 	}
 
     this.test = function() {
-        svApi.test();
+        Println(svApi.test());
     }
 }
 

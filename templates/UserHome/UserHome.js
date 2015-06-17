@@ -85,7 +85,6 @@ function createPoll(){
 	
 }
 
-
 function anoPoll(){
 	contentContainer.innerHTML = "";
 	

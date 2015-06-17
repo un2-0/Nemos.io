@@ -124,7 +124,7 @@ function SmartVoteAPI() {
             password = sutil.hexToString(esl.single.Value(userAddr, sutil.stringToHex("password")));
             distributed = parseInt(esl.kv.Value(electionNameToElectionAddress(electionName), sutil.stringToHex("distributed"), userAddr), 10).toString();
             voters.push({"id": username, "password": password, "status": distributed});
-            userAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("voterList"), sutil.stringToHex(userAddr));
+            userAddr = esl.ll.Main(electionNameToElectionAddress(electionName), sutil.stringToHex("voterList"), userAddr);
         }
         return voters;
     }
@@ -350,9 +350,13 @@ function SmartVoteAPI() {
 
         info.pollName = electionName;
         info.organizerName = getElectionOwner("electionName", electionName, "username");
+        Println(info.organizerName);
         info.openTime = this.getOpenTime(electionName);
+        Println(info.openTime);
         info.closeTime = this.getCloseTime(electionName);
+        Println(info.closeTime);
         info.pollDes = this.getElectionDescription(electionName);
+        Println("1   1111111111111 " + info.pollDes);
         return info;
     }
 
@@ -583,4 +587,8 @@ function SmartVoteAPI() {
 		monkAddr = "0x" + monk.ActiveAddress().Data;
 		Println("monkAddr: " + monkAddr);
 	}
+
+    this.test = function() {
+        return this.getVoters("pl7");
+    }
 };

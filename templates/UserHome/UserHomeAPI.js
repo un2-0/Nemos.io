@@ -2612,4 +2612,4 @@ function checkVoterNum(i) {
 	
 }
 
-
+z
