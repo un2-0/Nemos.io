@@ -1,4 +1,4 @@
-## SmartVote -- A Distributed Voting System
+## Nemos -- A Distributed Voting System
 
 A voting system which uses smart contracts to structure the application's logic, and a distributed file store system to share the content between application users.
 
