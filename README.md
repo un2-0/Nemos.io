@@ -13,13 +13,13 @@ Please note, however, that the blockchain it uses may have to be reset from time
 ## Installation
 The current SmartVote only supoort Ubuntu.
 
-For 64 bit machine, download [install64.sh](https://github.com/E-Movement/SmartVote/blob/master/install64.sh) and run it in the terminal:
+For 64 bit machine, download [install64.sh](https://github.com/netparty-france/nemos.io/blob/master/install64.sh) and run it in the terminal:
 
 ```bash
 sudo sh ./install64.sh
 ```
 
-For 32 bit machine, download [install32.sh](https://github.com/E-Movement/SmartVote/blob/master/install32.sh) and run it in the terminal:
+For 32 bit machine, download [install32.sh](https://github.com/netparty-france/nemos.io/blob/master/install32.sh) and run it in the terminal:
 
 ```bash
 sudo sh ./install32.sh
@@ -35,7 +35,7 @@ Connecting to an existing blockchain:
 ./start.sh
 ```
 
-where [start.sh](https://github.com/E-Movement/SmartVote/blob/master/start.sh) is in the folder $HOME/.eris/dapps/SmartVote
+where [start.sh](https://github.com/NetParty-France/Nemos.io/blob/master/start.sh) is in the folder $HOME/.eris/dapps/SmartVote
 
 Creating a new blockchain:
 
@@ -43,7 +43,7 @@ Creating a new blockchain:
 ./newBC.sh
 ```
 
-where [newBC.sh](https://github.com/E-Movement/SmartVote/blob/master/spec/newBC.sh) is in the folder $HOME/.eris/dapps/SmartVote/spec .
+where [newBC.sh](https://github.com/NetParty-France/Nemos.io/blob/master/spec/newBC.sh) is in the folder $HOME/.eris/dapps/SmartVote/spec .
 
 When the DApp is running, open [http://localhost:3000/SmartVote/](http://localhost:3000/SmartVote/) in a browser.
 
