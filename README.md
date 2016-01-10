@@ -1,6 +1,6 @@
 ## Nemos -- A Distributed Voting System
 
-A voting system which uses smart contracts to structure the application's logic, and a distributed file store system to share the content between application users.
+A voting system on the blockchain. For a general presentation, please see see our [prototype presentation](https://www.scribd.com/doc/295045463/Nemos-Prototype-Presentation)
 
 ## Installation
 
